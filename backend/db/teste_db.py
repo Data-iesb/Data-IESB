@@ -1,6 +1,7 @@
 import psycopg2
+import os
 
-DATABASE_URL = "postgresql://2222120009_Marley:2222120009_Marley@dataiesb.iesbtech.com.br:5432/2222120009_Marley"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 try:
     conn = psycopg2.connect(DATABASE_URL)
