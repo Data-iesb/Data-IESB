@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import os
 import jwt
 import uuid
-from db.relatorios import salvar_relatorio, editar_relatorio, listar_relatorios, listar_relatorios_por_aluno, deletar_relatorio
+from db.relatorios import salvar_relatorio, editar_relatorio, listar_relatorios_paginado, listar_relatorios_por_aluno, deletar_relatorio
 from flask import Blueprint, jsonify
 import shutil
  
@@ -61,7 +61,8 @@ def publicar_relatorio():
 @relatorios_bp.route("/api/relatorios", methods=["GET"])
 def listar():
     try:
-        relatorios = listar_relatorios()
+        page = request.args.get("page", default=1, type=int)
+        relatorios = listar_relatorios_paginado(page)
         return jsonify(relatorios), 200
     except Exception as e:
         return jsonify({"erro": str(e)}), 500

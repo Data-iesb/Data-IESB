@@ -24,18 +24,21 @@ def salvar_relatorio(nome_pasta, titulo, descricao, assunto, aluno_id):
     
 
 
-def listar_relatorios():
+def listar_relatorios_paginado(page=1, limite=20):
     try:
+        offset = (page - 1) * limite
+
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
         cur.execute(f"SET search_path TO {SCHEMA};")
 
         cur.execute("""
-            SELECT r.id, r.assunto, r.titulo, r.descricao, r.data_publicacao, r.caminho_pasta, a.nome
+            SELECT r.id, r.assunto, r.descricao, r.data_publicacao, r.caminho_pasta, a.nome
             FROM relatorio r
             JOIN aluno a ON r.aluno_id = a.id
             ORDER BY r.data_publicacao DESC
-        """)
+            LIMIT %s OFFSET %s
+        """, (limite, offset))
 
         rows = cur.fetchall()
         cur.close()
@@ -45,12 +48,11 @@ def listar_relatorios():
         for row in rows:
             relatorios.append({
                 "id": row[0],
-                "titulo": row[1],
-                "assunto": row[2],
-                "descricao": row[3],
-                "data_publicacao": row[4].isoformat(),
-                "caminho_pasta": row[5],
-                "autor": row[6]
+                "assunto": row[1],
+                "descricao": row[2],
+                "data_publicacao": row[3].isoformat(),
+                "caminho_pasta": row[4],
+                "autor": row[5]
             })
 
         return relatorios
