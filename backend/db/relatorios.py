@@ -24,7 +24,7 @@ def salvar_relatorio(nome_pasta, titulo, descricao, assunto, aluno_id):
     
 
 
-def listar_relatorios_paginado(page=1, limite=20):
+def listar_relatorios_paginado(page=1, limite=12):
     try:
         offset = (page - 1) * limite
 
