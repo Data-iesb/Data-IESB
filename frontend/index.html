@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DataIESB</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .relatorio-card {
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+      height: 200px;
+      text-align: center;
+    }
+    .relatorio-card h5 {
+      margin: 10px 0 0 0;
+      font-size: 1.1rem;
+    }
+    .relatorio-card p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .page-selector {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .relatorio-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger px-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">DataIESB</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarConteudo" aria-controls="navbarConteudo" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarConteudo">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="parceiros.html">Parceiros</a></li>
+          <li class="nav-item"><a class="nav-link" href="aluno.html" id="link-aluno">Aluno</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.html" id="link-login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="cadastro.html" id="link-cadastro">Cadastrar</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" id="link-sair">Sair</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+
+<!-- Slideshow 100% largura -->
+<div id="slideshow" class="carousel slide w-100 m-0 p-0" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="https://picsum.photos/1920/400?random=1" class="d-block w-100" alt="Slide 1">
+      </div>
+      <div class="carousel-item">
+        <img src="https://picsum.photos/1920/400?random=2" class="d-block w-100" alt="Slide 2">
+      </div>
+      <div class="carousel-item">
+        <img src="https://picsum.photos/1920/400?random=3" class="d-block w-100" alt="Slide 3">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#slideshow" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#slideshow" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+  
+
+  <!-- Relatórios -->
+  <div class="container my-4">
+    <h3 class="mb-3">Relatórios</h3>
+    <div id="relatorios-container" class="row g-3">
+      <!-- ... código anterior da navbar e slideshow ... -->
+      
+    </div>
+  
+</div> <!-- fim de .container -->
+
+<!-- Paginação -->
+<div class="page-selector my-4">
+  <div class="d-flex justify-content-center align-items-center gap-3">
+    <button class="btn btn-sm btn-danger" onclick="mudarPagina(-1)">Anterior</button>
+    <span id="pagina-atual" class="fs-3">1</span>
+    <button class="btn btn-sm btn-danger" onclick="mudarPagina(1)">Próxima</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3 mt-auto">
+  <div class="container">
+    <p class="mb-0">© 2025 DataIESB — Projeto Acadêmico | <a href="#" class="text-white text-decoration-underline">IESB</a></p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
+
+<!-- TODO -->
+<!--
+1. Fazer a navbar de "Parceiros"
+2. Js de criação de relatorio
+3. colocar o input da capa no backend
+4. js para ver o relatorio (caso precise)
+5. Falar para o chat sobre a variável
+6. Colocar um .js para códigos que servem para todas as páginas
+-->
