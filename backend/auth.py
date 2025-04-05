@@ -5,7 +5,7 @@ import os
 from werkzeug.security import check_password_hash
 from datetime import datetime, timedelta
 from db.aluno import criar_aluno, buscar_aluno_por_id, editar_aluno, atualizar_senha
-
+from flask_cors import cross_origin
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -78,6 +78,7 @@ def login():
 
 
 @auth_bp.route("/api/aluno/me", methods=["GET"])
+@cross_origin()
 def perfil_aluno():
     auth_header = request.headers.get("Authorization")
 
