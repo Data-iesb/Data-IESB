@@ -33,7 +33,7 @@ def listar_relatorios_paginado(page=1, limite=12):
         cur.execute(f"SET search_path TO {SCHEMA};")
 
         cur.execute("""
-            SELECT r.id, r.assunto, r.descricao, r.data_publicacao, r.caminho_pasta, a.nome
+            SELECT r.id, r.titulo, r.assunto, r.descricao, r.data_publicacao, r.caminho_pasta, a.id
             FROM relatorio r
             JOIN aluno a ON r.aluno_id = a.id
             ORDER BY r.data_publicacao DESC
@@ -48,11 +48,12 @@ def listar_relatorios_paginado(page=1, limite=12):
         for row in rows:
             relatorios.append({
                 "id": row[0],
-                "assunto": row[1],
-                "descricao": row[2],
-                "data_publicacao": row[3].isoformat(),
-                "caminho_pasta": row[4],
-                "autor": row[5]
+                "titulo": row[1],
+                "assunto": row[2],
+                "descricao": row[3],
+                "data_publicacao": row[4].isoformat(),
+                "caminho_pasta": row[5],
+                "autor": row[6]
             })
 
         return relatorios
@@ -60,6 +61,40 @@ def listar_relatorios_paginado(page=1, limite=12):
     except Exception as e:
         raise e
     
+
+
+def buscar_relatorio(relatorio_id):
+    print(type(relatorio_id))
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute(f"SET search_path TO {SCHEMA};")
+
+    cur.execute("""
+        SELECT r.id, r.caminho_pasta, r.descricao, r.data_publicacao,
+            r.assunto, a.nome AS autor
+        FROM relatorio r
+        JOIN aluno a ON r.aluno_id = a.id
+        WHERE r.id = %s;
+    """, (relatorio_id,))
+
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    print(row)
+
+    if row:
+        return {
+            "id": row[0],
+            "caminho_pasta": row[1],
+            "descricao": row[2],
+            "data_publicacao": row[3].isoformat(),
+            "assunto": row[4],
+            "autor": row[5]
+        }
+    else:
+        return None
+
 
 
 def editar_relatorio(relatorio_id, aluno_id, titulo, descricao, assunto):

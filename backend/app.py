@@ -3,6 +3,8 @@
 # TODO: Implementar um usuario administrador
 # TODO: Implementar um páginas de controle para administradores
 
+# TODO: Aceitar arquivos diferentes de jpg...
+# TODO: Editar Aluno
 
 
 from flask import Flask

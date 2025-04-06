@@ -107,12 +107,12 @@ async function carregarRelatoriosDoAluno() {
         card.innerHTML = `
           <div class="relatorio-card p-0">
             <div style="height: 120px; overflow: hidden;">
-              <img src="/uploads/${r.caminho_pasta}/capa.jpg" class="w-100 h-100" style="object-fit: cover;" alt="Capa do relatório">
+              <img src="../backend/uploads/${r.caminho_pasta}/capa.jpg" class="w-100 h-100" style="object-fit: cover;" alt="Capa do relatório">
             </div>
             <div class="p-2">
               <h5 class="mb-1">${r.assunto}</h5>
               <p class="text-muted" style="font-size: 0.85rem;">${r.descricao || "Sem descrição"}</p>
-              <a href="/uploads/${r.caminho_pasta}/relatorio.html" target="_blank" class="btn btn-sm btn-outline-danger me-1">Ver</a>
+              <a href="relatorio.html?id=${r.id}" target="_blank" class="btn btn-sm btn-outline-danger me-1">Ver</a>
               <button class="btn btn-sm btn-outline-secondary" onclick="deletarRelatorio(${r.id})">Excluir</button>
             </div>
           </div>

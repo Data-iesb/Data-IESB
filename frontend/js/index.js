@@ -30,20 +30,19 @@ function exibirRelatorios(relatorios) {
     const card = document.createElement("div");
     card.className = "col-6 col-md-4 col-lg-3";
     card.innerHTML = `
+    <a href="relatorio.html?id=${r.id}" class="text-decoration-none text-dark">
       <div class="relatorio-card p-0">
         <div style="height: 120px; overflow: hidden;">
-          <img src="/uploads/${r.caminho_pasta}/capa.jpg"
-            onerror="this.onerror=null; this.src='https://picsum.photos/300/120?grayscale'"
-            class="w-100 h-100"
-            style="object-fit: cover;"
-            alt="Capa do relatório">
+          <img src="../backend/uploads/${r.caminho_pasta}/capa.jpg" class="w-100 h-100" style="object-fit: cover;" alt="Capa do relatório">
         </div>
         <div class="p-2">
-          <h5>${r.assunto}</h5>
-          <p>${r.descricao || "Sem descrição"}</p>
-          <a href="/uploads/${r.caminho_pasta}/relatorio.html" class="btn btn-sm btn-outline-danger mt-2">Ver relatório</a>
+          <h5 class="mb-1">${r.assunto}</h5>
+          <p class="text-muted" style="font-size: 0.85rem;">${r.descricao || "Sem descrição"}</p>
+          <a href="../backend/uploads/${r.caminho_pasta}/relatorio.html" target="_blank" class="btn btn-sm btn-outline-danger me-1">Ver</a>
+          <button class="btn btn-sm btn-outline-secondary" onclick="deletarRelatorio(${r.id})">Excluir</button>
         </div>
       </div>
+    </a>
     `;
     container.appendChild(card);
   });

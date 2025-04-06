@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import os
 import jwt
 import uuid
-from db.relatorios import salvar_relatorio, editar_relatorio, listar_relatorios_paginado, listar_relatorios_por_aluno, deletar_relatorio
+from db.relatorios import salvar_relatorio, editar_relatorio, listar_relatorios_paginado, listar_relatorios_por_aluno, deletar_relatorio, buscar_relatorio
 from flask import Blueprint, jsonify
 import shutil
  
@@ -28,6 +28,7 @@ def publicar_relatorio():
             return jsonify({"erro": "Arquivo HTML e assunto são obrigatórios"}), 400
 
         arquivo = request.files["arquivo"]
+        capa = request.files["capa"]
         titulo = request.form["titulo"]
         descricao = request.form["descricao"]
         assunto = request.form["assunto"]
@@ -43,6 +44,10 @@ def publicar_relatorio():
         # Salva o arquivo como relatorio.html
         caminho_arquivo = os.path.join(pasta_destino, "relatorio.html")
         arquivo.save(caminho_arquivo)
+
+        extensao = os.path.splitext(capa.filename)[1].lower()
+        caminho_arquivo = os.path.join(pasta_destino, f"capa{extensao}")
+        capa.save(caminho_arquivo)
 
         # Salva no banco o nome da pasta (não o caminho completo)
         salvar_relatorio(pasta_id, titulo, descricao, assunto, aluno_id)
@@ -126,6 +131,17 @@ def listar_meus_relatorios():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
     
+
+
+@relatorios_bp.route("/api/relatorios/<int:relatorio_id>", methods=["GET"])
+def obter_relatorio(relatorio_id):
+    try:
+        relatorio = buscar_relatorio(relatorio_id)
+        if not relatorio:
+            return jsonify({"erro": "Relatório não encontrado"}), 404
+        return jsonify(relatorio), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
 
 @relatorios_bp.route("/api/relatorios/<int:relatorio_id>", methods=["DELETE"])
