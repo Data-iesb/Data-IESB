@@ -53,34 +53,3 @@ function mudarPagina(incremento) {
   if (novaPagina < 1) return;
   carregarRelatorios(novaPagina);
 }
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("token");
-
-  const linkAluno = document.getElementById("link-aluno");
-  const linkLogin = document.getElementById("link-login");
-  const linkCadastro = document.getElementById("link-cadastro");
-  const linkSair = document.getElementById("link-sair");
-
-  if (token) {
-    if (linkAluno) linkAluno.classList.remove("d-none");
-    if (linkLogin) linkLogin.classList.add("d-none");
-    if (linkCadastro) linkCadastro.classList.add("d-none");
-    if (linkSair) linkSair.classList.remove("d-none");
-  } else {
-    if (linkAluno) linkAluno.classList.add("d-none");
-    if (linkLogin) linkLogin.classList.remove("d-none");
-    if (linkCadastro) linkCadastro.classList.remove("d-none");
-    if (linkSair) linkSair.classList.add("d-none");
-  }
-
-  if (linkSair) {
-    linkSair.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("token");
-      window.location.reload();
-    });
-  }
-});
