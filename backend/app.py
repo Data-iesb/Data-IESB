@@ -7,7 +7,7 @@
 # TODO: Editar Aluno
 
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -21,14 +21,18 @@ def create_app():
     app = Flask(__name__)
     CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
 
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "chave_padrao")
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(relatorios_bp)
 
     @app.route("/")
     def index():
-        return {"mensagem": "API Data IESB online."}
+        return send_from_directory("../frontend", "index.html")
+
+    @app.route("/<path:filename>")
+    def frontend_files(filename):
+        return send_from_directory("../frontend", filename)
 
     return app
 
