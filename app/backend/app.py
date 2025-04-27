@@ -34,8 +34,12 @@ def create_app():
     def frontend_files(filename):
         return send_from_directory("../frontend", filename)
 
+    def health():
+        return "OK", 200
+
+
     return app
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0", port=5000)

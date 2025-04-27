@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: psd
+  namespace: default
+  labels:
+    app: psd
+  annotations:
+    keel.sh/policy: "all"
+    keel.sh/trigger: "poll"
+    keel.sh/pollSchedule: "@every 1m"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: psd
+  template:
+    metadata:
+      labels:
+        app: psd
+    spec:
+      containers:
+        - name: psd
+          image: 326668682603.dkr.ecr.us-east-1.amazonaws.com/data-prophets/psd:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8501
+
