@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = "http://ec2-3-82-1-192.compute-1.amazonaws.com/:80";
 
 document.getElementById("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();
