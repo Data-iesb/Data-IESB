@@ -1,5 +1,3 @@
-const API_URL = "http://ec2-3-82-1-192.compute-1.amazonaws.com/:80";
-
 document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("token");
     console.log(localStorage)
@@ -10,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   
     try {
-      const resp = await fetch(API_URL+"/api/aluno/me", {
+      const resp = await fetch(config.API_URL + "/api/aluno/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
   
@@ -86,7 +84,7 @@ async function carregarRelatoriosDoAluno() {
     console.log("aqui")
   
     try {
-      const resp = await fetch(API_URL + "/api/relatorios/me", {
+      const resp = await fetch(config.API_URL + "/api/relatorios/me", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -135,7 +133,7 @@ if (!confirmar) return;
 const token = localStorage.getItem("token");
 
 try {
-    const resposta = await fetch(API_URL + `/api/relatorios/${id}`, {
+    const resposta = await fetch(config.API_URL + `/api/relatorios/${id}`, {
     method: "DELETE",
     headers: {
         Authorization: `Bearer ${token}`

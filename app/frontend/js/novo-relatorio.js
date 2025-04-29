@@ -1,5 +1,3 @@
-const API_URL = "http://ec2-3-82-1-192.compute-1.amazonaws.com/:80";
-
 document.getElementById("form-relatorio").addEventListener("submit", async (e) => {
     e.preventDefault();
   
@@ -26,7 +24,7 @@ document.getElementById("form-relatorio").addEventListener("submit", async (e) =
     const mensagemSucesso = document.getElementById("mensagem-sucesso");
   
     try {
-      const resposta = await fetch(API_URL + "/api/relatorios", {
+      const resposta = await fetch(config.API_URL + "/api/relatorios", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`

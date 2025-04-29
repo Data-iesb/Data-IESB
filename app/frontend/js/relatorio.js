@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  fetch(`http://127.0.0.1:5000/api/relatorios/${relatorioId}`)
+  fetch(config.API_URL + `/api/relatorios/${relatorioId}`)
     .then((res) => {
       if (!res.ok) {
         throw new Error("Relatório não encontrado.");

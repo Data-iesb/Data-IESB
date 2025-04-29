@@ -1,5 +1,3 @@
-const API_URL = "http://ec2-3-82-1-192.compute-1.amazonaws.com/:80";
-
 document.getElementById("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();
   
@@ -8,7 +6,7 @@ document.getElementById("form-login").addEventListener("submit", async (e) => {
     const msgErro = document.getElementById("mensagem-erro");
   
     try {
-      const resposta = await fetch(API_URL + "/api/login", {
+      const resposta = await fetch(config.API_URL + "/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, senha })
