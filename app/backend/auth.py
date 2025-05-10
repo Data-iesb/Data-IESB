@@ -6,7 +6,10 @@ from werkzeug.security import check_password_hash
 from datetime import datetime, timedelta
 from db.aluno import criar_aluno, buscar_aluno_por_id, editar_aluno, atualizar_senha
 from flask_cors import cross_origin
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 auth_bp = Blueprint("auth", __name__)
 
 

@@ -5,6 +5,11 @@ import uuid
 from db.relatorios import salvar_relatorio, editar_relatorio, listar_relatorios_paginado, listar_relatorios_por_aluno, deletar_relatorio, buscar_relatorio
 from flask import Blueprint, jsonify
 import shutil
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
  
 relatorios_bp = Blueprint("relatorios", __name__)
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "chave_padrao")

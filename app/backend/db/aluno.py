@@ -128,4 +128,4 @@ def atualizar_senha(id_aluno, senha_atual, nova_senha):
 
 
 if __name__ == "__main__":
-    criar_aluno("Marley Abe", "Ciência de Dados", 6, "senha123")
+    criar_aluno("Marley Abe", "marleyabe@gmail.com", "Ciência de Dados", 6, "senha123")
