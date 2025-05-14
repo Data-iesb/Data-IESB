@@ -58,4 +58,4 @@ ENV PATH="/home/flaskuser/.local/bin:${PATH}"
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail http://localhost:5000/health || exit 1
 
 # Start the Streamlit application
-CMD ["python3", "backend/app.py"]
+CMD ["python3", "/app/backend/app.py"]
