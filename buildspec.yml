@@ -1,14 +1,20 @@
 version: 0.2
 
+env:
+  variables:
+    REGION: "us-east-1"
+    ACCOUNT_ID: "248189947068"
+    REPOSITORY: "dataiesb-site"
+    CONTAINER_NAME: "dataiesb"
+    EC2_INSTANCE_ID: "i-0ee9f0c1a2da546bb"  # Replace with your actual instance ID
+
 phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 248189947068.dkr.ecr.us-east-1.amazonaws.com
-      
-      # Set variables
-      - REPOSITORY_URI=248189947068.dkr.ecr.us-east-1.amazonaws.com/dataiesb-site
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPOSITORY
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
 
   build:
@@ -17,12 +23,19 @@ phases:
       - docker build --build-arg REPOSITORY_URI=$REPOSITORY_URI --build-arg SCHEMA=$SCHEMA --build-arg DB_NAME=$DB_NAME --build-arg JWT_SECRET_KEY=$JWT_SECRET_KEY --build-arg DATABASE_URL=$DATABASE_URL -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
-
   post_build:
     commands:
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
+      - echo Triggering deploy on EC2 via SSM...
+      - |
+        aws ssm send-command \
+          --instance-ids "$EC2_INSTANCE_ID" \
+          --document-name "AWS-RunShellScript" \
+          --comment "Deploy new Docker image" \
+          --parameters commands=["aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com","docker stop $CONTAINER_NAME || true","docker rm $CONTAINER_NAME || true","docker pull $REPOSITORY_URI:$IMAGE_TAG","docker run -d -p 80:5000 --name $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG"] \
+          --region $REGION
 
 artifacts:
   files: '**/*'
