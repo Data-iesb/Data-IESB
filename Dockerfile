@@ -1,5 +1,6 @@
 # Use a stable Debian-based Python image
-FROM python:3.12-slim
+FROM public.ecr.aws/docker/library/python:3.12-slim
+
 
 # Set working directory
 WORKDIR /app
