@@ -1,6 +1,17 @@
 # Use a stable Debian-based Python image
 FROM public.ecr.aws/docker/library/python:3.12-slim
 
+ARG REPOSITORY_URI
+ARG SCHEMA
+ARG DB_NAME
+ARG JWT_SECRET_KEY
+ARG DATABASE_URL
+
+ENV REPOSITORY_URI=${REPOSITORY_URI}
+ENV SCHEMA=${SCHEMA}
+ENV DB_NAME=${DB_NAME}
+ENV JWT_SECRET_KEY=${JWT_SECRET_KEY}
+ENV DATABASE_URL=${DATABASE_URL}
 
 # Set working directory
 WORKDIR /app
@@ -47,4 +58,4 @@ ENV PATH="/home/flaskuser/.local/bin:${PATH}"
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail http://localhost:5000/health || exit 1
 
 # Start the Streamlit application
-CMD ["python3", "app.py"]
+CMD ["python3", "backend/app.py"]
