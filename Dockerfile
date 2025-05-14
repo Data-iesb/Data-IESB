@@ -28,7 +28,7 @@ RUN useradd -m -s /bin/bash flaskuser && chown -R flaskuser:flaskuser /app
 USER flaskuser
 
 # Copy dependencies first
-COPY --chown=flaskuser:flaskuser docker/requirements.txt /app/
+COPY --chown=flaskuser:flaskuser requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the app
