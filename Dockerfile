@@ -31,8 +31,8 @@ USER flaskuser
 COPY --chown=flaskuser:flaskuser requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the app
-COPY --chown=flaskuser:flaskuser app /app/
+# Copy all project files (adjust if .dockerignore excludes something)
+COPY --chown=flaskuser:flaskuser . /app/
 
 # Expose Flask port
 EXPOSE 5000

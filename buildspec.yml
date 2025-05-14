@@ -12,7 +12,8 @@ phases:
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker build --build-arg MY_ENV_VAR=$MY_ENV_VAR -t my-image .
+
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
