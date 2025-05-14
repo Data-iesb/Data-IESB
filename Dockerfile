@@ -1,11 +1,49 @@
-FROM python:3.9-slim
+# Use a stable Debian-based Python image
+FROM python:3.12-slim
 
+# Set working directory
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    vim \
+    unzip \
+    libz-dev \
+    postgresql-client \
+ && rm -rf /var/lib/apt/lists/*
 
-COPY . .
 
-CMD ["python", "app.py"]
+RUN curl -o /tmp/zlib1g_1.3.dfsg+really1.3.1-1+b1_amd64.deb https://ftp.debian.org/debian/pool/main/z/zlib/zlib1g_1.3.dfsg+really1.3.1-1+b1_amd64.deb && \
+    curl -o /tmp/zlib1g-dev_1.3.dfsg+really1.3.1-1+b1_amd64.deb https://ftp.debian.org/debian/pool/main/z/zlib/zlib1g-dev_1.3.dfsg+really1.3.1-1+b1_amd64.deb && \
+    dpkg -i /tmp/zlib1g_1.3.dfsg+really1.3.1-1+b1_amd64.deb /tmp/zlib1g-dev_1.3.dfsg+really1.3.1-1+b1_amd64.deb || apt-get install -f -y && \
+    rm -f /tmp/zlib1g_1.3.dfsg+really1.3.1-1+b1_amd64.deb /tmp/zlib1g-dev_1.3.dfsg+really1.3.1-1+b1_amd64.deb
 
+# Create a non-root user for security
+RUN useradd -m -s /bin/bash flaskuser && chown -R flaskuser:flaskuser /app
+
+# Switch to non-root user
+USER flaskuser
+
+# Copy dependencies first
+COPY --chown=flaskuser:flaskuser docker/requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the app
+COPY --chown=flaskuser:flaskuser app /app/
+
+# Expose Flask port
+EXPOSE 5000
+
+# Copy the .env file
+#COPY --chown=flaskuser:flaskuser docker/.env /app/
+
+# Set environment variables
+ENV PATH="/home/flaskuser/.local/bin:${PATH}"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail http://localhost:5000/health || exit 1
+
+# Start the Streamlit application
+CMD ["python3", "app.py"]
