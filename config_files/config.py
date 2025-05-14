@@ -1,8 +1,0 @@
-ECR_REPO = "dataiesb-site"
-AWS_ACCOUNT_ID = "248189947068"
-AWS_REGION = "us-east-1"
-REPOSITORY_URI = f"{AWS_ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/{ECR_REPO}"
-
-CONTAINER_NAME="dataiesb-site"
-DOCKER_IMAGE=f"{CONTAINER_NAME}-img"
-CONTAINER_PORT="80:5000"
