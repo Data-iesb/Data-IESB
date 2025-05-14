@@ -6,14 +6,19 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 248189947068.dkr.ecr.us-east-1.amazonaws.com
+      
+      # Set variables
       - REPOSITORY_URI=248189947068.dkr.ecr.us-east-1.amazonaws.com/flask-hello-world
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
 
   build:
     commands:
       - echo Building the Docker image...
-      - docker build --build-arg MY_ENV_VAR=$MY_ENV_VAR -t my-image .
+      
+      # Build and tag with $REPOSITORY_URI:$IMAGE_TAG
+      - docker build --build-arg MY_ENV_VAR=$MY_ENV_VAR -t $REPOSITORY_URI:$IMAGE_TAG .
 
+      # Tag the image as latest as well
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
