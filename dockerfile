@@ -47,6 +47,7 @@ COPY --chown=flaskuser:flaskuser . /app/
 
 # Expose Flask port
 EXPOSE 5000
+EXPOSE 8501
 
 # Copy the .env file
 #COPY --chown=flaskuser:flaskuser docker/.env /app/
@@ -55,7 +56,7 @@ EXPOSE 5000
 ENV PATH="/home/flaskuser/.local/bin:${PATH}"
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail http://localhost:5000/health || exit 1
+# HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail http://localhost:5000/health || exit 1
 
 # Start the Streamlit application
 CMD ["python3", "/app/backend/app.py"]
