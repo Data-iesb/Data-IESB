@@ -79,12 +79,13 @@ def publicar_relatorio():
         os.remove(caminho_arquivo)
 
         extensao = os.path.splitext(capa.filename)[1].lower()
-        pasta_destino = os.path.join("backend/static", pasta_id)  # caminho relativo
+        pasta_destino = os.path.join("backend/static", pasta_id)  
+        os.makedirs(pasta_destino, exist_ok=True) 
 
         caminho_arquivo = os.path.join(pasta_destino, f"capa{extensao}")
         capa.save(caminho_arquivo)
 
-        # Salva no banco o nome da pasta (não o caminho completo)
+
         salvar_relatorio(pasta_id, titulo, descricao, assunto, aluno_id)
 
         return jsonify({"mensagem": "Relatório enviado com sucesso"}), 201
