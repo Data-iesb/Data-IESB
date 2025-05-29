@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataiesb-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dataiesb-app
+  template:
+    metadata:
+      labels:
+        app: dataiesb-app
+      annotations:
+        keel.sh/policy: force
+        keel.sh/trigger: poll
+        keel.sh/approvals: "none"
+
+    spec:
+      containers:
+      - name: dataiesb-container
+        image: 248189947068.dkr.ecr.us-east-1.amazonaws.com/dataiesb-site:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        - containerPort: 8501
+        volumeMounts:
+        - name: dataiesb-storage
+          mountPath: /app/data
+      volumes:
+      - name: dataiesb-storage
+        persistentVolumeClaim:
+          claimName: dataiesb-ebs-pvc
