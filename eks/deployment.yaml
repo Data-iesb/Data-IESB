@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: dataiesb-container
-        image: 248189947068.dkr.ecr.us-east-1.amazonaws.com/dataiesb-site:latest
+        image: 248189947068.dkr.ecr.us-east-1.amazonaws.com/dataiesb-site@sha256:<digest>
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
