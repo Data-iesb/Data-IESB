@@ -13,6 +13,7 @@ phases:
   install:
     runtime-versions:
       python: 3.11
+    commands:
       - echo Installing kubectl...
       - curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
       - chmod +x kubectl
@@ -31,7 +32,7 @@ phases:
       - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com
       - export REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$REPOSITORY
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - aws eks update-kubeconfig --name sas-6881323-eks --region $BUILD_REGION
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $BUILD_REGION
 
   build:
     commands:
