@@ -13,8 +13,9 @@ spec:
         app: dataiesb-app
       annotations:
         keel.sh/policy: force
-        keel.sh/trigger: poll
+        keel.sh/trigger: webhook
         keel.sh/approvals: "none"
+
     spec:
       # Init container to fix volume permissions
       initContainers:
@@ -29,7 +30,7 @@ spec:
 
       containers:
       - name: dataiesb-container
-        image: 248189947068.dkr.ecr.us-east-1.amazonaws.com/dataiesb-site@sha256:<digest>
+        image: 248189947068.dkr.ecr.us-east-1.amazonaws.com/dataiesb-site:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
