@@ -2,41 +2,46 @@ version: 0.2
 
 env:
   variables:
-    REGION: "us-east-1"
+    REGION: "sa-east-1"
     ACCOUNT_ID: "248189947068"
+    CLUSTER_NAME: "sas-6881323-eks"
     REPOSITORY: "dataiesb-site"
-    CONTAINER_NAME: "dataiesb"
-    EC2_INSTANCE_ID: "i-0ee9f0c1a2da546bb"  # Replace with your actual instance ID
+    DEPLOYMENT_NAME: "dataiesb-app"
+    CONTAINER_NAME: "dataiesb-container"
 
 phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo Installing kubectl...
+      - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.29.0/2024-04-05/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin
+      - echo Installing AWS CLI...
+      - pip install --upgrade awscli
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws --version
-      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
-      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPOSITORY
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo Configuring kubectl for EKS...
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $REGION
 
   build:
     commands:
       - echo Building the Docker image...
-      - docker build --build-arg REPOSITORY_URI=$REPOSITORY_URI --build-arg SCHEMA=$SCHEMA --build-arg DB_NAME=$DB_NAME --build-arg JWT_SECRET_KEY=$JWT_SECRET_KEY --build-arg DATABASE_URL=$DATABASE_URL -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
     commands:
-      - echo Pushing the Docker images...
+      - echo Pushing Docker images to ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
-      - echo Triggering deploy on EC2 via SSM...
-      - |
-        aws ssm send-command \
-          --instance-ids "$EC2_INSTANCE_ID" \
-          --document-name "AWS-RunShellScript" \
-          --comment "Deploy new Docker image" \
-          --parameters commands=["aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com","docker stop $CONTAINER_NAME || true","docker rm $CONTAINER_NAME || true","docker pull $REPOSITORY_URI:$IMAGE_TAG","docker run -d -p 80:5000 --name $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG"] \
-          --region $REGION
-
-artifacts:
-  files: '**/*'
+      - echo Updating deployment in EKS...
+      - kubectl set image deployment/$DEPLOYMENT_NAME $CONTAINER_NAME=$REPOSITORY_URI:$IMAGE_TAG -n default
+      - kubectl rollout status deployment/$DEPLOYMENT_NAME -n default
 
