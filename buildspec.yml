@@ -23,6 +23,8 @@ phases:
 
   pre_build:
     commands:
+      - export REGION=sa-east-1
+      - export ACCOUNT_ID=248189947068
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
       - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY
