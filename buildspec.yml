@@ -23,14 +23,16 @@ phases:
 
   pre_build:
     commands:
-      - export REGION=sa-east-1
+  commands:
+      - export ECR_REGION=us-east-1
+      - export BUILD_REGION=sa-east-1
       - export ACCOUNT_ID=248189947068
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
-      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - echo Configuring kubectl for EKS...
-      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $REGION
+      - export REPOSITORY=dataiesb-site
+      - echo Logging in to Amazon ECR in $ECR_REGION...
+      - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com
+      - export REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$REPOSITORY
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - aws eks update-kubeconfig --name sas-6881323-eks --region $BUILD_REGION
 
   build:
     commands:
