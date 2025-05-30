@@ -23,7 +23,6 @@ phases:
 
   pre_build:
     commands:
-  commands:
       - export ECR_REGION=us-east-1
       - export BUILD_REGION=sa-east-1
       - export ACCOUNT_ID=248189947068
