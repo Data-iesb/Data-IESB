@@ -1,30 +1,31 @@
 version: 0.2
 
+env:
+  variables:
+    AWS_ACCOUNT_ID: "123456789012"           # ← Replace with your actual AWS account ID
+    AWS_DEFAULT_REGION: "us-east-1"          # ← Replace with your AWS region
+    ECR_REPO: "dataiesb-site"                # ← Optional: add these if not using config.py
+    DOCKER_IMAGE: "dataiesb-site"
+    CONTAINER_NAME: "dataiesb"
+
 phases:
   pre_build:
     commands:
-      - echo "🔍 Setting environment variables from config..."
-      - export AWS_ACCOUNT_ID=$(python3 -c "from config_files import config; print(config.AWS_ACCOUNT_ID)")
-      - export AWS_DEFAULT_REGION=$(python3 -c "from config_files import config; print(config.AWS_DEFAULT_REGION)")
-      - export ECR_REPO=$(python3 -c "from config_files import config; print(config.ECR_REPO)")
-      - export REPOSITORY_URI=$(python3 -c "from config_files import config; print(config.REPOSITORY_URI)")
-      - export DOCKER_IMAGE=$(python3 -c "from config_files import config; print(config.DOCKER_IMAGE)")
-      - export CONTAINER_NAME=$(python3 -c "from config_files import config; print(config.CONTAINER_NAME)")
       - echo "🔑 Logging in to Amazon ECR..."
       - aws --version
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - echo "✅ Environment variables set and logged into ECR."
+      - echo "✅ Logged into ECR successfully."
 
   build:
     commands:
       - echo "🛠️  Building Docker image..."
       - docker build --no-cache -t $DOCKER_IMAGE -f docker/Dockerfile .
-      - docker tag $DOCKER_IMAGE:latest $REPOSITORY_URI:latest
+      - docker tag $DOCKER_IMAGE:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO:latest
 
   post_build:
     commands:
       - echo "🚀 Pushing Docker image to ECR..."
-      - docker push $REPOSITORY_URI:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO:latest
       - echo "✅ Build and push completed."
 
 artifacts:
