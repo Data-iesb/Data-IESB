@@ -10,7 +10,7 @@ spec:
     app: dataiesb-app
   ports:
     - port: 80
-      targetPort: 5000
+      targetPort: 8501
       protocol: TCP
       name: http
 
