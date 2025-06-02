@@ -37,8 +37,14 @@ phases:
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
-      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+      - docker build \
+          --build-arg REPOSITORY_URI=$REPOSITORY_URI \
+          --build-arg SCHEMA=$SCHEMA \
+          --build-arg DB_NAME=$DB_NAME \
+          --build-arg JWT_SECRET_KEY=$JWT_SECRET_KEY \
+          --build-arg DATABASE_URL=$DATABASE_URL \
+          -t $REPOSITORY_URI:$IMAGE_TAG .
+
 
   post_build:
     commands:
