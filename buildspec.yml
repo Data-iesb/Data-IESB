@@ -33,6 +33,7 @@ phases:
       - export REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$REPOSITORY
       - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - aws eks update-kubeconfig --name $CLUSTER_NAME --region $BUILD_REGION
+
   build:
     commands:
       - echo Building the Docker image...
@@ -44,6 +45,8 @@ phases:
           --build-arg JWT_SECRET_KEY=$JWT_SECRET_KEY \
           --build-arg DATABASE_URL=$DATABASE_URL \
           -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+
 
   post_build:
     commands:
