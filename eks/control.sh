@@ -15,11 +15,9 @@ if [ "$1" == "1" ]; then
   echo "🚀 Turning ON resources (apply manifests)..."
   kubectl apply -f "deployment.yaml" -n "$NAMESPACE"
   kubectl apply -f "service.yaml" -n "$NAMESPACE"
-  kubectl apply -f "ingress.yaml" -n "$NAMESPACE"
   echo "✅ All resources turned ON."
 else
   echo "🛑 Turning OFF resources (delete manifests)..."
-  kubectl delete -f "ingress.yaml" -n "$NAMESPACE" --ignore-not-found
   kubectl delete -f "service.yaml" -n "$NAMESPACE" --ignore-not-found
   kubectl delete -f "deployment.yaml" -n "$NAMESPACE" --ignore-not-found
   echo "✅ All resources turned OFF."

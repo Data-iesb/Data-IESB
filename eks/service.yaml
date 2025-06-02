@@ -1,15 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: psd
+  name: dataiesb-svc
   namespace: default
   labels:
-    app: psd
+    app: dataiesb-app
 spec:
-  type: ClusterIP
   selector:
-    app: psd
+    app: dataiesb-app
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 8501
+      protocol: TCP
+  type: ClusterIP
 
