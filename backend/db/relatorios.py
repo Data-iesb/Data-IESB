@@ -64,7 +64,6 @@ def listar_relatorios_paginado(page=1, limite=12):
 
 
 def buscar_relatorio(relatorio_id):
-    print(type(relatorio_id))
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     cur.execute(f"SET search_path TO {SCHEMA};")
@@ -81,8 +80,7 @@ def buscar_relatorio(relatorio_id):
     cur.close()
     conn.close()
 
-    print(row)
-
+    
     if row:
         return {
             "id": row[0],
