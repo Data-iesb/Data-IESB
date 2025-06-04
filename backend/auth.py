@@ -36,7 +36,7 @@ def cadastrar_aluno():
 
 
 
-@auth_bp.route("/api/login", methods=["POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
 
