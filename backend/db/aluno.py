@@ -125,6 +125,16 @@ def atualizar_senha(id_aluno, senha_atual, nova_senha):
     except Exception as e:
         raise e
 
+def buscar_aluno_por_email(email):
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute(f"SET search_path TO {SCHEMA};")
+    cur.execute("SELECT id, senha FROM aluno WHERE email = %s", (email,))
+    resultado = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    return resultado
 
 
 if __name__ == "__main__":

@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then((obj) => {
       const iframe = document.querySelector("iframe");
-      //iframe.src = `../backend/uploads/${relatorio.caminho_pasta}/relatorio.html`;
       iframe.src = `http://localhost:8501/relatorio/${obj.relatorio.id}`;
     })
     .catch((err) => {
