@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then((obj) => {
       const iframe = document.querySelector("iframe");
-      iframe.src = `http://localhost:8501/relatorio/${obj.relatorio.id}`;
+      iframe.src = `http://k8s-default-ingressi-73bd0705e3-102651203.sa-east-1.elb.amazonaws.com:8501/relatorio/${obj.relatorio.id}`;
     })
     .catch((err) => {
       console.error(err);
