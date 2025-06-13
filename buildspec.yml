@@ -4,10 +4,10 @@ env:
   variables:
     REGION: "sa-east-1"
     ACCOUNT_ID: "248189947068"
-    CLUSTER_NAME: "sas-6881323-eks"
     REPOSITORY: "dataiesb-site"
     DEPLOYMENT_NAME: "dataiesb-app"
     CONTAINER_NAME: "dataiesb-container"
+    S3_BUCKET: "dataiesb"  # Add this variable to define the target S3 bucket
 
 phases:
   install:
@@ -18,26 +18,17 @@ phases:
 
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
+      - echo Preparing to upload files to S3 in region $REGION...
       - aws --version
-      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
-      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPOSITORY
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo Using S3 bucket $S3_BUCKET for file upload.
 
   build:
     commands:
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Dockerfile-EKS .
-      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+      - echo Uploading files to S3 bucket $S3_BUCKET...
+      - aws s3 cp src/ s3://$S3_BUCKET/ --recursive
 
   post_build:
     commands:
-      - echo Pushing the Docker image to ECR...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:latest
-      - echo Build completed on `date`
-      - echo "Copying all files from report-manual-sync/ to S3..."
-      - aws s3 cp src/ s3://dataiesb/ --recursive
       - echo "S3 copy complete."
 
 artifacts:
