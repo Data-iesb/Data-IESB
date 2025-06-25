@@ -65,7 +65,8 @@
 
         for (const id of reportIds) {
           const imageUrl = await findCoverImageUrl(id);
-          const reportUrl = `www.app.dataiesb.com/report/?rel=${id}`;
+	  const reportUrl = `https://app.dataiesb.com/report/?rel=${id}`;
+
 
           const card = document.createElement("div");
           card.className = "col-md-4 mb-4";
