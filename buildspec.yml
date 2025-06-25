@@ -8,7 +8,7 @@ env:
     DEPLOYMENT_NAME: "dataiesb-app"
     CONTAINER_NAME: "dataiesb-container"
     S3_BUCKET: "dataiesb"
-    CLOUDFRONT_DISTRIBUTION_ID: "D28LVM9JKYFOTX"  
+    CLOUDFRONT_DISTRIBUTION_ID: "E371T2F886B5KI"  
 
 phases:
   install:
