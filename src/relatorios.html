@@ -57,38 +57,41 @@
       return 'https://via.placeholder.com/400x180?text=Sem+Imagem';
     }
 
-    async function loadReports() {
-      try {
-        const response = await fetch("https://dataiesb.com/reports.json");
-        const reportIds = await response.json();
-        const container = document.getElementById("cards-container");
+	async function loadReports() {
+	  const container = document.getElementById("cards-container");
+	  const reportsUrl = "https://dataiesb.com/reports.json";
 
-        for (const id of reportIds) {
-          const imageUrl = await findCoverImageUrl(id);
-	  const reportUrl = `https://app.dataiesb.com/report/?rel=${id}`;
+	  try {
+	    const response = await fetch(reportsUrl);
+	    const reportIds = await response.json();
 
+	    for (const id of reportIds) {
+	      const imageUrl = await findCoverImageUrl(id);
+	      const reportUrl = `https://app.dataiesb.com/report/?rel=${id}`;
 
-          const card = document.createElement("div");
-          card.className = "col-md-4 mb-4";
+	      const card = document.createElement("div");
+	      card.className = "col-md-4 mb-4";
+	      card.innerHTML = `
+		<div class="relatorio-card p-3 bg-white bg-opacity-75 rounded shadow">
+		  <img src="${imageUrl}" alt="Capa" class="img-fluid mb-2">
+		  <div>
+		    <h5>${id}</h5>
+		    <a href="${reportUrl}" class="btn btn-sm btn-outline-primary mt-2" target="_blank" rel="noopener noreferrer">Abrir</a>
+		  </div>
+		</div>
+	      `;
 
-          card.innerHTML = `
-            <div class="relatorio-card p-3">
-              <img src="${imageUrl}" alt="Capa" class="img-fluid mb-2">
-              <div>
-                <h5>${id}</h5>
-                <a href="${reportUrl}" class="btn btn-sm btn-outline-primary mt-2" target="_blank">Abrir</a>
-              </div>
-            </div>
-          `;
+	      container.appendChild(card);
+	    }
+	  } catch (error) {
+	    console.error("Erro ao carregar relatórios:", error);
+	    container.innerHTML = `
+	      <p class="text-danger">
+		Erro ao carregar relatórios. Verifique a conexão ou o arquivo <code>reports.json</code>.
+	      </p>`;
+	  }
+	}
 
-          container.appendChild(card);
-        }
-      } catch (err) {
-        console.error("Erro ao carregar relatórios:", err);
-        document.getElementById("cards-container").innerHTML =
-          `<p class="text-danger">Erro ao carregar relatórios. Verifique a conexão ou o arquivo reports.json.</p>`;
-      }
-    }
 
     loadReports();
   </script>
