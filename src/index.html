@@ -85,7 +85,7 @@
     async function findCoverImageUrl(id) {
       const extensions = ['png', 'jpg', 'jpeg', 'webp'];
       for (const ext of extensions) {
-        const url = `https://dataiesb.s3.amazonaws.com/${id}/capa.${ext}`;
+        const url = `https://dataiesb.com/${id}/capa.${ext}`;
         try {
           const res = await fetch(url, { method: 'HEAD' });
           if (res.ok) return url;
@@ -98,7 +98,7 @@
 
     async function loadReports() {
       try {
-        const response = await fetch("https://dataiesb.s3.amazonaws.com/reports.json");
+        const response = await fetch("https://dataiesb.com/reports.json");
         const reportIds = await response.json();
         const container = document.getElementById("cards-container");
 
