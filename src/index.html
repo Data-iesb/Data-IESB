@@ -104,7 +104,7 @@
 
         for (const id of reportIds) {
           const imageUrl = await findCoverImageUrl(id);
-          const reportUrl = `http://k8s-default-ingressi-73bd0705e3-102651203.sa-east-1.elb.amazonaws.com/report/?rel=${id}`;
+          const reportUrl = `www.app.dataiesb.com/report/?rel=${id}`;
 
           const card = document.createElement("div");
           card.className = "col-md-4 mb-4";
