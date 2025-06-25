@@ -8,7 +8,7 @@ env:
     DEPLOYMENT_NAME: "dataiesb-app"
     CONTAINER_NAME: "dataiesb-container"
     S3_BUCKET: "dataiesb"
-    CLOUDFRONT_DISTRIBUTION_ID: "D28LVM9JKYFOTX"
+    CLOUDFRONT_DISTRIBUTION_ID: "D28LVM9JKYFOTX"  
 
 phases:
   install:
@@ -31,7 +31,7 @@ phases:
   post_build:
     commands:
       - echo "S3 copy complete."
-      - echo "Invalidating CloudFront cache..."
+      - echo "Invalidating CloudFront cache for distribution $CLOUDFRONT_DISTRIBUTION_ID..."
       - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
 
 artifacts:
