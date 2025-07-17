@@ -1,0 +1,574 @@
+/* Reset e configurações globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #212529; /* Cor de texto base mais escura */
+    background-color: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+.container {
+    max-width: 1200px; /* Aumentado para mais espaço */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Cabeçalho Melhorado */
+header {
+    padding: 15px 0;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nav-container {
+    display: grid;
+    grid-template-columns: auto 1fr auto; /* Colunas para logo, nav e ações */
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.6em;
+    color: #DA2F35; /* Cor escura para o logo */
+}
+
+header nav {
+    margin-left: 60px; /* Centraliza a lista de links */
+}
+
+header nav ul {
+    display: inline-flex; /* Faz os itens se alinharem */
+    gap: 30px;
+}
+
+header nav a {
+    font-size: 0.9em;
+    color: #32325D; /* Cor escura para os links */
+    font-weight: 500;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: flex-end; /* Alinha à direita */
+    align-items: center;
+    gap: 10px;
+}
+
+.header-actions input[type="search"] {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+.login-btn {
+    background-color: #5A67D8; /* Tom de roxo/azul da imagem */
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* Seção Hero */
+.hero {
+    padding: 80px 0;
+}
+
+.hero-container {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.hero-image {
+    flex: 1;
+    position: relative;
+}
+
+.hero-image img {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+}
+
+.tag {
+    background-color: #e9ecef;
+    color: #5A67D8;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.hero-text h1 {
+    font-size: 3.2em; /* Tamanho ajustado */
+    line-height: 1.2;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.hero-text p {
+    font-size: 1.1em;
+    color: #6c757d;
+    margin-bottom: 35px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    padding: 14px 28px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    border: 1px solid transparent;
+    font-size: 0.95em;
+}
+
+.btn-primary {
+    background-color: #D64045; /* Vermelho mais fiel */
+    color: white;
+}
+
+.btn-secondary {
+    background-color: white;
+    color: #596CFF;
+    border-color: #596CFF;
+}
+
+.stat-card {
+    position: absolute;
+    color: white;
+    padding: 25px;
+    width: 260px; /* Largura ajustada */
+    
+}
+
+.stat-card h2 {
+    font-size: 2.8em;
+    margin-bottom: 5px;
+}
+
+.stat-1 {
+    background-color: #1D3557; /* Azul marinho mais escuro */
+    top: 00px;
+    border-right: 7px solid white;
+    border-bottom: 7px solid white;
+}
+
+.stat-2 {
+    background-color: #D64045; /* Vermelho mais fiel */
+    bottom: 00px;
+    right: 0px;
+    border-left: 7px solid white;
+    border-top: 7px solid white;
+}
+
+/* Seção de Painéis */
+.panels {
+    padding: 80px 0;
+    background-color: #fff; /* Fundo branco */
+}
+
+.panels h2 {
+    font-size: 2.2em;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* O subtítulo permanece centralizado, conforme a imagem de referência */
+.panels .subtitle {
+    text-align: center;
+    color: #6c757d;
+    max-width: 600px;
+    margin: 0 auto 50px auto;
+}
+
+.panels-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Define 3 colunas */
+    gap: 30px;
+}
+
+.panel-card {
+    background-color: #f8f9fa; /* Fundo cinza claro */
+    padding: 30px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px; /* Bordas mais arredondadas */
+    text-align: left; /* Garante alinhamento à esquerda */
+    cursor: pointer;
+}
+
+.panel-card h3 {
+    font-size: 1.3em;
+    margin-bottom: 15px; /* Mais espaço após o título */
+    color: #212529;
+}
+
+.panel-card p {
+    color: #6c757d;
+    line-height: 1.7;
+}
+
+/* Seção de Newsletter */
+.newsletter {
+     /* Mesmo azul do card */
+    color: white;
+    
+}
+
+.newsletter-container {
+    background-color: #1D3557;
+    padding: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 40px;
+    border-radius: 30px;
+}
+
+.newsletter-text {
+    flex-basis: 50%;
+}
+
+.newsletter-text h2 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+}
+
+.newsletter-text p {
+    opacity: 0.9;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 10px;
+    flex-basis: 45%;
+}
+
+.newsletter-form input {
+    flex-grow: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 5px;
+}
+
+.newsletter-form .btn-primary {
+    border-color: #D64045;
+}
+
+/* Rodapé */
+footer {
+    background-color: #fff;
+    padding: 25px 0;
+    font-size: 0.9em;
+    color: #6c757d;
+    border-top: 1px solid #e9ecef;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer nav ul {
+    display: flex;
+    gap: 25px;
+}
+
+/* Adicione estas novas regras ao seu arquivo style.css */
+
+/* Estilo para o link ativo no menu */
+header nav a.active {
+    font-weight: 900;
+}
+
+/* Seção: Conheça o Projeto */
+.project-intro {
+    padding: 80px 0;
+}
+
+.project-intro h1 {
+    color: #32325D;
+    font-size: 2.8em;
+    font-weight: 700;
+    margin-bottom: 40px;
+    line-height: 1.3;
+}
+
+.project-content {
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+.project-text {
+    flex: 1;
+}
+
+.project-text p {
+    font-size: 1.1em;
+    color: #6c757d;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.project-media {
+    flex-basis: 45%;
+    max-width: 500px;
+}
+
+.project-media img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.project-buttons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.btn-link {
+    color: #5A67D8;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Seção: Equipe Técnica */
+.team {
+    padding: 40px 0 80px 0;
+    background-color: #f8f9fa;
+}
+
+.team h2 {
+    font-size: 2.2em;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.team .subtitle {
+    text-align: center;
+    color: #6c757d;
+    max-width: 800px;
+    margin: 0 auto 50px auto;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+}
+
+.team-column h3 {
+    font-size: 1.4em;
+    color: #343a40;
+    margin-bottom: 25px;
+}
+
+.team-member {
+    margin-bottom: 20px;
+}
+
+.team-member p {
+    margin: 0;
+    line-height: 1.5;
+    color: #6c757d;
+}
+
+.team-member p strong {
+    color: #212529;
+}
+
+/* Grid para a lista de alunos de IA */
+.team-member-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Adicione estas novas regras ao seu arquivo style.css */
+
+/* Estilos gerais para o conteúdo da página */
+.page-content {
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+.page-content h1 {
+    color: #32325D;
+    font-size: 2.8em;
+    font-weight: 700;
+    margin-bottom: 60px;
+}
+
+/* Lista de Parceiros */
+.partner-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 50px;
+    margin-bottom: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.partner-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.partner-logo {
+    flex-basis: 20%;
+    max-width: 200px;
+}
+
+.partner-logo img {
+    width: 100%;
+    height: auto;
+}
+
+.partner-description {
+    flex: 1;
+}
+
+.partner-description p {
+    font-size: 0.85em;
+    color: #6c757d;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.partner-description p:last-child {
+    margin-bottom: 0;
+}
+
+/* Adicione estas novas regras ao seu arquivo style.css */
+
+/* Wrapper da página de contato */
+.contact-wrapper {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr;
+    gap: 80px;
+    align-items: flex-start;
+}
+
+/* Formulário de Contato */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.form-row {
+    display: flex;
+    gap: 30px;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #343a40;
+}
+
+.form-group input,
+.form-group textarea {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #ced4da;
+    padding: 10px 5px;
+    font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-bottom-color: #5A67D8; /* Cor de destaque no foco */
+}
+
+/* Ajuste específico para a textarea */
+.form-group textarea {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.form-group textarea:focus {
+    border-color: #5A67D8;
+}
+
+/* Botão de Envio */
+.contact-form .btn {
+    align-self: flex-start; /* Alinha o botão à esquerda */
+    padding: 12px 40px;
+}
+
+/* Box de Informações de Contato */
+.contact-info-box {
+    background-color: #1D3557; /* Azul marinho escuro */
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+}
+
+.contact-info-box h2 {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+}
+
+.contact-details-list {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-details-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 25px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.contact-details-list li:last-child {
+    margin-bottom: 0;
+}
+
+.contact-details-list i {
+    font-size: 1.5em;
+    margin-top: 5px;
+    color: #aeb8c4;
+}

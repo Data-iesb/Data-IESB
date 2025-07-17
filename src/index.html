@@ -1,100 +1,111 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DataIESB</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    /* Slideshow de fundo */
-    .bg-slideshow {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 20vh;
-      z-index: -1;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      animation: slideshow 30s infinite;
-      opacity: .40;
-    }
-
-    @keyframes slideshow {
-      0%   { background-image: url('https://www.iesb.br/content/uploads/2021/05/Laboratorios-de-Macs3-1-min-scaled.jpeg'); }
-      33%  { background-image: url('https://www.iesb.br/content/uploads/2021/05/13312894924_eb2493286a_o-min-2-scaled.jpeg'); }
-      66%  { background-image: url('https://www.iesb.br/content/uploads/2021/04/sul-4-Auditorio.jpg'); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data IESB</title>
+    <link rel="stylesheet" href="./style/home.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<body>
 
-<body class="d-flex flex-column min-vh-100">
-  <!-- Slideshow de fundo -->
-  <div class="bg-slideshow"></div>
+    <header>
+        <div class="container nav-container">
+            <div class="logo">Data IESB</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Painéis de Estudos</a></li>
+                    <li><a href="quem-somos.html">Quem somos</a></li>
+                    <li><a href="parceiros.html">Parceiros</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-  <!-- Top Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-danger px-4">
-    <div class="container-fluid">
-      <a class="navbar-brand text-white" href="#">IESB BigData Lab</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="relatorios.html">Relatórios</a></li>
-          <li class="nav-item"><a class="nav-link" href="equipe.html">Equipe Técnica</a></li>
-          <li class="nav-item"><a class="nav-link" href="parceiros.html">Parceiros</a></li>
-          <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="cadastrar.html">Cadastrar</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    <main>
+        <section class="hero">
+            <div class="container hero-container">
+                <div class="hero-text">
+                    <span class="tag">Novidade</span>
+                    <h1>Novo painel mostra os dados do ensino superior no Brasil</h1>
+                    <p>Análises mostra como o investimento na educação superior foi implementado.</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary">Veja o estudo agora</button>
+                        <!-- <button class="btn btn-secondary">Peça um painel personalizado</button> -->
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="./img/meeting.png" alt="Pessoas trabalhando em um escritório">
+                    <div class="stat-card stat-1">
+                        <h2>78%</h2>
+                        <p>das cidades não possuem novos professores</p>
+                    </div>
+                    <div class="stat-card stat-2">
+                        <h2>60%</h2>
+                        <p>da verba destinada à educação foi reduzida</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <!-- Seção de Apresentação do Projeto -->
-  <section class="container my-5 bg-light bg-opacity-75 p-4 rounded shadow-sm">
-    <p>
-      O Projeto <strong>Big Data – IESB</strong> é uma iniciativa estratégica voltada à criação e manutenção de um banco de dados estruturado, composto por informações públicas e, quando aplicável, dados proprietários de organizações parceiras. Seu foco prioritário é apoiar instituições públicas das esferas federal, estadual, distrital e municipal na melhoria da tomada de decisões, na eficiência da gestão pública, na formulação de políticas baseadas em evidências e na oferta de serviços mais qualificados à população. O projeto também contempla o suporte técnico e analítico a empresas parceiras do setor privado, especialmente aquelas interessadas em soluções inovadoras orientadas por dados para ganho de eficiência, inovação e responsabilidade social.
-    </p>
+        <section class="panels">
+            <div class="container">
+                <h2>Veja outros painéis lançados</h2>
+                <p class="subtitle">Conheça nossos estudos sobre o PIB, Segurança Pública, Infraestrutura e Saneamento Básico no Brasil.</p>
 
-    <p>
-      O projeto abrange múltiplas áreas de interesse social e governamental, incluindo saúde, educação, meio ambiente, segurança pública, direitos humanos, previdência social, trabalho, demografia, assistência social, habitação e desenvolvimento urbano. Ao integrar dados dessas áreas, busca-se fomentar a geração de conhecimento, a inovação em políticas públicas e a construção de soluções analíticas voltadas ao bem comum.
-    </p>
 
-    <p>
-      Além disso, o <strong>Projeto Big Data – IESB</strong> constitui um espaço de <strong>aprendizagem aplicada para os estudantes do IESB</strong>, que têm a oportunidade de utilizar ferramentas e metodologias de <strong>Ciência de Dados e Inteligência Artificial</strong> em projetos reais, ampliando sua formação técnica e seu compromisso com o desenvolvimento social e institucional do país.
-    </p>
-  </section>
+                <div class="panels-grid" id="cards-container">
+                    <!-- Cards serão inseridos aqui -->
+                </div>
+            </div>
+        </section>
 
-  <!-- Main Content: Relatórios -->
-  <section id="relatorios" class="container my-5 flex-grow-1">
-    <h3 class="mb-4">Relatórios</h3>
-    <div class="row" id="cards-container">
-      <!-- Cards serão inseridos aqui -->
-    </div>
-  </section>
+        <section class="newsletter">
+            <div class="container newsletter-container">
+                <div class="newsletter-text">
+                    <h2>Não perca uma análise</h2>
+                    <p>Cadastre seu e-mail e seja informado sempre que publicarmos um novo estudo</p>
+                </div>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Seu e-mail">
+                    <button type="submit" class="btn btn-primary">Inscreva-se</button>
+                </form>
+            </div>
+        </section>
+    </main>
 
-  <!-- Footer -->
-  <footer class="py-4 text-center text-muted">
-    © 2025 DataIESB
-  </footer>
+    <footer>
+        <div class="container footer-container">
+            <p>&copy; 2025. Criado pelo Data IESB.</p>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="quem-somos.html">Quem Somos</a></li>
+                    <li><a href="parceiros.html">Parceiros</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
 
-  <!-- Scripts -->
-  <script>
-    async function findCoverImageUrl(id) {
-      const extensions = ['png', 'jpg', 'jpeg', 'webp'];
-      for (const ext of extensions) {
-        const url = `https://dataiesb.com/${id}/capa.${ext}`;
-        try {
-          const res = await fetch(url, { method: 'HEAD' });
-          if (res.ok) return url;
-        } catch (err) {
-          console.warn(`Erro ao verificar ${url}:`, err);
-        }
-      }
-      return 'https://via.placeholder.com/400x180?text=Sem+Imagem';
-    }
+</body>
+<script>
+    // async function findCoverImageUrl(id) {
+    //   const extensions = ['png', 'jpg', 'jpeg', 'webp'];
+    //   for (const ext of extensions) {
+    //     const url = `https://dataiesb.com/${id}/capa.${ext}`;
+    //     try {
+    //       const res = await fetch(url, { method: 'HEAD' });
+    //       if (res.ok) return url;
+    //     } catch (err) {
+    //       console.warn(`Erro ao verificar ${url}:`, err);
+    //     }
+    //   }
+    //   return 'https://via.placeholder.com/400x180?text=Sem+Imagem';
+    // }
 
     async function loadReports() {
 	  const container = document.getElementById("cards-container");
@@ -104,20 +115,21 @@
 	    const response = await fetch(reportsUrl);
 	    const reportIds = await response.json();
 
+        console.log(reportIds)
+
 	    for (const id of reportIds) {
-	      const imageUrl = await findCoverImageUrl(id);
+	    //   const imageUrl = await findCoverImageUrl(id);
 	      const reportUrl = `http://app.dataiesb.com/report/?rel=${id}`;
 
 	      const card = document.createElement("div");
-	      card.className = "col-md-4 mb-4";
-	      card.innerHTML = `
-		<div class="relatorio-card p-3 bg-white bg-opacity-75 rounded shadow">
-		  <img src="${imageUrl}" alt="Capa" class="img-fluid mb-2">
-		  <div>
-		    <h5>${id}</h5>
-		    <a href="${reportUrl}" class="btn btn-sm btn-outline-primary mt-2" target="_blank" rel="noopener noreferrer">Abrir</a>
-		  </div>
-		</div>
+	    //   card.className = "col-md-4 mb-4";
+          card.innerHTML = `
+		<div class="panel-card">
+            <a href="${reportUrl}">
+                <h3>${id}</h3>
+                <p>Precisa de uma descrição...</p>
+            </a>
+        </div>
 	      `;
 
 	      container.appendChild(card);
@@ -125,16 +137,16 @@
 	  } catch (error) {
 	    console.error("Erro ao carregar relatórios:", error);
 	    container.innerHTML = `
-	      <p class="text-danger">
-		Erro ao carregar relatórios. Verifique a conexão ou o arquivo <code>reports.json</code>.
-	      </p>`;
+	      <div class="panel-card">
+            <a href="#">
+                <h3>Erro</h3>
+                <p>${error}</p>
+            </a>
+        </div>`;
 	  }
 	}
-
 
     loadReports();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 </html>
-
