@@ -199,7 +199,6 @@ header nav a {
     margin-bottom: 15px;
 }
 
-/* O subtítulo permanece centralizado, conforme a imagem de referência */
 .panels .subtitle {
     text-align: center;
     color: #6c757d;
@@ -235,9 +234,7 @@ header nav a {
 
 /* Seção de Newsletter */
 .newsletter {
-     /* Mesmo azul do card */
     color: white;
-    
 }
 
 .newsletter-container {
@@ -300,8 +297,6 @@ footer nav ul {
     display: flex;
     gap: 25px;
 }
-
-/* Adicione estas novas regras ao seu arquivo style.css */
 
 /* Estilo para o link ativo no menu */
 header nav a.active {
@@ -406,14 +401,11 @@ header nav a.active {
     color: #212529;
 }
 
-/* Grid para a lista de alunos de IA */
 .team-member-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
-
-/* Adicione estas novas regras ao seu arquivo style.css */
 
 /* Estilos gerais para o conteúdo da página */
 .page-content {
@@ -469,8 +461,6 @@ header nav a.active {
     margin-bottom: 0;
 }
 
-/* Adicione estas novas regras ao seu arquivo style.css */
-
 /* Wrapper da página de contato */
 .contact-wrapper {
     display: grid;
@@ -519,7 +509,6 @@ header nav a.active {
     border-bottom-color: #5A67D8; /* Cor de destaque no foco */
 }
 
-/* Ajuste específico para a textarea */
 .form-group textarea {
     border: 1px solid #ced4da;
     border-radius: 5px;
@@ -530,7 +519,6 @@ header nav a.active {
     border-color: #5A67D8;
 }
 
-/* Botão de Envio */
 .contact-form .btn {
     align-self: flex-start; /* Alinha o botão à esquerda */
     padding: 12px 40px;
@@ -571,4 +559,222 @@ header nav a.active {
     font-size: 1.5em;
     margin-top: 5px;
     color: #aeb8c4;
+}
+
+/******************************************/
+/* --- ESTILOS RESPONSIVOS --- */
+/******************************************/
+
+/* Telas de tablet e desktops menores (até 992px) */
+@media (max-width: 992px) {
+    .panels-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .team-grid, .contact-wrapper {
+        grid-template-columns: 1fr;
+    }
+    .hero-text h1, .project-intro h1, .page-content h1 {
+        font-size: 2.5em;
+    }
+    .stat-card {
+        width: 220px;
+        padding: 20px;
+    }
+    .stat-1 {
+        left: -20px;
+    }
+    .stat-2 {
+        right: -20px;
+    }
+    .nav-container {
+        gap: 10px;
+    }
+    header nav {
+        margin-left: 0;
+    }
+}
+
+/* Telas de celular e tablets em modo retrato (até 768px) */
+@media (max-width: 768px) {
+    .project-media {
+        display: none;
+    }
+    /* Layouts principais para empilhamento */
+    .hero-container,
+    .newsletter-container,
+    .footer-container,
+    .project-content,
+    .partner-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Ajustes do Cabeçalho */
+    .nav-container {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 20px;
+    }
+    header nav ul {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+    .header-actions {
+        flex-direction: column;
+        width: 80%;
+    }
+    .header-actions input[type="search"], .header-actions .login-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Ajustes gerais de texto e espaçamento */
+    section, .page-content {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+    .hero-text h1, .project-intro h1, .page-content h1 {
+        font-size: 2.2em;
+    }
+    .panels h2, .team h2, .newsletter-text h2, .contact-info-box h2 {
+        font-size: 1.9em;
+    }
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    /* Reposicionamento dos cards de estatística */
+    .hero-image {
+        margin-top: 40px;
+    }
+    .stat-card {
+        position: relative;
+        width: 90%;
+        margin: 15px auto;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        border: none;
+        border-radius: 12px;
+    }
+    
+    /* Grids de uma coluna */
+    .panels-grid,
+    .team-member-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Seção de Parceiros */
+    .partner-item {
+        align-items: center;
+    }
+    .partner-logo {
+        max-width: 160px;
+    }
+    .partner-description {
+        text-align: left;
+    }
+
+    /* Formulário de Contato */
+    .form-row {
+        flex-direction: column;
+    }
+    .contact-wrapper, .team-grid {
+        gap: 40px;
+    }
+    .contact-form .btn {
+        width: 100%;
+    }
+
+    /* Rodapé */
+    .footer-container {
+        gap: 20px;
+    }
+    footer nav ul {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+}
+
+/***************************************************/
+/* --- ESTILOS DO MENU RESPONSIVO (SEM JS) --- */
+/***************************************************/
+
+/* Esconde o checkbox */
+.menu-toggle {
+    display: none;
+}
+
+/* Estiliza o ícone do menu (a label) */
+.hamburger-menu {
+    display: none; /* Fica escondido em telas grandes */
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.hamburger-line {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #32325D;
+    margin: 5px 0;
+}
+
+/* Media Query para ativar o menu responsivo */
+@media (max-width: 992px) {
+    /* Mostra o ícone do menu */
+    .hamburger-menu {
+        display: block;
+    }
+
+    /* Ajusta o layout do cabeçalho */
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Esconde o menu por padrão */
+    .nav-collapse {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+    }
+    
+    /* A MÁGICA ACONTECE AQUI: */
+    /* Quando o checkbox está marcado, o menu (.nav-collapse) é exibido */
+    .menu-toggle:checked ~ .nav-collapse {
+        display: flex;
+    }
+
+    /* Estilos dos itens dentro do menu aberto */
+    header nav ul {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        width: 100%;
+    }
+    header nav a {
+        font-size: 1.1em;
+    }
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 15px;
+    }
+    .header-actions input[type="search"], .header-actions .login-btn {
+        width: 100%;
+        text-align: center;
+    }
 }
