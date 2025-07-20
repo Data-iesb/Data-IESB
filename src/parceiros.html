@@ -11,21 +11,32 @@
 <body>
 
     <header>
-        <div class="container nav-container">
-            <div class="logo">Data IESB</div>
+    <div class="container nav-container">
+        <div class="logo">Data IESB</div>
+
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        
+        <label for="menu-toggle" class="hamburger-menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </label>
+
+        <div class="nav-collapse">
             <nav>
                 <ul>
                     <li><a href="index.html">Painéis e Estudos</a></li>
                     <li><a href="quem-somos.html">Quem somos</a></li>
-                    <li><a href="parceiros.html" class="active">Parceiros</a></li>
+                    <li><a class="active" href="parceiros.html">Parceiros</a></li>
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
-            <div class="header-actions">
+            <!-- <div class="header-actions">
                 <input type="search" placeholder="Pesquisar aqui">
                 <button class="login-btn">Login</button>
-            </div>
+            </div> -->
         </div>
+    </div>
     </header>
 
     <main class="container page-content">
