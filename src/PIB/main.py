@@ -13,27 +13,32 @@ from botocore.exceptions import ClientError
 # ========== ESTILO CUSTOMIZADO ==========
 st.markdown("""
     <style>
-    .red-banner {
-        padding: 24px 0 12px 0;
-        margin-bottom: 0px;
-        text-align: center;
-        font-size: 2.2rem;
-        font-weight: bold;
-        letter-spacing: 1px;
-        border-radius: 0 0 12px 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    /* Corrige a cor do texto em inputs da sidebar */
+    section[data-testid="stSidebar"] .stSelectbox,
+    section[data-testid="stSidebar"] .stMultiSelect,
+    section[data-testid="stSidebar"] .stSlider,
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] span {
+        color: #FFFFFF !important;
     }
-    .stTabs [data-baseweb="tab-list"] {
-        justify-content: center;
+
+    /* Corrige o número e texto do slider */
+    section[data-testid="stSidebar"] .stSlider > div > div {
+        color: #FFCDD2 !important; /* rosa claro para contraste */
     }
-    .footer {
-        text-align: center;
-        margin-top: 32px;
-        font-size: 1rem;
-        padding-bottom: 12px;
+
+    /* Corrige a cor da linha da seleção (dropdown open) */
+    section[data-testid="stSidebar"] .css-1wa3eu0-placeholder {
+        color: #FFFFFF !important;
+    }
+
+    /* Corrige hover nos menus dropdown */
+    section[data-testid="stSidebar"] .css-1n76uvr-option {
+        color: #1D345B !important;
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 # ========== TOPO DO SITE ==========
 st.markdown("<div class='red-banner'>Dashboard de Análise do PIB dos Municípios do Brasil</div>", unsafe_allow_html=True)
