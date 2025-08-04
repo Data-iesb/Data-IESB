@@ -14,11 +14,9 @@ from botocore.exceptions import ClientError
 st.markdown("""
     <style>
     .red-banner {
-        background-color: #b71c1c;
         padding: 24px 0 12px 0;
         margin-bottom: 0px;
         text-align: center;
-        color: white;
         font-size: 2.2rem;
         font-weight: bold;
         letter-spacing: 1px;
@@ -30,7 +28,6 @@ st.markdown("""
     }
     .footer {
         text-align: center;
-        color: #666;
         margin-top: 32px;
         font-size: 1rem;
         padding-bottom: 12px;
