@@ -1,1 +1,31 @@
-["OCORRENCIAS", "PIB", "PIB-2","ENSINO_SUPERIOR"]
+{
+  "rel001": {
+    "id_s3": "rel001/",
+    "descricao": "Relatório de ocorrências registradas no sistema.",
+    "deletado": false,
+    "autor": "Equipe IESB (rel001)",
+    "titulo": "Relatório de Ocorrências"
+  },
+  "rel002": {
+    "id_s3": "rel002/",
+    "descricao": "Dados econômicos do Produto Interno Bruto (PIB).",
+    "deletado": false,
+    "autor": "Departamento Econômico (rel002)",
+    "titulo": "Relatório do PIB"
+  },
+  "rel003": {
+    "id_s3": "rel003/",
+    "descricao": "Análise comparativa do PIB entre regiões.",
+    "deletado": false,
+    "autor": "Departamento Econômico (rel003)",
+    "titulo": "PIB Comparativo"
+  },
+  "rel004": {
+    "id_s3": "rel004/",
+    "descricao": "Estatísticas sobre o ensino superior.",
+    "deletado": false,
+    "autor": "MEC (rel004)",
+    "titulo": "Ensino Superior no Brasil"
+  }
+}
+
