@@ -1,30 +1,30 @@
 {
-  "rel001": {
-    "id_s3": "rel001/",
+  "1": {
+    "id_s3": "reports/1/",
     "descricao": "Relatório de ocorrências registradas no sistema.",
     "deletado": false,
-    "autor": "Equipe IESB (rel001)",
+    "autor": "Equipe IESB (1)",
     "titulo": "Relatório de Ocorrências"
   },
-  "rel002": {
-    "id_s3": "rel002/",
+  "2": {
+    "id_s3": "reports/2/",
     "descricao": "Dados econômicos do Produto Interno Bruto (PIB).",
     "deletado": false,
-    "autor": "Departamento Econômico (rel002)",
+    "autor": "Departamento Econômico (2)",
     "titulo": "Relatório do PIB"
   },
-  "rel003": {
-    "id_s3": "rel003/",
+  "3": {
+    "id_s3": "reports/3/",
     "descricao": "Análise comparativa do PIB entre regiões.",
     "deletado": false,
-    "autor": "Departamento Econômico (rel003)",
+    "autor": "Departamento Econômico (3)",
     "titulo": "PIB Comparativo"
   },
-  "rel004": {
-    "id_s3": "rel004/",
+  "4": {
+    "id_s3": "reports/4/",
     "descricao": "Estatísticas sobre o ensino superior.",
     "deletado": false,
-    "autor": "MEC (rel004)",
+    "autor": "MEC (4)",
     "titulo": "Ensino Superior no Brasil"
   }
 }
