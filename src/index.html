@@ -187,8 +187,7 @@
 
       // Correctly iterate over object
       for (const [id, report] of Object.entries(reports)) {
-        const reportUrl = `http://app.dataiesb.com/report/?rel=/${id}`;
-
+        const reportUrl = `http://app.dataiesb.com/report/?id=${id}`;
         const card = document.createElement("div");
         card.innerHTML = `
           <div class="panel-card">
