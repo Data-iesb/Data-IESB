@@ -185,6 +185,7 @@
       const response = await fetch(reportsUrl);
       const reports = await response.json();
 
+      // Correctly iterate over object
       for (const [id, report] of Object.entries(reports)) {
         const reportUrl = `http://app.dataiesb.com/report/?rel=${id}`;
 
@@ -205,8 +206,8 @@
     }
   }
 
-  // Load when page is ready
   window.onload = loadReports;
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </html>
