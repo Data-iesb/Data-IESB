@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Display</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        /* Top bar styles */
+        .top-bar {
+            background-color: #1D345B;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .top-bar img {
+            width: 80px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .color-boxes {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+
+        .color-box {
+            width: 30%;
+            height: 200px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            padding-top: 80px;
+        }
+
+        .color-box p {
+            font-size: 1.2rem;
+        }
+
+        .vermelho {
+            background-color: #D13F42;
+        }
+
+        .branco {
+            background-color: #FFFFFF;
+            color: #333; /* Adjust text color for contrast */
+        }
+
+        .azul {
+            background-color: #1D345B;
+        }
+
+        .code-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar with Logo -->
+    <div class="top-bar">
+        <a href="index.html">
+            <img src="https://d28lvm9jkyfotx.cloudfront.net/logo.png" alt="Data IESB Logo">
+        </a>
+    </div>
+
+    <div class="container">
+        <h1>Cores para Visualização</h1>
+        
+        <div class="color-boxes">
+            <div class="color-box vermelho">
+                <p>Vermelho</p>
+                <p>#D13F42</p>
+            </div>
+            <div class="color-box branco">
+                <p>Branco</p>
+                <p>#FFFFFF</p>
+            </div>
+            <div class="color-box azul">
+                <p>Azul</p>
+                <p>#1D345B</p>
+            </div>
+        </div>
+
+        <div class="code-box">
+            <p>Código para as cores:</p>
+            <pre>
+.vermelho { background-color: #D13F42; }
+.branco { background-color: #FFFFFF; color: #333; }
+.azul { background-color: #1D345B; }
+            </pre>
+        </div>
+    </div>
+
+</body>
+</html>
+
