@@ -50,7 +50,8 @@
             text-align: center;
             color: white;
             font-weight: bold;
-            padding-top: 80px;
+            padding-top: 50px;
+            position: relative;
         }
 
         .color-box p {
@@ -70,6 +71,11 @@
             background-color: #1D345B;
         }
 
+        .cinza {
+            background-color: #E4E4E4;
+            color: #333; /* Adjust text color for contrast */
+        }
+
         .code-box {
             margin-top: 30px;
             padding: 20px;
@@ -78,6 +84,20 @@
             border-radius: 10px;
             font-family: monospace;
             overflow-x: auto;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #1D345B;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background-color: #D13F42;
         }
     </style>
 </head>
@@ -97,14 +117,22 @@
             <div class="color-box vermelho">
                 <p>Vermelho</p>
                 <p>#D13F42</p>
+                <button class="copy-btn" onclick="copyToClipboard('#D13F42')">Copiar Código</button>
             </div>
             <div class="color-box branco">
                 <p>Branco</p>
                 <p>#FFFFFF</p>
+                <button class="copy-btn" onclick="copyToClipboard('#FFFFFF')">Copiar Código</button>
             </div>
             <div class="color-box azul">
                 <p>Azul</p>
                 <p>#1D345B</p>
+                <button class="copy-btn" onclick="copyToClipboard('#1D345B')">Copiar Código</button>
+            </div>
+            <div class="color-box cinza">
+                <p>Cinza</p>
+                <p>#E4E4E4</p>
+                <button class="copy-btn" onclick="copyToClipboard('#E4E4E4')">Copiar Código</button>
             </div>
         </div>
 
@@ -114,9 +142,22 @@
 .vermelho { background-color: #D13F42; }
 .branco { background-color: #FFFFFF; color: #333; }
 .azul { background-color: #1D345B; }
+.cinza { background-color: #E4E4E4; color: #333; }
             </pre>
         </div>
     </div>
+
+    <script>
+        function copyToClipboard(colorCode) {
+            const tempInput = document.createElement('input');
+            tempInput.value = colorCode;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Código copiado: ' + colorCode);
+        }
+    </script>
 
 </body>
 </html>
