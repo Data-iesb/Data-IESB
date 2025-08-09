@@ -190,10 +190,10 @@
 
       // Ensure 'reports' is an object and it is not empty
       if (typeof reports === 'object' && reports !== null) {
-        // Iterate over reports if it is a valid object
+        // Iterate over reports and check if the ID is valid (iterable)
         for (const [id, report] of Object.entries(reports)) {
-          // Only show report if 'deletado' is false and necessary fields are available
-          if (report && report.deletado === false && report.titulo && report.descricao && report.autor) {
+          // Check if the ID is iterable and if the report has the necessary properties
+          if (id && report && report.deletado === false && report.titulo && report.descricao && report.autor) {
             const reportUrl = `http://app.dataiesb.com/report/?id=${id}`;
             const card = document.createElement("div");
             card.innerHTML = `
@@ -206,6 +206,8 @@
                 </div>
             `;
             container.appendChild(card);
+          } else {
+            console.warn(`Skipping invalid or non-iterable report with ID: ${id}`);
           }
         }
       } else {
@@ -218,6 +220,7 @@
 
   window.onload = loadReports;
 </script>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
