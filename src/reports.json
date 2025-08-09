@@ -3,20 +3,20 @@
     "id_s3": "reports/1/",
     "descricao": "Relatório de ocorrências registradas no sistema.",
     "deletado": false,
-    "autor": "Leonardo de Borges Silva Braga",
+    "autor": "Leonardo Borges Silva Braga",
     "titulo": "Relatório de Ocorrências"
   },
   "2": {
     "id_s3": "reports/2/",
     "descricao": "Dados econômicos do Produto Interno Bruto (PIB).",
     "deletado": false,
-    "autor": "Leonardo de Borges Silva Braga",
+    "autor": "Leonardo Borges Silva Braga",
     "titulo": "Relatório do PIB"
   },
   "3": {
     "id_s3": "reports/3/",
     "descricao": "Análise comparativa do PIB entre regiões.",
-    "deletado": false,
+    "deletado": true,
     "autor": "Nulo",
     "titulo": "PIB Comparativo"
   },
