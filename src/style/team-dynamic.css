@@ -24,7 +24,7 @@
 .role-badge {
     display: inline-block;
     background-color: #D64045; /* Same as .btn-primary */
-    color: white; /* Same as .btn-primary */
+    color: #FFFFFF; /* Pure white, not gray */
     padding: 6px 14px;
     border-radius: 5px; /* Same as .btn */
     font-size: 0.85em;
@@ -41,7 +41,7 @@
 
 .role-badge:hover {
     background-color: #c23539; /* Slightly darker red on hover */
-    color: white;
+    color: #FFFFFF; /* Keep white text on hover */
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(214, 64, 69, 0.3);
 }
@@ -186,8 +186,8 @@
     }
     
     .role-badge {
-        background: #1D345B !important;
-        color: #FFFFFF !important;
+        background: #D64045 !important; /* Same red as .btn-primary */
+        color: #FFFFFF !important; /* Pure white text */
         border: 1px solid #000000 !important;
     }
     
