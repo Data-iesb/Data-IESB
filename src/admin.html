@@ -11,14 +11,22 @@
     .form-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 5px; }
     input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; }
-    button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; margin-right: 5px; }
+    .btn-danger { background: #dc3545; }
+    .btn-success { background: #28a745; }
+    .btn-small { padding: 5px 10px; font-size: 12px; }
     .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
     .success { background: #d4edda; color: #155724; }
     .error { background: #f8d7da; color: #721c24; }
     .reports-section { margin-top: 40px; }
     .report-item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
     .report-title { font-weight: bold; margin-bottom: 5px; }
-    .report-meta { font-size: 12px; color: #666; }
+    .report-meta { font-size: 12px; color: #666; margin-bottom: 10px; }
+    .report-actions { margin-top: 10px; }
+    .confirm-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                     background: white; border: 2px solid #ccc; padding: 20px; border-radius: 5px; z-index: 1000; }
+    .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+               background: rgba(0,0,0,0.5); z-index: 999; }
   </style>
 </head>
 <body>
@@ -62,9 +70,20 @@
     <div id="reportsList">Carregando relatórios...</div>
   </div>
 
+  <!-- Confirmation Dialog -->
+  <div class="overlay" id="overlay"></div>
+  <div class="confirm-dialog" id="confirmDialog">
+    <h3>Confirmar Exclusão</h3>
+    <p>Tem certeza que deseja excluir este relatório?</p>
+    <p><strong id="reportToDelete"></strong></p>
+    <button onclick="confirmDelete()" class="btn-danger">Sim, Excluir</button>
+    <button onclick="cancelDelete()">Cancelar</button>
+  </div>
+
   <script>
     let currentUser = null;
     let authToken = null;
+    let reportToDeleteId = null;
 
     function showMessage(text, type) {
       const div = document.getElementById('message');
@@ -141,10 +160,96 @@
               Criado: ${new Date(report.created_at).toLocaleDateString('pt-BR')} | 
               Atualizado: ${new Date(report.updated_at).toLocaleDateString('pt-BR')}
             </div>
+            <div class="report-actions">
+              <button onclick="downloadReport('${id}')" class="btn-success btn-small">
+                📥 Download
+              </button>
+              <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn-danger btn-small">
+                🗑️ Excluir
+              </button>
+            </div>
           </div>
         `;
       }
       container.innerHTML = html;
+    }
+
+    async function downloadReport(reportId) {
+      if (!authToken) {
+        logout();
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/download`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `report_${reportId}.py`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          showMessage('Download iniciado!', 'success');
+        } else if (response.status === 401) {
+          logout();
+        } else {
+          showMessage('Erro ao fazer download do relatório', 'error');
+        }
+      } catch (error) {
+        showMessage('Erro de conexão ao fazer download', 'error');
+      }
+    }
+
+    function showDeleteConfirm(reportId, reportTitle) {
+      reportToDeleteId = reportId;
+      document.getElementById('reportToDelete').textContent = reportTitle;
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('confirmDialog').style.display = 'block';
+    }
+
+    function cancelDelete() {
+      reportToDeleteId = null;
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('confirmDialog').style.display = 'none';
+    }
+
+    async function confirmDelete() {
+      if (!reportToDeleteId || !authToken) {
+        cancelDelete();
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportToDeleteId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          showMessage('Relatório excluído com sucesso!', 'success');
+          loadReports(); // Reload reports list
+        } else if (response.status === 401) {
+          logout();
+        } else {
+          showMessage('Erro ao excluir relatório', 'error');
+        }
+      } catch (error) {
+        showMessage('Erro de conexão ao excluir relatório', 'error');
+      }
+
+      cancelDelete();
     }
 
     document.getElementById('form').onsubmit = async function(e) {
