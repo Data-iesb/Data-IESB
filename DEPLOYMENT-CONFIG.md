@@ -1,11 +1,11 @@
 # Deployment Configuration - Data IESB
 
 ## Overview
-The Data IESB project uses separate deployment configurations for production and development environments.
+The Data IESB project uses separate deployment configurations for production and development environments with a new branch structure.
 
-## Current Working Configuration
+## Branch Structure (Updated)
 
-### 🚀 Main Branch (Production)
+### 🚀 prod Branch (Production)
 - **Environment**: Production
 - **Region**: `sa-east-1` (São Paulo)
 - **S3 Bucket**: `dataiesb`
@@ -14,7 +14,7 @@ The Data IESB project uses separate deployment configurations for production and
 - **Deployment Method**: AWS CodeBuild with `buildspec.yml`
 - **Status**: ✅ Working
 
-### 🧪 Dev Branch (Development)
+### 🧪 dev Branch (Development - Default)
 - **Environment**: Development
 - **Region**: `us-east-1` (N. Virginia)
 - **S3 Bucket**: `dev-dataiesb`
@@ -26,36 +26,33 @@ The Data IESB project uses separate deployment configurations for production and
 
 ## Buildspec Files
 
-### 1. `buildspec.yml` (Production - Main Branch)
-- **Purpose**: Production deployment for main branch
+### 1. `buildspec.yml` (Production - prod Branch)
+- **Purpose**: Production deployment for prod branch
 - **Configuration**: Hardcoded production values
 - **Features**:
   - Simple, reliable YAML structure
   - Direct S3 sync to production bucket
   - CloudFront invalidation for production
-  - No complex branch detection (to avoid YAML errors)
+  - Clear production-focused logging
 
 ### 2. `buildspec-dev-simple.yml` (Development)
 - **Purpose**: Development deployment configuration
 - **Use Case**: Manual development builds if needed
 - **Configuration**: Hardcoded development values
 
-### 3. `buildspec-main.yml` & `buildspec-dev.yml`
-- **Purpose**: Alternative configurations with explicit settings
-- **Status**: Available but not currently used
-
 ## Deployment Process
 
-### Production Deployment (Main Branch)
-1. Push to `main` branch
-2. AWS CodeBuild triggers automatically
-3. Uses `buildspec.yml` with production settings
-4. Deploys to production S3 bucket (`dataiesb`)
-5. Invalidates production CloudFront (`E371T2F886B5KI`)
-6. Site available at `https://dataiesb.com`
+### Production Deployment (prod Branch)
+1. Create PR from `dev` to `prod` branch
+2. Merge PR after review and approval
+3. AWS CodeBuild triggers automatically
+4. Uses `buildspec.yml` with production settings
+5. Deploys to production S3 bucket (`dataiesb`)
+6. Invalidates production CloudFront (`E371T2F886B5KI`)
+7. Site available at `https://dataiesb.com`
 
-### Development Deployment (Dev Branch)
-1. Push to `dev` branch
+### Development Deployment (dev Branch)
+1. Push to `dev` branch (default branch)
 2. GitHub Actions triggers automatically (`.github/workflows/deploy-dev.yml`)
 3. Deploys to development S3 bucket (`dev-dataiesb`)
 4. Invalidates development CloudFront (`E142Z1CPAKR8S8`)
@@ -63,41 +60,47 @@ The Data IESB project uses separate deployment configurations for production and
 
 ## Environment Variables
 
-### Production (Main Branch)
+### Production (prod Branch)
 ```bash
+ENVIRONMENT=production
 REGION=sa-east-1
 S3_BUCKET=dataiesb
 CLOUDFRONT_DISTRIBUTION_ID=E371T2F886B5KI
 SITE_URL=https://dataiesb.com
 ```
 
-### Development (Dev Branch)
+### Development (dev Branch)
 ```bash
+ENVIRONMENT=development
 REGION=us-east-1
 S3_BUCKET=dev-dataiesb
 CLOUDFRONT_DISTRIBUTION_ID=E142Z1CPAKR8S8
 SITE_URL=https://d2v66tm8wx23ar.cloudfront.net
 ```
 
-## Recent Issues Resolved
+## Branch Migration
 
-### YAML Syntax Errors
-- **Problem**: Complex multi-line commands in buildspec.yml caused parsing errors
-- **Solution**: Simplified to basic single-line commands
-- **Status**: ✅ Resolved
+### ✅ Completed Steps
+- [x] Created `prod` branch from `main`
+- [x] Synced `dev` branch with latest changes
+- [x] Updated buildspec.yml for prod branch
+- [x] Updated deployment documentation
+- [x] Created branch mapping documentation
 
-### Build Failures
-- **Problem**: `YAML_FILE_ERROR: Expected Commands[3] to be of string type`
-- **Root Cause**: Improper YAML formatting in multi-line script blocks
-- **Solution**: Removed complex branch detection, used hardcoded values
-- **Status**: ✅ Resolved
+### 🔄 Pending Steps
+- [ ] Change GitHub default branch from `main` to `dev`
+- [ ] Update AWS CodeBuild to use `prod` branch
+- [ ] Update branch protection rules
+- [ ] Test both environments
+- [ ] Delete old `main` branch
 
 ## Security & Best Practices
 
 ### Branch Protection
-- Main branch requires pull request reviews
-- No direct pushes to main branch
+- prod branch requires pull request reviews
+- No direct pushes to prod branch
 - Status checks must pass before merging
+- dev branch is now the default for new development
 
 ### AWS Permissions
 - Separate IAM roles for production and development
@@ -105,32 +108,47 @@ SITE_URL=https://d2v66tm8wx23ar.cloudfront.net
 - Environment-specific resource access
 
 ### Deployment Safety
-- Production uses hardcoded values to prevent errors
+- Production uses explicit prod branch configuration
 - Development uses GitHub Actions for reliability
 - Both environments have separate AWS resources
+
+## Workflow
+
+### Development Workflow
+1. **Feature Development**: Create feature branch from `dev`
+2. **Testing**: Merge feature to `dev` for testing in development environment
+3. **Production Release**: Create PR from `dev` to `prod` for production deployment
+
+### Branch Structure
+```
+dev (default) ← feature branches
+ ↓ (PR for production release)
+prod (production) → AWS CodeBuild → https://dataiesb.com
+```
 
 ## Troubleshooting
 
 ### Common Issues
-1. **Build fails with YAML error**: Check buildspec.yml syntax
-2. **CloudFront not updating**: Wait 5-15 minutes for invalidation
-3. **S3 sync failures**: Check AWS credentials and bucket permissions
-4. **Files not appearing**: Verify S3 bucket and CloudFront distribution
+1. **Build fails**: Check if CodeBuild is configured for `prod` branch
+2. **Wrong environment**: Verify branch-specific configurations
+3. **CloudFront not updating**: Wait 5-15 minutes for invalidation
+4. **Default branch**: Ensure GitHub default is set to `dev`
 
 ### Verification Steps
-1. Check build logs in AWS CodeBuild console
-2. Verify S3 bucket contents match expected files
-3. Test CloudFront URL after invalidation completes
-4. Confirm DNS resolution for custom domains
+1. Check that `dev` is the default branch in GitHub
+2. Verify CodeBuild project uses `prod` branch
+3. Test development deployment from `dev` branch
+4. Test production deployment from `prod` branch
 
 ## Next Steps
-1. Monitor production builds for stability
-2. Consider re-adding branch detection once builds are stable
-3. Configure DNS for `dev.dataiesb.com`
-4. Set up monitoring and alerting
-5. Add automated testing in deployment pipeline
+1. Complete GitHub repository settings update
+2. Update AWS CodeBuild project configuration
+3. Test both deployment pipelines
+4. Configure DNS for `dev.dataiesb.com`
+5. Set up monitoring and alerting
 
 ## Build Status
-- **Production (Main)**: ✅ Should work with simplified buildspec.yml
-- **Development (Dev)**: ✅ Working with GitHub Actions
+- **Production (prod)**: ✅ Ready with updated buildspec.yml
+- **Development (dev)**: ✅ Working with GitHub Actions
+- **Branch Migration**: 🔄 In Progress
 - **Last Updated**: 2025-08-10
