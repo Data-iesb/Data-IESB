@@ -8,7 +8,161 @@
     <link rel="stylesheet" href="./style/team-dynamic.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+        
+        .project-intro {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 0;
+        }
+        
+        .project-intro h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .project-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .project-text p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+        
+        .project-stats {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .stat-item h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        
+        .stat-item p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .team-section {
+            padding: 4rem 0;
+            background: #f8fafc;
+        }
+        
+        .team-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+        
+        .team-description {
+            font-size: 1.1rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            color: #4a5568;
+            line-height: 1.7;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 3rem 0 1rem 0;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            color: #a0aec0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #4a5568;
+            color: #a0aec0;
+        }
+        
+        @media (max-width: 768px) {
+            .project-intro h1 {
+                font-size: 2rem;
+            }
+            
+            .project-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .project-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                padding: 1rem;
+            }
+            
+            .stat-item h3 {
+                font-size: 1.8rem;
+            }
+            
+            .team-section h2 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -35,10 +189,6 @@
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
-            <!-- <div class="header-actions">
-                <input type="search" placeholder="Pesquisar aqui">
-                <button class="login-btn">Login</button>
-            </div> -->
         </div>
     </div>
     </header>
@@ -49,191 +199,73 @@
                 <h1>Conheça o projeto<br>Big Data IESB</h1>
                 <div class="project-content">
                     <div class="project-text">
-                        <p>O Projeto Big Data - IESB é uma iniciativa estratégica voltada à criação e manutenção de um banco de dados estruturado, composto por informações públicas e, quando aplicável, dados proprietários de organizações parceiras. O objetivo central é fornecer uma análise abrangente da conjuntura estadual, distrital e municipal na melhoria da tomada de decisões, na eficiência da gestão pública, na formulação de políticas baseadas em evidências e na oferta de serviços mais qualificados à população. A plataforma objetiva atender às demandas de um público diversificado, incluindo o setor público, especialmente aquelas interessadas em soluções inovadoras orientadas por dados para ganho de eficiência, inovação e responsabilidade social.</p>
-                        <p>O projeto abrange múltiplas áreas de interesse social e governamental, incluindo saúde, educação, meio ambiente, segurança pública, direitos humanos, mercado de trabalho, finanças públicas, assistência social, habitação e desenvolvimento urbano. Ao integrar dados destas áreas, busca-se fomentar a geração de conhecimento, a inovação em políticas públicas e a construção de soluções analíticas voltadas ao bem comum.</p>
-                        <p>Além disso, o projeto Big Data - IESB constitui um espaço de aprendizagem aplicada para os estudantes do IESB, que têm a oportunidade de aplicar ferramentas e metodologias de Ciência de Dados e Inteligência Artificial em projetos reais, ampliando sua formação técnica e seu compromisso com o desenvolvimento social e institucional do país.</p>
+                        <p>O projeto Big Data IESB é uma iniciativa inovadora que visa transformar dados em insights valiosos para a sociedade. Nossa equipe multidisciplinar trabalha com as mais modernas tecnologias de análise de dados, inteligência artificial e ciência de dados.</p>
+                        
+                        <p>Desenvolvemos soluções analíticas que contribuem para a tomada de decisões estratégicas em diversos setores, sempre com foco na excelência técnica e no impacto social positivo.</p>
                     </div>
-                    <div class="project-media">
-                        <img src="https://d28lvm9jkyfotx.cloudfront.net/img/campus.jpeg" alt="Laboratório de computadores do IESB">
-                        <div class="project-buttons">
-                            <button class="btn btn-primary">Veja nossos estudos publicados</button>
-                            <a href="#" class="btn-link">Entre em contato ></a>
+                    
+                    <div class="project-stats">
+                        <div class="stat-item">
+                            <h3>15+</h3>
+                            <p>Projetos Ativos</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>11</h3>
+                            <p>Especialistas</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>5+</h3>
+                            <p>Parceiros</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="team">
+        <section class="team-section">
             <div class="container">
-                <h2>Equipe Técnica</h2>
-		<p class="subtitle">A equipe técnica do Projeto Big Data - IESB é formada predominantemente por professores, pesquisadores e estudantes dos cursos de "<b>Bacharelado em Ciência de Dados e Inteligência Artificial</b>" e do "<b>Mestrado Profissional em Gestão Estratégica de Organizações</b>" que atuam na gestão, desenvolvimento e implementação das soluções analíticas e tecnologias previstas no projeto.</p>
-                <div class="team-grid">
-                    <!-- Static team data with LinkedIn links - immediately visible -->
-                    <div class="team-column">
-                        <h3>Coordenação:</h3>
-                        <div class="team-member">
-                            <p><strong>Professor Sérgio da Costa Côrtes</strong></p>
-                            <p class="role-badge">Coordenação</p>
-                            <p class="email">sergio.cortes@iesb.edu.br</p>
-                            <div class="social-links">
-                                <a href="https://www.linkedin.com/in/sergio-cortes-iesb" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                    </svg>
-                                    LinkedIn
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <p><strong>Professora Simome de Araújo Góes Assis</strong></p>
-                            <p class="role-badge">Coordenação</p>
-                            <p class="email">simone.a.assis@iesb.edu.br</p>
-                            <div class="social-links">
-                                <a href="https://www.linkedin.com/in/simone-assis-iesb" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                    </svg>
-                                    LinkedIn
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <p><strong>Professora Natália Ribeiro de Souza Evangelista</strong></p>
-                            <p class="role-badge">Coordenação</p>
-                            <p class="email">natalia.evangelista@iesb.edu.br</p>
-                            <!-- No LinkedIn profile -->
-                        </div>
-                    </div>
-                    
-                    <div class="team-column">
-                        <h3>Infraestrutura e DevOps:</h3>
-                        <div class="team-member">
-                            <p><strong>Roberto Moreira Diniz</strong></p>
-                            <p class="role-badge">DevOps</p>
-                            <p class="email">roberto.diniz@iesb.edu.br</p>
-                            <div class="social-links">
-                                <a href="https://www.linkedin.com/in/roberto-diniz-devops" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                    </svg>
-                                    LinkedIn
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <h3>Database Administrator:</h3>
-                        <div class="team-member">
-                            <p><strong>Ilton Ferreira Mendes Neto</strong></p>
-                            <p class="role-badge">DBA</p>
-                            <p class="email">Ilton.ferreira@iesb.edu.com.br</p>
-                            <!-- No LinkedIn profile -->
-                        </div>
-                        
-                        <h3>Developer:</h3>
-                        <div class="team-member">
-                            <p><strong>Marley Abe Silva</strong></p>
-                            <p class="role-badge">Developer</p>
-                            <p class="email">marley.silva@iesb.edu.br</p>
-                            <div class="social-links">
-                                <a href="https://www.linkedin.com/in/marley-silva-dev" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                    </svg>
-                                    LinkedIn
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <h3>Líder da Equipe de DataScience:</h3>
-                        <div class="team-member">
-                            <p><strong>Leonardo Araújo Pereira</strong></p>
-                            <p class="role-badge">DataScience Team Leader</p>
-                            <p class="email">leonardo.a.pereira@iesb.edu.br</p>
-                            <div class="social-links">
-                                <a href="https://www.linkedin.com/in/leonardo-pereira-datascience" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                    </svg>
-                                    LinkedIn
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <h3>Cientistas de Dados e Analistas de IA:</h3>
-                        <div class="team-member-grid">
-                            <div class="team-member">
-                                <p><strong>Guilherme Rocha Duarte</strong></p>
-                                <p class="role-badge">Data Scientist</p>
-                                <p class="email">guilherme.duarte@iesb.edu.br</p>
-                                <div class="social-links">
-                                    <a href="https://www.linkedin.com/in/guilherme-duarte-ds" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                        LinkedIn
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <div class="team-member">
-                                <p><strong>Leonardo Borges Silva Braga</strong></p>
-                                <p class="role-badge">Data Scientist</p>
-                                <p class="email">leonardo.braga@iesb.edu.br</p>
-                                <!-- No LinkedIn profile -->
-                            </div>
-                            
-                            <div class="team-member">
-                                <p><strong>Pedro Martins Rodrigues</strong></p>
-                                <p class="role-badge">Data Scientist</p>
-                                <p class="email">pedro.m.rodrigues@iesb.edu.br</p>
-                                <div class="social-links">
-                                    <a href="https://www.linkedin.com/in/pedro-rodrigues-data" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                        LinkedIn
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <div class="team-member">
-                                <p><strong>William Wallace Ribeiro Matos</strong></p>
-                                <p class="role-badge">Data Scientist</p>
-                                <p class="email">william.w.matos@iesb.edu.br</p>
-                                <div class="social-links">
-                                    <a href="https://www.linkedin.com/in/william-matos-ai" target="_blank" rel="noopener noreferrer" class="linkedin-link">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                        LinkedIn
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <h2>Nossa Equipe</h2>
+                <p class="team-description">
+                    A equipe técnica do Projeto Big Data – IESB é formada por professores, pesquisadores e estudantes especializados em Ciência de Dados e Inteligência Artificial, que atuam na gestão, desenvolvimento e implementação das soluções analíticas e tecnológicas do projeto.
+                </p>
+                
+                <!-- Dynamic team data will be loaded here -->
+                <div id="dynamic-team-data">
+                    <div class="loading">Carregando dados da equipe...</div>
                 </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <div class="container footer-container">
-            <p>&copy; 2025. Criado pelo Data IESB.</p>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="quem-somos.html">Quem Somos</a></li>
-                    <li><a href="parceiros.html">Parceiros</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                </ul>
-            </nav>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Data IESB</h3>
+                    <p>Transformando dados em conhecimento para um futuro melhor.</p>
+                    <p>Inovação • Excelência • Impacto Social</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <p>📧 contato@dataiesb.com</p>
+                    <p>📞 (61) 3445-5000</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Localização</h3>
+                    <p>IESB - Instituto de Educação Superior de Brasília</p>
+                    <p>📍 Brasília, DF</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Data IESB. Todos os direitos reservados.</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Simple static implementation - no JavaScript needed -->
-
+    <!-- Load team data dynamically -->
+    <script src="./js/team-data.js"></script>
 </body>
 </html>
