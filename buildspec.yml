@@ -82,7 +82,6 @@ phases:
           --paths "/*" \
           --query 'Invalidation.Id' \
           --output text)
-        
         echo "✅ CloudFront invalidation created: $INVALIDATION_ID"
       - echo "🎉 $ENVIRONMENT deployment completed successfully!"
       - echo "🌐 Site URL: $SITE_URL"
