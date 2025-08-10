@@ -58,29 +58,28 @@ class TeamDataManager {
     }
 
     getFallbackData() {
-        // Fallback static data with professional categories
         return [
             {
                 id: '1',
                 email: 'sergio.cortes@iesb.edu.br',
-                name: 'Professor Sérgio da Costa Côrtes',
-                role: 'Coordenação',
+                name: 'Prof. Sérgio da Costa Côrtes',
+                role: 'Coordenador Geral',
                 category: 'Coordenação',
                 active: true
             },
             {
                 id: '2',
                 email: 'simone.a.assis@iesb.edu.br',
-                name: 'Professora Simone de Araújo Góes Assis',
-                role: 'Coordenação',
+                name: 'Profa. Simone de Araújo Góes Assis',
+                role: 'Coordenadora Acadêmica',
                 category: 'Coordenação',
                 active: true
             },
             {
                 id: '3',
                 email: 'natalia.evangelista@iesb.edu.br',
-                name: 'Professora Natália Ribeiro de Souza Evangelista',
-                role: 'Coordenação',
+                name: 'Profa. Natália Ribeiro de Souza Evangelista',
+                role: 'Coordenadora de Pesquisa',
                 category: 'Coordenação',
                 active: true
             },
@@ -88,7 +87,7 @@ class TeamDataManager {
                 id: '4',
                 email: 'roberto.diniz@iesb.edu.br',
                 name: 'Roberto Moreira Diniz',
-                role: 'DevOps',
+                role: 'Especialista DevOps',
                 category: 'Infraestrutura e DevOps',
                 active: true
             },
@@ -96,56 +95,56 @@ class TeamDataManager {
                 id: '5',
                 email: 'Ilton.ferreira@iesb.edu.com.br',
                 name: 'Ilton Ferreira Mendes Neto',
-                role: 'DBA',
-                category: 'Database Administrator',
+                role: 'Administrador de Banco de Dados',
+                category: 'Infraestrutura e DevOps',
                 active: true
             },
             {
                 id: '6',
                 email: 'marley.silva@iesb.edu.br',
                 name: 'Marley Abe Silva',
-                role: 'Developer',
-                category: 'Developer',
+                role: 'Desenvolvedor Full Stack',
+                category: 'Desenvolvimento',
                 active: true
             },
             {
                 id: '7',
                 email: 'leonardo.a.pereira@iesb.edu.br',
                 name: 'Leonardo Araújo Pereira',
-                role: 'DataScience Team Leader',
-                category: 'Líder da Equipe de DataScience',
+                role: 'Líder de Data Science',
+                category: 'Ciência de Dados',
                 active: true
             },
             {
                 id: '8',
                 email: 'guilherme.duarte@iesb.edu.br',
                 name: 'Guilherme Rocha Duarte',
-                role: 'Data Scientist',
-                category: 'Cientistas de Dados e Analistas de IA',
+                role: 'Cientista de Dados',
+                category: 'Ciência de Dados',
                 active: true
             },
             {
                 id: '9',
                 email: 'leonardo.braga@iesb.edu.br',
                 name: 'Leonardo Borges Silva Braga',
-                role: 'Data Scientist',
-                category: 'Cientistas de Dados e Analistas de IA',
+                role: 'Cientista de Dados',
+                category: 'Ciência de Dados',
                 active: true
             },
             {
                 id: '10',
                 email: 'pedro.m.rodrigues@iesb.edu.br',
                 name: 'Pedro Martins Rodrigues',
-                role: 'Data Scientist',
-                category: 'Cientistas de Dados e Analistas de IA',
+                role: 'Analista de IA',
+                category: 'Inteligência Artificial',
                 active: true
             },
             {
                 id: '11',
                 email: 'william.w.matos@iesb.edu.br',
                 name: 'William Wallace Ribeiro Matos',
-                role: 'Data Scientist',
-                category: 'Cientistas de Dados e Analistas de IA',
+                role: 'Especialista em Machine Learning',
+                category: 'Inteligência Artificial',
                 active: true
             }
         ];
@@ -168,9 +167,9 @@ class TeamDataManager {
     renderTeamMember(member) {
         return `
             <div class="team-member">
-                <p><strong>${member.name}</strong></p>
-                <p class="role-badge">${member.role}</p>
-                <p class="email">${member.email}</p>
+                <strong>${member.name}</strong>
+                <div class="role-badge">${member.role}</div>
+                <div class="email">${member.email}</div>
             </div>
         `;
     }
@@ -179,28 +178,32 @@ class TeamDataManager {
         const groupedData = this.groupByCategory(teamData);
         let html = '';
 
-        // Define the order of categories
+        // Define the order of categories with better names
         const categoryOrder = [
-            'Coordenação',
-            'Infraestrutura e DevOps',
-            'Database Administrator',
-            'Developer',
-            'Líder da Equipe de DataScience',
-            'Cientistas de Dados e Analistas de IA',
-            'Outros'
+            { key: 'Coordenação', title: '👥 Coordenação' },
+            { key: 'Infraestrutura e DevOps', title: '⚙️ Infraestrutura & DevOps' },
+            { key: 'Desenvolvimento', title: '💻 Desenvolvimento' },
+            { key: 'Ciência de Dados', title: '📊 Ciência de Dados' },
+            { key: 'Inteligência Artificial', title: '🤖 Inteligência Artificial' },
+            { key: 'Outros', title: '🔧 Outros' }
         ];
 
-        categoryOrder.forEach(category => {
-            if (groupedData[category] && groupedData[category].length > 0) {
-                html += `<div class="team-category">`;
-                html += `<h4 class="category-title">${category}</h4>`;
-                html += `<div class="team-members">`;
+        categoryOrder.forEach(({ key, title }) => {
+            if (groupedData[key] && groupedData[key].length > 0) {
+                html += `
+                    <div class="team-category">
+                        <h3 class="category-title">${title}</h3>
+                        <div class="team-members">
+                `;
                 
-                groupedData[category].forEach(member => {
+                groupedData[key].forEach(member => {
                     html += this.renderTeamMember(member);
                 });
                 
-                html += `</div></div>`;
+                html += `
+                        </div>
+                    </div>
+                `;
             }
         });
 
@@ -209,26 +212,35 @@ class TeamDataManager {
 
     async loadAndRenderTeam() {
         try {
+            const teamContainer = document.getElementById('dynamic-team-data');
+            if (!teamContainer) {
+                console.warn('Team container element not found');
+                return;
+            }
+
+            // Show loading state
+            teamContainer.innerHTML = '<div class="loading">Carregando equipe...</div>';
+            
             const teamData = await this.scanTable();
             
             // Render the team data
-            const teamContainer = document.getElementById('dynamic-team-data');
-            if (teamContainer) {
-                teamContainer.innerHTML = this.renderTeamSection(teamData);
-                console.log(`Rendered ${teamData.length} team members`);
-            } else {
-                console.warn('Team container element not found');
-            }
+            teamContainer.innerHTML = this.renderTeamSection(teamData);
+            teamContainer.className = 'team-grid';
+            
+            console.log(`✅ Rendered ${teamData.length} team members successfully`);
             
         } catch (error) {
             console.error('Error loading team data:', error);
             
-            // Fallback to static data
-            const fallbackData = this.getFallbackData();
+            // Show error state
             const teamContainer = document.getElementById('dynamic-team-data');
             if (teamContainer) {
-                teamContainer.innerHTML = this.renderTeamSection(fallbackData);
-                console.log('Rendered fallback team data');
+                teamContainer.innerHTML = `
+                    <div class="error">
+                        <h3>Erro ao carregar dados da equipe</h3>
+                        <p>Não foi possível carregar os dados da equipe. Tente recarregar a página.</p>
+                    </div>
+                `;
             }
         }
     }
