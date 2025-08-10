@@ -1,0 +1,88 @@
+{
+  "branch_protection_rules": {
+    "dev_branch": {
+      "branch": "dev",
+      "protection_rules": {
+        "required_status_checks": {
+          "strict": true,
+          "contexts": ["deploy-dev"]
+        },
+        "enforce_admins": false,
+        "required_pull_request_reviews": {
+          "required_approving_review_count": 1,
+          "dismiss_stale_reviews": true,
+          "require_code_owner_reviews": false,
+          "require_last_push_approval": false
+        },
+        "restrictions": null,
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "block_creations": false,
+        "required_conversation_resolution": true
+      },
+      "purpose": "Development branch - moderate protection for team collaboration"
+    },
+    "main_branch": {
+      "branch": "main",
+      "protection_rules": {
+        "required_status_checks": {
+          "strict": true,
+          "contexts": ["deploy-dev", "security-scan"]
+        },
+        "enforce_admins": true,
+        "required_pull_request_reviews": {
+          "required_approving_review_count": 2,
+          "dismiss_stale_reviews": true,
+          "require_code_owner_reviews": true,
+          "require_last_push_approval": true
+        },
+        "restrictions": {
+          "users": ["roberto-diniz"],
+          "teams": ["data-iesb-admins"]
+        },
+        "allow_force_pushes": false,
+        "allow_deletions": false,
+        "block_creations": false,
+        "required_conversation_resolution": true
+      },
+      "purpose": "Production branch - strict protection for production stability"
+    }
+  },
+  "workflow_rules": {
+    "feature_branches": {
+      "naming_convention": "feature/description-of-feature",
+      "base_branch": "dev",
+      "merge_target": "dev"
+    },
+    "hotfix_branches": {
+      "naming_convention": "hotfix/critical-fix-description",
+      "base_branch": "main",
+      "merge_target": "main",
+      "requires_immediate_review": true
+    },
+    "release_branches": {
+      "naming_convention": "release/version-number",
+      "base_branch": "dev",
+      "merge_target": "main",
+      "requires_qa_approval": true
+    }
+  },
+  "team_permissions": {
+    "new_contributors": {
+      "default_branch": "dev",
+      "can_push_to": ["feature/*"],
+      "cannot_push_to": ["dev", "main"],
+      "must_use_pull_requests": true
+    },
+    "team_members": {
+      "can_push_to": ["dev", "feature/*"],
+      "cannot_push_to": ["main"],
+      "can_approve_dev_prs": true
+    },
+    "administrators": {
+      "can_push_to": ["dev", "main", "feature/*"],
+      "can_approve_all_prs": true,
+      "can_merge_to_main": true
+    }
+  }
+}
