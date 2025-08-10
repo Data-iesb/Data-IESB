@@ -1,0 +1,48 @@
+version: 0.2
+
+env:
+  variables:
+    REGION: "sa-east-1"
+    ACCOUNT_ID: "248189947068"
+    REPOSITORY: "dataiesb-site"
+    DEPLOYMENT_NAME: "dataiesb-app"
+    CONTAINER_NAME: "dataiesb-container"
+    S3_BUCKET: "dataiesb"
+    CLOUDFRONT_DISTRIBUTION_ID: "E371T2F886B5KI"
+    ENVIRONMENT: "production"
+    BRANCH: "main"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - pip install --upgrade awscli
+
+  pre_build:
+    commands:
+      - echo "🚀 Starting PRODUCTION deployment from main branch..."
+      - echo "Environment: $ENVIRONMENT"
+      - echo "Branch: $BRANCH"
+      - echo "Region: $REGION"
+      - echo "S3 Bucket: $S3_BUCKET"
+      - echo "CloudFront Distribution: $CLOUDFRONT_DISTRIBUTION_ID"
+      - aws --version
+
+  build:
+    commands:
+      - echo "📁 Uploading files to PRODUCTION S3 bucket..."
+      - aws s3 sync src/ s3://$S3_BUCKET/ --delete --exclude "*.sh" --exclude "*.json" --exclude ".git/*"
+      - echo "✅ Files successfully synced to production S3"
+
+  post_build:
+    commands:
+      - echo "🔄 Invalidating PRODUCTION CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+      - echo "✅ Production deployment completed successfully!"
+      - echo "🌐 Production site: https://dataiesb.com"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'src'
