@@ -75,7 +75,7 @@ header nav a {
 }
 
 .login-btn {
-    background-color: #5A67D8; /* Tom de roxo/azul da imagem */
+    background-color: #1D345B; /* Azul da paleta oficial */
     color: white;
     border: none;
     padding: 10px 24px;
@@ -149,14 +149,14 @@ header nav a {
 }
 
 .btn-primary {
-    background-color: #D64045; /* Vermelho mais fiel */
+    background-color: #D13F42; /* Vermelho da paleta oficial */
     color: white;
 }
 
 .btn-secondary {
     background-color: white;
-    color: #596CFF;
-    border-color: #596CFF;
+    color: #1D345B; /* Azul da paleta oficial */
+    border-color: #1D345B; /* Azul da paleta oficial */
 }
 
 .stat-card {
@@ -275,7 +275,7 @@ header nav a {
 }
 
 .newsletter-form .btn-primary {
-    border-color: #D64045;
+    border-color: #D13F42; /* Vermelho da paleta oficial */
 }
 
 /* Rodapé */
@@ -351,7 +351,7 @@ header nav a.active {
 }
 
 .btn-link {
-    color: #5A67D8;
+    color: #1D345B; /* Azul da paleta oficial */
     font-weight: 600;
     text-decoration: none;
 }

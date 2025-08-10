@@ -1,5 +1,8 @@
 version: 0.2
 
+# Unified buildspec for both dev and prod branches
+# Automatically detects branch and deploys to appropriate environment
+
 phases:
   install:
     runtime-versions:
@@ -9,19 +12,41 @@ phases:
 
   pre_build:
     commands:
-      - echo "Starting deployment..."
+      - echo "Detecting branch and environment..."
+      - |
+        if [ "$CODEBUILD_WEBHOOK_HEAD_REF" = "refs/heads/prod" ] || [ "$CODEBUILD_SOURCE_VERSION" = "prod" ]; then
+          export ENVIRONMENT="production"
+          export AWS_REGION="sa-east-1"
+          export S3_BUCKET="dataiesb"
+          export CLOUDFRONT_ID="E371T2F886B5KI"
+          export SITE_URL="https://dataiesb.com"
+        else
+          export ENVIRONMENT="development"
+          export AWS_REGION="us-east-1"
+          export S3_BUCKET="dev-dataiesb"
+          export CLOUDFRONT_ID="E142Z1CPAKR8S8"
+          export SITE_URL="https://d2v66tm8wx23ar.cloudfront.net"
+        fi
+      - echo "Starting $ENVIRONMENT deployment..."
+      - echo "Environment is $ENVIRONMENT"
+      - echo "Region is $AWS_REGION"
+      - echo "S3 Bucket is $S3_BUCKET"
+      - echo "CloudFront Distribution is $CLOUDFRONT_ID"
+      - echo "Site URL is $SITE_URL"
       - aws --version
 
   build:
     commands:
-      - echo "Uploading files to S3..."
-      - aws s3 sync src/ s3://dataiesb/ --region sa-east-1 --delete
+      - echo "Uploading files to $ENVIRONMENT S3 bucket..."
+      - aws s3 sync src/ s3://$S3_BUCKET/ --region $AWS_REGION --delete --exclude "*.sh" --exclude "*.json" --exclude ".git/*" --exclude ".github/*" --exclude "*.md" --exclude "test-*" --exclude "*-test.*"
+      - echo "Files successfully synced to $ENVIRONMENT S3"
 
   post_build:
     commands:
-      - echo "Invalidating CloudFront..."
-      - aws cloudfront create-invalidation --distribution-id E371T2F886B5KI --paths "/*"
-      - echo "Deployment completed!"
+      - echo "Invalidating $ENVIRONMENT CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
+      - echo "$ENVIRONMENT deployment completed successfully"
+      - echo "$ENVIRONMENT site is $SITE_URL"
 
 artifacts:
   files:
