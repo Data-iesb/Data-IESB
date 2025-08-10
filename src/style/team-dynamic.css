@@ -178,20 +178,79 @@
     }
 }
 
-/* Print styles */
+/* LinkedIn and social links styling */
+.social-links {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid #E4E4E4;
+}
+
+.linkedin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0077B5; /* LinkedIn brand color */
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    border: 1px solid #E4E4E4;
+    transition: all 0.3s ease;
+}
+
+.linkedin-link:hover {
+    background-color: #0077B5;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 119, 181, 0.3);
+    border-color: #0077B5;
+}
+
+.linkedin-link svg {
+    transition: all 0.3s ease;
+}
+
+.linkedin-link:hover svg {
+    fill: #FFFFFF;
+}
+
+/* Email styling improvements */
+.team-member .email {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 0.5rem;
+}
+
+/* Print styles for LinkedIn links */
 @media print {
-    .team-member {
-        box-shadow: none;
-        border: 1px solid #000000;
-    }
-    
-    .role-badge {
-        background: #D64045 !important; /* Same red as .btn-primary */
-        color: #FFFFFF !important; /* Pure white text */
+    .linkedin-link {
+        background: #f8f9fa !important;
+        color: #0077B5 !important;
         border: 1px solid #000000 !important;
     }
     
-    .team-grid {
-        border: 1px solid #000000;
+    .social-links {
+        border-top: 1px solid #000000;
+    }
+}
+
+/* Responsive improvements for LinkedIn links */
+@media (max-width: 768px) {
+    .linkedin-link {
+        font-size: 0.8em;
+        padding: 0.3rem 0.6rem;
+        gap: 0.4rem;
+    }
+    
+    .linkedin-link svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .social-links {
+        margin-top: 0.6rem;
+        padding-top: 0.6rem;
     }
 }
