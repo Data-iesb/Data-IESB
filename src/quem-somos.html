@@ -17,19 +17,18 @@
         }
         
         .project-intro {
-            background: #ffffff;
-            color: #2d3748;
+            background: linear-gradient(135deg, #1D345B 0%, #4a6fa5 100%);
+            color: white;
             padding: 4rem 0;
             margin-bottom: 0;
-            border-bottom: 1px solid #e2e8f0;
         }
         
         .project-intro h1 {
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 2rem;
-            color: #2d3748;
-            text-shadow: none;
+            color: #FFFFFF;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .project-content {
@@ -42,7 +41,8 @@
         .project-text p {
             font-size: 1.1rem;
             margin-bottom: 1.5rem;
-            color: #4a5568;
+            color: #FFFFFF;
+            opacity: 0.95;
             line-height: 1.7;
         }
         
@@ -53,30 +53,32 @@
         }
         
         .stat-item {
-            background: #f7fafc;
+            background: rgba(255,255,255,0.15);
             padding: 1.5rem;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid #e2e8f0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
             transition: all 0.3s ease;
         }
         
         .stat-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-color: #cbd5e0;
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
         
         .stat-item h3 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            color: #2d3748;
+            color: #FFFFFF;
         }
         
         .stat-item p {
             font-size: 1rem;
-            color: #4a5568;
+            color: #FFFFFF;
+            opacity: 0.9;
             margin: 0;
         }
         
@@ -143,7 +145,7 @@
         @media (max-width: 768px) {
             .project-intro h1 {
                 font-size: 2rem;
-                color: #2d3748;
+                color: #FFFFFF;
             }
             
             .project-content {
