@@ -65,6 +65,11 @@ def lambda_handler(event, context):
         if method == 'GET' and path.endswith('/reports'):
             return get_user_reports(user_email, headers)
         
+        # Handle GET /reports/{id}/download - download user's report file
+        if method == 'GET' and '/reports/' in path and path.endswith('/download'):
+            report_id = path.split('/reports/')[-1].replace('/download', '')
+            return download_user_report(user_email, report_id, headers)
+        
         # Handle POST /reports - create report for user
         if method == 'POST' and path.endswith('/reports'):
             return create_user_report(event, user_email, headers)
@@ -212,6 +217,61 @@ def get_user_reports(user_email, headers):
             'statusCode': 500,
             'headers': headers,
             'body': json.dumps({'message': f'Error fetching reports: {str(e)}'})
+        }
+
+def download_user_report(user_email, report_id, headers):
+    """Download a report file if it belongs to the user"""
+    try:
+        # Check if report belongs to user
+        response = table.get_item(Key={'report_id': report_id})
+        if 'Item' not in response:
+            return {
+                'statusCode': 404,
+                'headers': headers,
+                'body': json.dumps({'message': 'Report not found'})
+            }
+        
+        report = response['Item']
+        if report['user_email'] != user_email:
+            return {
+                'statusCode': 403,
+                'headers': headers,
+                'body': json.dumps({'message': 'Access denied - Report belongs to another user'})
+            }
+        
+        # Get file from S3
+        s3_key = f'reports/{report_id}/main.py'
+        try:
+            s3_response = s3_client.get_object(Bucket=BUCKET_NAME, Key=s3_key)
+            file_content = s3_response['Body'].read()
+            
+            # Return file as base64 encoded response
+            return {
+                'statusCode': 200,
+                'headers': {
+                    **headers,
+                    'Content-Type': 'text/x-python',
+                    'Content-Disposition': f'attachment; filename="report_{report_id}.py"'
+                },
+                'body': base64.b64encode(file_content).decode('utf-8'),
+                'isBase64Encoded': True
+            }
+            
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'NoSuchKey':
+                return {
+                    'statusCode': 404,
+                    'headers': headers,
+                    'body': json.dumps({'message': 'Report file not found in storage'})
+                }
+            else:
+                raise e
+        
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': headers,
+            'body': json.dumps({'message': f'Error downloading report: {str(e)}'})
         }
 
 def create_user_report(event, user_email, headers):
