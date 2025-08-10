@@ -114,6 +114,23 @@
         .domain-info strong {
             color: #856404;
         }
+        
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .forgot-password a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +185,11 @@
                         </div>
                         <button type="submit" class="btn-login">Entrar</button>
                     </form>
+                    
+                    <div class="forgot-password">
+                        <a href="#" onclick="redirectToForgotPassword()">Esqueceu sua senha?</a>
+                    </div>
+                    
                     <div id="loginMessage" class="login-message" style="display: none;"></div>
                 </div>
             </div>
@@ -253,6 +275,19 @@
                 message.textContent = "Erro de conexão com o servidor. Tente novamente.";
             }
         });
+        
+        // Function to redirect to Cognito hosted UI for password reset
+        function redirectToForgotPassword() {
+            const cognitoUrl = 'https://auth.dataiesb.com/forgotPassword';
+            const clientId = '2mpcqrmv19qk8ajqk9j2cemimj';
+            const redirectUri = encodeURIComponent('https://dataiesb.com/login.html');
+            
+            // Construct the forgot password URL
+            const forgotPasswordUrl = `${cognitoUrl}?client_id=${clientId}&response_type=code&scope=email+openid+phone&redirect_uri=${redirectUri}`;
+            
+            // Redirect to Cognito hosted UI
+            window.location.href = forgotPasswordUrl;
+        }
     </script>
 
 </body>
