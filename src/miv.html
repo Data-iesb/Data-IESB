@@ -40,11 +40,14 @@
         .color-boxes {
             display: flex;
             justify-content: space-around;
+            flex-wrap: wrap;
             margin-top: 40px;
+            gap: 20px;
         }
 
         .color-box {
-            width: 30%;
+            width: 22%;
+            min-width: 200px;
             height: 200px;
             border-radius: 10px;
             text-align: center;
@@ -74,6 +77,11 @@
         .cinza {
             background-color: #E4E4E4;
             color: #333; /* Adjust text color for contrast */
+        }
+
+        .preto {
+            background-color: #000000;
+            color: #FFFFFF;
         }
 
         .code-box {
@@ -134,6 +142,11 @@
                 <p>#E4E4E4</p>
                 <button class="copy-btn" onclick="copyToClipboard('#E4E4E4')">Copiar Código</button>
             </div>
+            <div class="color-box preto">
+                <p>Preto</p>
+                <p>#000000</p>
+                <button class="copy-btn" onclick="copyToClipboard('#000000')">Copiar Código</button>
+            </div>
         </div>
 
         <div class="code-box">
@@ -143,6 +156,7 @@
 .branco { background-color: #FFFFFF; color: #333; }
 .azul { background-color: #1D345B; }
 .cinza { background-color: #E4E4E4; color: #333; }
+.preto { background-color: #000000; color: #FFFFFF; }
             </pre>
         </div>
     </div>
