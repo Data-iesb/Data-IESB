@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test LinkedIn Functionality - Dev Branch - Data IESB</title>
+    <link rel="stylesheet" href="./style/home.css"> 
+    <link rel="stylesheet" href="./style/team-dynamic.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .demo-section {
+            margin-bottom: 3rem;
+        }
+        .demo-title {
+            color: #1D345B;
+            border-bottom: 3px solid #D13F42;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .member-example {
+            background: #FFFFFF;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid #1D345B;
+            border: 1px solid #E4E4E4;
+            max-width: 400px;
+        }
+        .member-example:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #D13F42;
+            border: 1px solid #000000;
+        }
+        .explanation {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 4px solid #1D345B;
+        }
+        .feature-list {
+            background: #e8f4fd;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>LinkedIn Functionality Test - Dev Branch Implementation</h1>
+        
+        <div class="demo-section">
+            <h2 class="demo-title">New LinkedIn Features in Dev Branch</h2>
+            <div class="feature-list">
+                <p><strong>✅ Features Implemented:</strong></p>
+                <ul>
+                    <li>LinkedIn buttons appear only for users with LinkedIn profiles in DynamoDB</li>
+                    <li>Blue LinkedIn buttons following MMIV color scheme (#007bff)</li>
+                    <li>Direct DynamoDB integration with AWS SDK</li>
+                    <li>Fallback data includes LinkedIn profiles for testing</li>
+                    <li>Responsive design for mobile devices</li>
+                    <li>Professional styling with hover effects</li>
+                    <li>Update functionality for managing LinkedIn profiles</li>
+                </ul>
+            </div>
+            
+            <h3>Example 1: Team Member WITH LinkedIn Profile</h3>
+            <div class="member-example">
+                <p><strong>Professor Sérgio da Costa Côrtes</strong></p>
+                <p class="role-badge">Coordenação</p>
+                <p class="email">sergio.cortes@iesb.edu.br</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/sergio-cortes-iesb" target="_blank" rel="noopener noreferrer" class="linkedin-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        LinkedIn
+                    </a>
+                </div>
+            </div>
+            
+            <h3>Example 2: Team Member WITHOUT LinkedIn Profile</h3>
+            <div class="member-example">
+                <p><strong>Professora Natália Ribeiro de Souza Evangelista</strong></p>
+                <p class="role-badge">Coordenação</p>
+                <p class="email">natalia.evangelista@iesb.edu.br</p>
+                <!-- No LinkedIn link appears here -->
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2 class="demo-title">Live Team Data from DynamoDB</h2>
+            <div class="explanation">
+                <p><strong>Note:</strong> The section below loads real team data from DynamoDB. If AWS credentials are not configured, it will fall back to static data with LinkedIn profiles. LinkedIn buttons will appear for team members who have profiles configured in the database.</p>
+            </div>
+            
+            <div class="team-grid">
+                <div class="loading">Carregando dados da equipe...</div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2 class="demo-title">Technical Implementation Details</h2>
+            <div class="explanation">
+                <h4>DynamoDB Integration:</h4>
+                <ul>
+                    <li>Direct AWS SDK integration for real-time data fetching</li>
+                    <li>Scans DataIESB-Team table for active team members</li>
+                    <li>LinkedIn field in DynamoDB controls button visibility</li>
+                    <li>Automatic fallback to static data if AWS is unavailable</li>
+                    <li>Update functionality for managing LinkedIn profiles</li>
+                </ul>
+                
+                <h4>LinkedIn Button Logic:</h4>
+                <ul>
+                    <li>Only renders if member.linkedin field exists and is not empty</li>
+                    <li>Uses blue color scheme (#007bff) following MMIV style</li>
+                    <li>Opens LinkedIn profiles in new tab with security attributes</li>
+                    <li>Responsive design with proper mobile styling</li>
+                    <li>Hover effects with smooth transitions</li>
+                </ul>
+                
+                <h4>Data Structure:</h4>
+                <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 5px; overflow-x: auto;">
+{
+  "id": "1",
+  "email": "sergio.cortes@iesb.edu.br",
+  "name": "Professor Sérgio da Costa Côrtes",
+  "role": "Coordenação",
+  "category": "Coordenação",
+  "linkedin": "https://www.linkedin.com/in/sergio-cortes-iesb",
+  "active": true
+}</pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2 class="demo-title">Navigation</h2>
+            <p><a href="quem-somos.html" style="color: #1D345B; text-decoration: none; font-weight: 600;">← Back to Quem Somos Page</a></p>
+        </div>
+    </div>
+
+    <!-- AWS SDK for DynamoDB access -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+    
+    <!-- Team Data JavaScript -->
+    <script src="./js/team-data.js"></script>
+</body>
+</html>
