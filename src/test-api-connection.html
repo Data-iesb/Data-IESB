@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Connection - Data IESB</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <button onclick="testApiConnection()">Test API Connection</button>
+    <div id="results"></div>
+
+    <script>
+        async function testApiConnection() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="info">Testing API connection...</div>';
+            
+            try {
+                // Test the actual endpoint
+                const endpoint = 'https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/team';
+                
+                let results = '<h2>Test Results:</h2>';
+                
+                try {
+                    results += `<h3>Testing: ${endpoint}</h3>`;
+                    
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        results += `<div class="success">✅ Success! Status: ${response.status}</div>`;
+                        results += `<div class="success">Found ${data.data.length} team members</div>`;
+                        results += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    } else {
+                        results += `<div class="error">❌ Failed! Status: ${response.status}</div>`;
+                        results += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    }
+                } catch (error) {
+                    results += `<div class="error">❌ Error: ${error.message}</div>`;
+                }
+                
+                resultsDiv.innerHTML = results;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+            }
+        }
+        
+        // Auto-run test on page load
+        window.addEventListener('load', testApiConnection);
+    </script>
+</body>
+</html>
