@@ -189,25 +189,25 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: #0077B5; /* LinkedIn brand color */
+    color: #ffffff; /* White text on blue background */
     text-decoration: none;
     font-size: 0.9em;
     font-weight: 600;
     padding: 0.6rem 1rem;
     border-radius: 6px;
-    background-color: #f8f9fa;
-    border: 2px solid #0077B5;
+    background-color: #007bff; /* Blue background following mmiv style */
+    border: 2px solid #007bff;
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(0, 119, 181, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
 }
 
 .linkedin-link:hover {
-    background-color: #0077B5;
+    background-color: #0056b3; /* Darker blue on hover */
     color: #FFFFFF;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 119, 181, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.4);
     border-color: #005885;
 }
 
@@ -289,7 +289,7 @@
 @media print {
     .linkedin-link {
         background: #f8f9fa !important;
-        color: #0077B5 !important;
+        color: #007bff !important;
         border: 1px solid #000000 !important;
     }
     
