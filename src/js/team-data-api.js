@@ -1,54 +1,44 @@
 class TeamDataManager {
     constructor() {
-        this.tableName = 'DataIESB-TeamMembers';
-        this.region = 'us-east-1';
-        this.docClient = null;
-        this.initializeAWS();
+        // Determine API endpoint based on environment
+        this.apiEndpoint = this.getApiEndpoint();
+        console.log('Using API endpoint:', this.apiEndpoint);
     }
 
-    initializeAWS() {
-        try {
-            if (typeof AWS !== 'undefined') {
-                AWS.config.update({
-                    region: this.region,
-                    credentials: new AWS.CognitoIdentityCredentials({
-                        IdentityPoolId: 'us-east-1:your-identity-pool-id'
-                    })
-                });
-                this.docClient = new AWS.DynamoDB.DocumentClient();
-                console.log('AWS SDK initialized successfully');
-            } else {
-                console.warn('AWS SDK not available, using fallback data');
-            }
-        } catch (error) {
-            console.warn('Failed to initialize AWS SDK:', error);
+    getApiEndpoint() {
+        const hostname = window.location.hostname;
+        
+        // Check if we're in development
+        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('local')) {
+            return 'http://localhost:5001/api/team';
         }
+        
+        // For production, use relative path or your production API URL
+        // Update this with your actual production API endpoint
+        return '/api/team';
     }
 
-    async scanTable() {
-        if (!this.docClient) {
-            console.log('Using fallback data (AWS SDK not available)');
-            return this.getFallbackData();
-        }
-
+    async fetchTeamData() {
         try {
-            const params = {
-                TableName: this.tableName
-            };
-
-            console.log('Scanning DynamoDB table:', this.tableName);
-            const result = await this.docClient.scan(params).promise();
+            console.log('Fetching team data from API...');
+            const response = await fetch(this.apiEndpoint);
             
-            if (result.Items && result.Items.length > 0) {
-                console.log(`Found ${result.Items.length} team members in DynamoDB`);
-                return result.Items;
-            } else {
-                console.log('No team members found in DynamoDB, using fallback data');
-                return this.getFallbackData();
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                console.log(`✅ Loaded ${result.data.length} team members from API`);
+                return result.data;
+            } else {
+                throw new Error(result.message || 'Failed to load team data');
+            }
+            
         } catch (error) {
-            console.error('Error scanning DynamoDB table:', error);
-            console.log('Falling back to static data');
+            console.error('Error fetching team data from API:', error);
+            console.log('Using fallback data');
             return this.getFallbackData();
         }
     }
@@ -179,8 +169,11 @@ class TeamDataManager {
             { key: 'Coordenação', title: '👥 Coordenação' },
             { key: 'Infraestrutura e DevOps', title: '⚙️ Infraestrutura & DevOps' },
             { key: 'Desenvolvimento', title: '💻 Desenvolvimento' },
+            { key: 'Developer', title: '💻 Desenvolvimento' }, // Alternative category name
             { key: 'Ciência de Dados', title: '📊 Ciência de Dados' },
+            { key: 'Líder da Equipe de DataScience', title: '📊 Liderança em Data Science' },
             { key: 'Inteligência Artificial', title: '🤖 Inteligência Artificial' },
+            { key: 'Database Administrator', title: '🗄️ Administração de Banco de Dados' },
             { key: 'Outros', title: '🔧 Outros' }
         ];
 
@@ -217,7 +210,7 @@ class TeamDataManager {
             // Show loading state
             teamContainer.innerHTML = '<div class="loading">Carregando equipe...</div>';
             
-            const teamData = await this.scanTable();
+            const teamData = await this.fetchTeamData();
             
             // Render the team data
             teamContainer.innerHTML = this.renderTeamSection(teamData);
