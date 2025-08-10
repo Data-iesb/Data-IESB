@@ -1,5 +1,8 @@
 version: 0.2
 
+# Production buildspec for 'prod' branch
+# Deploys to production environment (sa-east-1, dataiesb bucket)
+
 phases:
   install:
     runtime-versions:
@@ -9,19 +12,25 @@ phases:
 
   pre_build:
     commands:
-      - echo "Starting deployment..."
+      - echo "🚀 Starting PRODUCTION deployment from prod branch..."
+      - echo "Environment: Production"
+      - echo "Region: sa-east-1"
+      - echo "S3 Bucket: dataiesb"
+      - echo "CloudFront Distribution: E371T2F886B5KI"
       - aws --version
 
   build:
     commands:
-      - echo "Uploading files to S3..."
-      - aws s3 sync src/ s3://dataiesb/ --region sa-east-1 --delete
+      - echo "📁 Uploading files to PRODUCTION S3 bucket..."
+      - aws s3 sync src/ s3://dataiesb/ --region sa-east-1 --delete --exclude "*.sh" --exclude "*.json" --exclude ".git/*" --exclude ".github/*" --exclude "*.md"
+      - echo "✅ Files successfully synced to production S3"
 
   post_build:
     commands:
-      - echo "Invalidating CloudFront..."
+      - echo "🔄 Invalidating PRODUCTION CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id E371T2F886B5KI --paths "/*"
-      - echo "Deployment completed!"
+      - echo "🎉 Production deployment completed successfully!"
+      - echo "🌐 Production site: https://dataiesb.com"
 
 artifacts:
   files:
