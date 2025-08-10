@@ -1,0 +1,57 @@
+name: Deploy to Production Environment
+
+on:
+  push:
+    branches: [ prod ]
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Deploy to S3
+      run: |
+        echo "🚀 Deploying to Production Environment"
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Commit: ${{ github.sha }}"
+        
+        # Sync files to production S3 bucket
+        aws s3 sync src/ s3://dataiesb/ --delete \
+          --exclude "*.sh" \
+          --exclude "*.json" \
+          --exclude ".git/*" \
+          --exclude ".github/*" \
+          --exclude "debug-team-api.html" \
+          --exclude "test-api-connection.html"
+          
+    - name: Invalidate CloudFront
+      run: |
+        # Create CloudFront invalidation for production
+        INVALIDATION_ID=$(aws cloudfront create-invalidation \
+          --distribution-id E371T2F886B5KI \
+          --paths "/*" \
+          --query 'Invalidation.Id' \
+          --output text)
+        
+        echo "✅ CloudFront invalidation created: $INVALIDATION_ID"
+        echo "🌐 Production site: https://dataiesb.com"
+        
+    - name: Deployment Summary
+      run: |
+        echo "## 🎉 Production Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **S3 Bucket:** dataiesb" >> $GITHUB_STEP_SUMMARY
+        echo "- **CloudFront:** E371T2F886B5KI" >> $GITHUB_STEP_SUMMARY
+        echo "- **Production URL:** https://dataiesb.com" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status:** ✅ Deployed Successfully" >> $GITHUB_STEP_SUMMARY
