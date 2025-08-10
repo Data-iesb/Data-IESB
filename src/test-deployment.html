@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Test - Data IESB</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .dev { border-left: 4px solid #007bff; }
+        .prod { border-left: 4px solid #28a745; }
+        h1 { color: #333; }
+        .timestamp { color: #666; font-size: 14px; }
+        .info { background: #e9ecef; padding: 15px; border-radius: 4px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container prod">
+        <h1>🚀 Production Environment Test</h1>
+        <div class="info">
+            <strong>Environment:</strong> Production<br>
+            <strong>Branch:</strong> prod<br>
+            <strong>CodeBuild Project:</strong> dataiesb-site-prod<br>
+            <strong>Region:</strong> sa-east-1<br>
+            <strong>S3 Bucket:</strong> dataiesb<br>
+            <strong>CloudFront:</strong> E371T2F886B5KI
+        </div>
+        <p class="timestamp">Test deployed: 2025-08-10 19:33 UTC</p>
+        <p>If you can see this page, the production deployment is working correctly!</p>
+        <p><strong>Expected URL:</strong> https://dataiesb.com/test-deployment.html</p>
+    </div>
+</body>
+</html>
