@@ -13,9 +13,8 @@ class TeamDataManager {
             return 'http://localhost:5001/api/team';
         }
         
-        // For production, use relative path or your production API URL
-        // Update this with your actual production API endpoint
-        return '/api/team';
+        // For all environments, use the deployed API Gateway endpoint
+        return 'https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/team';
     }
 
     async fetchTeamData() {
