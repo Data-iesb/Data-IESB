@@ -20,6 +20,60 @@
     min-height: 200px;
 }
 
+/* HR-related buttons styling - ONLY blue and white */
+.project-buttons .btn-primary,
+.team-section .btn,
+.hr-button,
+.team-action-btn {
+    background-color: #1D345B !important;
+    color: #FFFFFF !important;
+    border: 2px solid #FFFFFF !important;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.project-buttons .btn-primary:hover,
+.team-section .btn:hover,
+.hr-button:hover,
+.team-action-btn:hover {
+    background-color: #FFFFFF !important;
+    color: #1D345B !important;
+    border: 2px solid #1D345B !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 52, 91, 0.2);
+}
+
+/* HR-related link buttons */
+.project-buttons .btn-link,
+.team-section .btn-link,
+.hr-link {
+    color: #1D345B !important;
+    background-color: transparent !important;
+    border: 2px solid #1D345B !important;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.project-buttons .btn-link:hover,
+.team-section .btn-link:hover,
+.hr-link:hover {
+    background-color: #1D345B !important;
+    color: #FFFFFF !important;
+    border: 2px solid #1D345B !important;
+    transform: translateY(-2px);
+}
+
 /* Professional role badge styling with red+black and blue+white combinations */
 .role-badge {
     display: inline-block;
@@ -252,6 +306,20 @@
     .team-member:hover {
         border-left-width: 3px;
     }
+    
+    /* HR buttons responsive */
+    .project-buttons .btn-primary,
+    .hr-button,
+    .team-action-btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+    
+    .project-buttons .btn-link,
+    .hr-link {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
 }
 
 /* Print styles */
@@ -269,5 +337,14 @@
     
     .team-grid {
         border: 1px solid #000000;
+    }
+    
+    /* HR buttons print styles */
+    .project-buttons .btn-primary,
+    .hr-button,
+    .team-action-btn {
+        background: #1D345B !important;
+        color: #FFFFFF !important;
+        border: 1px solid #000000 !important;
     }
 }
