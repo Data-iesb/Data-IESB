@@ -1,4 +1,4 @@
-/* Dynamic team loading styles using Data IESB brand colors */
+/* Dynamic team loading styles using Data IESB brand colors with new combinations */
 .loading {
     text-align: center;
     padding: 2rem;
@@ -11,7 +11,7 @@
     padding: 2rem;
     color: #D13F42;
     background-color: #FFFFFF;
-    border: 1px solid #E4E4E4;
+    border: 1px solid #000000;
     border-radius: 8px;
     margin: 1rem 0;
 }
@@ -20,7 +20,7 @@
     min-height: 200px;
 }
 
-/* Professional role badge styling with brand colors */
+/* Professional role badge styling with red+black and blue+white combinations */
 .role-badge {
     display: inline-block;
     background: #1D345B;
@@ -32,26 +32,33 @@
     margin: 6px 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 6px rgba(29, 52, 91, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
+    border: 1px solid #FFFFFF;
 }
 
 .role-badge:hover {
     background: #D13F42;
+    color: #000000;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(209, 63, 66, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid #000000;
 }
 
-/* Different role badge variations using brand colors */
+/* Different role badge variations using brand color combinations */
 .team-member:nth-child(odd) .role-badge {
-    background: linear-gradient(135deg, #1D345B 0%, #2a4a73 100%);
+    background: #1D345B;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
 }
 
 .team-member:nth-child(even) .role-badge {
-    background: linear-gradient(135deg, #D13F42 0%, #e55a5d 100%);
+    background: #D13F42;
+    color: #000000;
+    border: 1px solid #000000;
 }
 
-/* Enhanced team member styling with brand colors */
+/* Enhanced team member styling with single color borders */
 .team-member {
     background: #FFFFFF;
     border-radius: 10px;
@@ -59,19 +66,19 @@
     margin-bottom: 1.2rem;
     border-left: 4px solid #1D345B;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(29, 52, 91, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #E4E4E4;
 }
 
 .team-member:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(29, 52, 91, 0.15);
-    border-left-color: #D13F42;
-    border-color: #D13F42;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid #D13F42;
+    border: 1px solid #000000;
 }
 
 .team-member strong {
-    color: #1D345B;
+    color: #000000;
     font-size: 1.1em;
     font-weight: 600;
 }
@@ -82,10 +89,10 @@
     margin-bottom: 0;
 }
 
-/* Section headers with brand colors */
+/* Section headers with single color lines */
 .team-column h3 {
-    color: #1D345B;
-    border-bottom: 3px solid #D13F42;
+    color: #000000;
+    border-bottom: 3px solid #1D345B;
     padding-bottom: 0.8rem;
     margin-bottom: 1.8rem;
     font-weight: 700;
@@ -100,18 +107,26 @@
     left: 0;
     width: 50px;
     height: 3px;
-    background: #1D345B;
+    background: #D13F42;
     border-radius: 2px;
 }
 
 /* Coordination section special styling */
 .team-column:first-child .team-member {
-    border-left-color: #D13F42;
-    background: linear-gradient(135deg, #FFFFFF 0%, #f8f9fa 100%);
+    border-left: 4px solid #D13F42;
+    background: #FFFFFF;
 }
 
 .team-column:first-child .team-member:hover {
-    border-left-color: #1D345B;
+    border-left: 4px solid #000000;
+}
+
+.team-column:first-child h3 {
+    border-bottom: 3px solid #D13F42;
+}
+
+.team-column:first-child h3::after {
+    background: #1D345B;
 }
 
 /* Loading animation with brand colors */
@@ -137,7 +152,7 @@
     background: #f9f9f9;
     padding: 2rem;
     border-radius: 12px;
-    border: 1px solid #E4E4E4;
+    border: 2px solid #1D345B;
 }
 
 .team-column {
@@ -150,16 +165,62 @@
     user-select: none;
 }
 
-/* Special styling for leadership roles */
+/* Special styling for leadership roles with red+black combination */
 .team-member:has(.role-badge:contains("Leader")) {
-    border-left-width: 6px;
-    border-left-color: #D13F42;
+    border-left: 6px solid #D13F42;
 }
 
 .team-member:has(.role-badge:contains("Leader")) .role-badge {
-    background: linear-gradient(135deg, #D13F42 0%, #1D345B 100%);
+    background: #D13F42;
+    color: #000000;
     font-weight: 700;
     padding: 8px 16px;
+    border: 2px solid #000000;
+}
+
+.team-member:has(.role-badge:contains("Leader")):hover .role-badge {
+    background: #000000;
+    color: #D13F42;
+    border: 2px solid #D13F42;
+}
+
+/* DevOps role styling with blue+white combination */
+.team-member:has(.role-badge:contains("DevOps")) .role-badge {
+    background: #1D345B;
+    color: #FFFFFF;
+    border: 2px solid #FFFFFF;
+}
+
+.team-member:has(.role-badge:contains("DevOps")):hover .role-badge {
+    background: #FFFFFF;
+    color: #1D345B;
+    border: 2px solid #1D345B;
+}
+
+/* DBA role styling with alternating combination */
+.team-member:has(.role-badge:contains("DBA")) .role-badge {
+    background: #000000;
+    color: #FFFFFF;
+    border: 2px solid #FFFFFF;
+}
+
+.team-member:has(.role-badge:contains("DBA")):hover .role-badge {
+    background: #D13F42;
+    color: #000000;
+    border: 2px solid #000000;
+}
+
+/* Developer role styling */
+.team-member:has(.role-badge:contains("Developer")) .role-badge {
+    background: #1D345B;
+    color: #FFFFFF;
+    border: 2px solid #FFFFFF;
+}
+
+.team-member:has(.role-badge:contains("Developer")):hover .role-badge {
+    background: #D13F42;
+    color: #000000;
+    border: 2px solid #000000;
 }
 
 /* Responsive improvements */
@@ -172,14 +233,24 @@
     .role-badge {
         font-size: 0.8em;
         padding: 5px 12px;
+        border-width: 1px;
     }
     
     .team-grid {
         padding: 1.5rem;
+        border-width: 1px;
     }
     
     .team-column h3 {
         font-size: 1.1em;
+    }
+    
+    .team-member {
+        border-left-width: 3px;
+    }
+    
+    .team-member:hover {
+        border-left-width: 3px;
     }
 }
 
@@ -187,11 +258,16 @@
 @media print {
     .team-member {
         box-shadow: none;
-        border: 1px solid #E4E4E4;
+        border: 1px solid #000000;
     }
     
     .role-badge {
         background: #1D345B !important;
         color: #FFFFFF !important;
+        border: 1px solid #000000 !important;
+    }
+    
+    .team-grid {
+        border: 1px solid #000000;
     }
 }
