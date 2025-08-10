@@ -22,7 +22,7 @@ class TeamDataManager {
     }
 
     getFallbackData() {
-        // Fallback static data in case API is not available
+        // Fallback static data with professional categories
         return [
             {
                 email: 'sergio.cortes@iesb.edu.br',
@@ -46,19 +46,19 @@ class TeamDataManager {
                 email: 'roberto.diniz@iesb.edu.br',
                 name: 'Roberto Moreira Diniz',
                 role: 'DevOps',
-                category: 'Aluno Analista de Infraestrutura e DevOps'
+                category: 'Infraestrutura e DevOps'
             },
             {
                 email: 'Ilton.ferreira@iesb.edu.com.br',
                 name: 'Ilton Ferreira Mendes Neto',
                 role: 'DBA',
-                category: 'Aluno DBA (Database Administrator)'
+                category: 'Database Administrator'
             },
             {
                 email: 'marley.silva@iesb.edu.br',
                 name: 'Marley Abe Silva',
                 role: 'Developer',
-                category: 'Aluno Developer'
+                category: 'Developer'
             },
             {
                 email: 'leonardo.a.pereira@iesb.edu.br',
@@ -70,25 +70,25 @@ class TeamDataManager {
                 email: 'guilherme.duarte@iesb.edu.br',
                 name: 'Guilherme Rocha Duarte',
                 role: 'Data Scientist',
-                category: 'Alunos Cientistas de Dados e Analistas de IA'
+                category: 'Cientistas de Dados e Analistas de IA'
             },
             {
                 email: 'leonardo.braga@iesb.edu.br',
                 name: 'Leonardo Borges Silva Braga',
                 role: 'Data Scientist',
-                category: 'Alunos Cientistas de Dados e Analistas de IA'
+                category: 'Cientistas de Dados e Analistas de IA'
             },
             {
                 email: 'pedro.m.rodrigues@iesb.edu.br',
                 name: 'Pedro Martins Rodrigues',
                 role: 'Data Scientist',
-                category: 'Alunos Cientistas de Dados e Analistas de IA'
+                category: 'Cientistas de Dados e Analistas de IA'
             },
             {
                 email: 'william.w.matos@iesb.edu.br',
                 name: 'William Wallace Ribeiro Matos',
                 role: 'Data Scientist',
-                category: 'Alunos Cientistas de Dados e Analistas de IA'
+                category: 'Cientistas de Dados e Analistas de IA'
             }
         ];
     }
@@ -138,26 +138,28 @@ class TeamDataManager {
         
         let techContent = '';
 
-        // DevOps
-        if (grouped['Aluno Analista de Infraestrutura e DevOps']) {
+        // Infrastructure and DevOps
+        if (grouped['Infraestrutura e DevOps']) {
             techContent += `
-                <h3>Aluno Analista de Infraestrutura e DevOps:</h3>
-                ${grouped['Aluno Analista de Infraestrutura e DevOps'].map(member => `
+                <h3>Infraestrutura e DevOps:</h3>
+                ${grouped['Infraestrutura e DevOps'].map(member => `
                     <div class="team-member">
                         <p><strong>${member.name}</strong></p>
+                        <p class="role-badge">${member.role}</p>
                         <p>${member.email}</p>
                     </div>
                 `).join('')}
             `;
         }
 
-        // DBA
-        if (grouped['Aluno DBA (Database Administrator)']) {
+        // Database Administrator
+        if (grouped['Database Administrator']) {
             techContent += `
-                <h3>Aluno DBA (Database Administrator):</h3>
-                ${grouped['Aluno DBA (Database Administrator)'].map(member => `
+                <h3>Database Administrator:</h3>
+                ${grouped['Database Administrator'].map(member => `
                     <div class="team-member">
                         <p><strong>${member.name}</strong></p>
+                        <p class="role-badge">${member.role}</p>
                         <p>${member.email}</p>
                     </div>
                 `).join('')}
@@ -165,12 +167,13 @@ class TeamDataManager {
         }
 
         // Developer
-        if (grouped['Aluno Developer']) {
+        if (grouped['Developer']) {
             techContent += `
-                <h3>Aluno Developer:</h3>
-                ${grouped['Aluno Developer'].map(member => `
+                <h3>Developer:</h3>
+                ${grouped['Developer'].map(member => `
                     <div class="team-member">
                         <p><strong>${member.name}</strong></p>
+                        <p class="role-badge">${member.role}</p>
                         <p>${member.email}</p>
                     </div>
                 `).join('')}
@@ -184,6 +187,7 @@ class TeamDataManager {
                 ${grouped['Líder da Equipe de DataScience'].map(member => `
                     <div class="team-member">
                         <p><strong>${member.name}</strong></p>
+                        <p class="role-badge">${member.role}</p>
                         <p>${member.email}</p>
                     </div>
                 `).join('')}
@@ -191,13 +195,14 @@ class TeamDataManager {
         }
 
         // Data Scientists
-        if (grouped['Alunos Cientistas de Dados e Analistas de IA']) {
+        if (grouped['Cientistas de Dados e Analistas de IA']) {
             techContent += `
-                <h3>Alunos Cientistas de Dados e Analistas de IA:</h3>
+                <h3>Cientistas de Dados e Analistas de IA:</h3>
                 <div class="team-member-grid">
-                    ${grouped['Alunos Cientistas de Dados e Analistas de IA'].map(member => `
+                    ${grouped['Cientistas de Dados e Analistas de IA'].map(member => `
                         <div class="team-member">
                             <p><strong>${member.name}</strong></p>
+                            <p class="role-badge">${member.role}</p>
                             <p>${member.email}</p>
                         </div>
                     `).join('')}
