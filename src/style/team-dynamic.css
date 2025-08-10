@@ -20,42 +20,30 @@
     min-height: 200px;
 }
 
-/* Professional role badge styling with red+black and blue+white combinations */
+/* Professional role badge styling using standard button template */
 .role-badge {
     display: inline-block;
-    background: #1D345B;
-    color: #FFFFFF;
+    background-color: #D64045; /* Same as .btn-primary */
+    color: white; /* Same as .btn-primary */
     padding: 6px 14px;
-    border-radius: 20px;
+    border-radius: 5px; /* Same as .btn */
     font-size: 0.85em;
-    font-weight: 600;
+    font-weight: 600; /* Same as .btn */
     margin: 6px 0;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px rgba(214, 64, 69, 0.2);
     transition: all 0.3s ease;
-    border: 1px solid #FFFFFF;
+    border: 1px solid transparent; /* Same as .btn */
+    cursor: pointer;
+    user-select: none;
 }
 
 .role-badge:hover {
-    background: #D13F42;
-    color: #000000;
+    background-color: #c23539; /* Slightly darker red on hover */
+    color: white;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border: 1px solid #000000;
-}
-
-/* Different role badge variations using brand color combinations */
-.team-member:nth-child(odd) .role-badge {
-    background: #1D345B;
-    color: #FFFFFF;
-    border: 1px solid #FFFFFF;
-}
-
-.team-member:nth-child(even) .role-badge {
-    background: #D13F42;
-    color: #000000;
-    border: 1px solid #000000;
+    box-shadow: 0 4px 8px rgba(214, 64, 69, 0.3);
 }
 
 /* Enhanced team member styling with single color borders */
@@ -157,70 +145,6 @@
 
 .team-column {
     background: transparent;
-}
-
-/* Professional badge hover effects */
-.role-badge {
-    cursor: pointer;
-    user-select: none;
-}
-
-/* Special styling for leadership roles with red+black combination */
-.team-member:has(.role-badge:contains("Leader")) {
-    border-left: 6px solid #D13F42;
-}
-
-.team-member:has(.role-badge:contains("Leader")) .role-badge {
-    background: #D13F42;
-    color: #000000;
-    font-weight: 700;
-    padding: 8px 16px;
-    border: 2px solid #000000;
-}
-
-.team-member:has(.role-badge:contains("Leader")):hover .role-badge {
-    background: #000000;
-    color: #D13F42;
-    border: 2px solid #D13F42;
-}
-
-/* DevOps role styling with blue+white combination */
-.team-member:has(.role-badge:contains("DevOps")) .role-badge {
-    background: #1D345B;
-    color: #FFFFFF;
-    border: 2px solid #FFFFFF;
-}
-
-.team-member:has(.role-badge:contains("DevOps")):hover .role-badge {
-    background: #FFFFFF;
-    color: #1D345B;
-    border: 2px solid #1D345B;
-}
-
-/* DBA role styling with alternating combination */
-.team-member:has(.role-badge:contains("DBA")) .role-badge {
-    background: #000000;
-    color: #FFFFFF;
-    border: 2px solid #FFFFFF;
-}
-
-.team-member:has(.role-badge:contains("DBA")):hover .role-badge {
-    background: #D13F42;
-    color: #000000;
-    border: 2px solid #000000;
-}
-
-/* Developer role styling */
-.team-member:has(.role-badge:contains("Developer")) .role-badge {
-    background: #1D345B;
-    color: #FFFFFF;
-    border: 2px solid #FFFFFF;
-}
-
-.team-member:has(.role-badge:contains("Developer")):hover .role-badge {
-    background: #D13F42;
-    color: #000000;
-    border: 2px solid #000000;
 }
 
 /* Responsive improvements */
