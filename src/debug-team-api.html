@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Team API - Data IESB</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .debug-info { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    </style>
+</head>
+<body>
+    <h1>Team API Debug Tool</h1>
+    <button onclick="runDebugTests()">Run Debug Tests</button>
+    <div id="results"></div>
+
+    <script>
+        async function runDebugTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="info">Running debug tests...</div>';
+            
+            let results = '<h2>Debug Results:</h2>';
+            
+            // Environment info
+            results += '<div class="debug-info">';
+            results += `<h3>Environment Information</h3>`;
+            results += `<strong>Hostname:</strong> ${window.location.hostname}<br>`;
+            results += `<strong>Full URL:</strong> ${window.location.href}<br>`;
+            results += `<strong>User Agent:</strong> ${navigator.userAgent}<br>`;
+            results += `<strong>Timestamp:</strong> ${new Date().toISOString()}<br>`;
+            results += '</div>';
+            
+            // Test API endpoint determination
+            const hostname = window.location.hostname;
+            let apiEndpoint;
+            
+            if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('local')) {
+                apiEndpoint = 'http://localhost:5001/api/team';
+            } else {
+                apiEndpoint = 'https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/team';
+            }
+            
+            results += `<div class="info"><strong>Determined API Endpoint:</strong> ${apiEndpoint}</div>`;
+            
+            // Test API connection
+            try {
+                results += `<h3>Testing API Connection</h3>`;
+                
+                const startTime = Date.now();
+                const response = await fetch(apiEndpoint);
+                const endTime = Date.now();
+                
+                results += `<div class="info">Response Time: ${endTime - startTime}ms</div>`;
+                results += `<div class="info">Status: ${response.status} ${response.statusText}</div>`;
+                results += `<div class="info">Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}</div>`;
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    results += `<div class="success">✅ API Success! Found ${data.data.length} team members</div>`;
+                    results += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    results += `<div class="error">❌ API Error!</div>`;
+                    results += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+                
+            } catch (error) {
+                results += `<div class="error">❌ Network Error: ${error.message}</div>`;
+                results += `<div class="error">Stack: ${error.stack}</div>`;
+            }
+            
+            // Test if team-data-api.js is loaded
+            results += `<h3>JavaScript Loading Test</h3>`;
+            if (typeof TeamDataManager !== 'undefined') {
+                results += `<div class="success">✅ TeamDataManager class is available</div>`;
+                
+                try {
+                    const manager = new TeamDataManager();
+                    results += `<div class="success">✅ TeamDataManager instance created</div>`;
+                    results += `<div class="info">API Endpoint from manager: ${manager.apiEndpoint}</div>`;
+                } catch (error) {
+                    results += `<div class="error">❌ Error creating TeamDataManager: ${error.message}</div>`;
+                }
+            } else {
+                results += `<div class="error">❌ TeamDataManager class not found - team-data-api.js may not be loaded</div>`;
+            }
+            
+            // Test DOM elements
+            results += `<h3>DOM Elements Test</h3>`;
+            const teamContainer = document.getElementById('dynamic-team-data');
+            if (teamContainer) {
+                results += `<div class="success">✅ Found #dynamic-team-data element</div>`;
+            } else {
+                results += `<div class="error">❌ #dynamic-team-data element not found</div>`;
+            }
+            
+            resultsDiv.innerHTML = results;
+        }
+        
+        // Auto-run on page load
+        window.addEventListener('load', runDebugTests);
+    </script>
+    
+    <!-- Load the team API script to test if it's working -->
+    <script src="./js/team-data-api.js"></script>
+</body>
+</html>
