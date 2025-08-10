@@ -1,0 +1,36 @@
+# Data IESB Code Owners
+# This file defines who must review and approve changes to specific parts of the codebase
+
+# Global owners - these users are requested for review on all changes
+* @roberto-diniz
+
+# Infrastructure and deployment files
+deploy-dev.sh @roberto-diniz
+.github/workflows/ @roberto-diniz
+dev-config.json @roberto-diniz
+branch-protection-config.json @roberto-diniz
+
+# AWS and infrastructure documentation
+DEV-README.md @roberto-diniz
+change-default-branch.md @roberto-diniz
+
+# Team data and dynamic content
+src/js/team-data.js @roberto-diniz @leonardo-a-pereira
+src/equipe.html @roberto-diniz @leonardo-a-pereira
+
+# Database and backend related
+reports.json @roberto-diniz @Ilton-ferreira
+
+# Styling and design
+src/style/ @roberto-diniz @marley-silva
+src/miv.html @roberto-diniz @marley-silva
+
+# Main pages - require multiple approvals
+src/index.html @roberto-diniz @leonardo-a-pereira
+src/quem-somos.html @roberto-diniz @leonardo-a-pereira
+
+# Configuration files - require admin approval
+*.json @roberto-diniz
+*.yml @roberto-diniz
+*.yaml @roberto-diniz
+*.sh @roberto-diniz
