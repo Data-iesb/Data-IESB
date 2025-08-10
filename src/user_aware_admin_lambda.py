@@ -122,6 +122,32 @@ def get_user_email_from_token(event):
         print(f"Error extracting email from token: {e}")
         return None
 
+def get_next_report_id():
+    """Get the next incremental report ID"""
+    try:
+        # Scan table to find the highest report_id
+        response = table.scan(
+            ProjectionExpression='report_id'
+        )
+        
+        max_id = 0
+        for item in response['Items']:
+            try:
+                # Try to convert report_id to integer
+                current_id = int(item['report_id'])
+                if current_id > max_id:
+                    max_id = current_id
+            except (ValueError, TypeError):
+                # Skip non-numeric IDs (like UUIDs from previous tests)
+                continue
+        
+        return str(max_id + 1)
+        
+    except Exception as e:
+        print(f"Error getting next report ID: {e}")
+        # Fallback to timestamp-based ID if scan fails
+        return str(int(datetime.utcnow().timestamp()))
+
 def parse_multipart_form_data(event):
     """Parse multipart form data from API Gateway event"""
     try:
@@ -287,8 +313,8 @@ def create_user_report(event, user_email, headers):
                 'body': json.dumps({'message': 'Invalid form data or missing file'})
             }
         
-        # Generate report ID
-        report_id = str(uuid.uuid4())
+        # Generate incremental report ID
+        report_id = get_next_report_id()
         timestamp = datetime.utcnow().isoformat()
         
         # Upload file to S3
