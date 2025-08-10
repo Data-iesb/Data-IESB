@@ -6,17 +6,20 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 import jwt
 from jwt.exceptions import InvalidTokenError
+import re
 
 # AWS clients
 s3_client = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
 cognito_client = boto3.client('cognito-idp')
+cloudfront_client = boto3.client('cloudfront')
 
 # Configuration
 BUCKET_NAME = 'dataiesb'
 REPORTS_TABLE = 'dataiesb-reports'
 COGNITO_USER_POOL_ID = 'us-east-1_QvLQs82bE'
 COGNITO_REGION = 'us-east-1'
+CLOUDFRONT_DISTRIBUTION_ID = 'E371T2F886B5KI'
 
 # DynamoDB table
 table = dynamodb.Table(REPORTS_TABLE)
@@ -114,6 +117,68 @@ def get_user_email_from_token(event):
         print(f"Error extracting email from token: {e}")
         return None
 
+def parse_multipart_form_data(event):
+    """Parse multipart form data from API Gateway event"""
+    try:
+        content_type = event.get('headers', {}).get('content-type', '')
+        if 'multipart/form-data' not in content_type:
+            return None, None
+        
+        # Extract boundary
+        boundary_match = re.search(r'boundary=([^;]+)', content_type)
+        if not boundary_match:
+            return None, None
+        
+        boundary = boundary_match.group(1)
+        
+        # Decode body
+        body = event.get('body', '')
+        if event.get('isBase64Encoded', False):
+            body = base64.b64decode(body).decode('utf-8')
+        
+        # Parse form data
+        form_data = {}
+        file_data = None
+        
+        # Split by boundary
+        parts = body.split(f'--{boundary}')
+        
+        for part in parts:
+            if 'Content-Disposition: form-data' in part:
+                # Extract field name
+                name_match = re.search(r'name="([^"]+)"', part)
+                if not name_match:
+                    continue
+                
+                field_name = name_match.group(1)
+                
+                # Check if it's a file
+                if 'filename=' in part:
+                    filename_match = re.search(r'filename="([^"]+)"', part)
+                    if filename_match:
+                        filename = filename_match.group(1)
+                        # Extract file content (after double newline)
+                        content_start = part.find('\r\n\r\n')
+                        if content_start != -1:
+                            file_content = part[content_start + 4:].rstrip('\r\n')
+                            file_data = {
+                                'filename': filename,
+                                'content': file_content,
+                                'field_name': field_name
+                            }
+                else:
+                    # Regular form field
+                    content_start = part.find('\r\n\r\n')
+                    if content_start != -1:
+                        field_value = part[content_start + 4:].rstrip('\r\n')
+                        form_data[field_name] = field_value
+        
+        return form_data, file_data
+        
+    except Exception as e:
+        print(f"Error parsing multipart data: {e}")
+        return None, None
+
 def get_user_reports(user_email, headers):
     """Get all reports for a specific user"""
     try:
@@ -150,29 +215,46 @@ def get_user_reports(user_email, headers):
         }
 
 def create_user_report(event, user_email, headers):
-    """Create a new report for the user"""
+    """Create a new report for the user with file upload"""
     try:
         # Parse multipart form data
-        content_type = event.get('headers', {}).get('content-type', '')
-        if 'multipart/form-data' not in content_type:
+        form_data, file_data = parse_multipart_form_data(event)
+        
+        if not form_data or not file_data:
             return {
                 'statusCode': 400,
                 'headers': headers,
-                'body': json.dumps({'message': 'Content-Type must be multipart/form-data'})
+                'body': json.dumps({'message': 'Invalid form data or missing file'})
             }
         
-        # For now, just create a simple report entry
+        # Generate report ID
         report_id = str(uuid.uuid4())
         timestamp = datetime.utcnow().isoformat()
+        
+        # Upload file to S3
+        s3_key = f'reports/{report_id}/main.py'
+        try:
+            s3_client.put_object(
+                Bucket=BUCKET_NAME,
+                Key=s3_key,
+                Body=file_data['content'],
+                ContentType='text/x-python'
+            )
+        except Exception as e:
+            return {
+                'statusCode': 500,
+                'headers': headers,
+                'body': json.dumps({'message': f'Error uploading file to S3: {str(e)}'})
+            }
         
         # Create DynamoDB entry
         table.put_item(
             Item={
                 'report_id': report_id,
                 'user_email': user_email,
-                'titulo': 'New Report',  # Will be updated when we parse form data
-                'autor': user_email.split('@')[0],  # Use email username as default author
-                'descricao': 'Report created via admin interface',
+                'titulo': form_data.get('titulo', 'Untitled Report'),
+                'autor': form_data.get('autor', user_email.split('@')[0]),
+                'descricao': form_data.get('descricao', 'No description'),
                 'created_at': timestamp,
                 'updated_at': timestamp,
                 'deletado': False,
@@ -180,12 +262,20 @@ def create_user_report(event, user_email, headers):
             }
         )
         
+        # Invalidate CloudFront cache for the report
+        try:
+            invalidate_cloudfront_cache([f'/reports/{report_id}/*'])
+        except Exception as e:
+            print(f"CloudFront invalidation failed: {e}")
+            # Don't fail the request if CloudFront invalidation fails
+        
         return {
             'statusCode': 200,
             'headers': headers,
             'body': json.dumps({
                 'message': 'Report created successfully',
-                'report_id': report_id
+                'report_id': report_id,
+                's3_key': s3_key
             })
         }
         
@@ -216,12 +306,51 @@ def update_user_report(event, user_email, report_id, headers):
                 'body': json.dumps({'message': 'Access denied - Report belongs to another user'})
             }
         
-        # Update report
+        # Parse form data for updates
+        form_data, file_data = parse_multipart_form_data(event)
+        
+        # Update report metadata
         timestamp = datetime.utcnow().isoformat()
+        update_expression = 'SET updated_at = :timestamp'
+        expression_values = {':timestamp': timestamp}
+        
+        if form_data:
+            if 'titulo' in form_data:
+                update_expression += ', titulo = :titulo'
+                expression_values[':titulo'] = form_data['titulo']
+            if 'autor' in form_data:
+                update_expression += ', autor = :autor'
+                expression_values[':autor'] = form_data['autor']
+            if 'descricao' in form_data:
+                update_expression += ', descricao = :descricao'
+                expression_values[':descricao'] = form_data['descricao']
+        
+        # Update file if provided
+        if file_data:
+            s3_key = f'reports/{report_id}/main.py'
+            try:
+                s3_client.put_object(
+                    Bucket=BUCKET_NAME,
+                    Key=s3_key,
+                    Body=file_data['content'],
+                    ContentType='text/x-python'
+                )
+                
+                # Invalidate CloudFront cache
+                invalidate_cloudfront_cache([f'/reports/{report_id}/*'])
+                
+            except Exception as e:
+                return {
+                    'statusCode': 500,
+                    'headers': headers,
+                    'body': json.dumps({'message': f'Error updating file: {str(e)}'})
+                }
+        
+        # Update DynamoDB
         table.update_item(
             Key={'report_id': report_id},
-            UpdateExpression='SET updated_at = :timestamp',
-            ExpressionAttributeValues={':timestamp': timestamp}
+            UpdateExpression=update_expression,
+            ExpressionAttributeValues=expression_values
         )
         
         return {
@@ -268,6 +397,12 @@ def delete_user_report(user_email, report_id, headers):
             }
         )
         
+        # Invalidate CloudFront cache
+        try:
+            invalidate_cloudfront_cache([f'/reports/{report_id}/*'])
+        except Exception as e:
+            print(f"CloudFront invalidation failed: {e}")
+        
         return {
             'statusCode': 200,
             'headers': headers,
@@ -280,3 +415,26 @@ def delete_user_report(user_email, report_id, headers):
             'headers': headers,
             'body': json.dumps({'message': f'Error deleting report: {str(e)}'})
         }
+
+def invalidate_cloudfront_cache(paths):
+    """Invalidate CloudFront cache for specific paths"""
+    try:
+        caller_reference = f"lambda-invalidation-{int(datetime.utcnow().timestamp())}"
+        
+        response = cloudfront_client.create_invalidation(
+            DistributionId=CLOUDFRONT_DISTRIBUTION_ID,
+            InvalidationBatch={
+                'Paths': {
+                    'Quantity': len(paths),
+                    'Items': paths
+                },
+                'CallerReference': caller_reference
+            }
+        )
+        
+        print(f"CloudFront invalidation created: {response['Invalidation']['Id']}")
+        return response
+        
+    except Exception as e:
+        print(f"Error creating CloudFront invalidation: {e}")
+        raise e
