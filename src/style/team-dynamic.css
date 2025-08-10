@@ -326,3 +326,64 @@
         font-size: 1em;
     }
 }
+/* LinkedIn button styling following MMIV blue color scheme */
+.social-links {
+    margin-top: 0.8rem;
+}
+
+.linkedin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #007bff; /* Blue background following MMIV style */
+    color: #FFFFFF; /* White text */
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+}
+
+.linkedin-link:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    color: #FFFFFF; /* Keep white text on hover */
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.linkedin-link svg {
+    flex-shrink: 0;
+}
+
+.team-member .email {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 0;
+}
+
+/* Print styles for LinkedIn links */
+@media print {
+    .linkedin-link {
+        background: #007bff !important; /* Blue background */
+        color: #FFFFFF !important; /* White text */
+        border: 1px solid #000000 !important;
+    }
+}
+
+/* Responsive improvements for LinkedIn links */
+@media (max-width: 768px) {
+    .linkedin-link {
+        font-size: 0.85em;
+        padding: 6px 12px;
+        gap: 6px;
+    }
+    
+    .linkedin-link svg {
+        width: 16px;
+        height: 16px;
+    }
+}
