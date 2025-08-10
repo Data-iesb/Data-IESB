@@ -48,40 +48,42 @@
         .color-box {
             width: 22%;
             min-width: 200px;
-            height: 200px;
+            height: 250px;
             border-radius: 10px;
             text-align: center;
-            color: white;
             font-weight: bold;
             padding-top: 50px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .color-box p {
-            font-size: 1.2rem;
+        /* Color combination templates */
+        .combination-1 {
+            background: linear-gradient(135deg, #D13F42 50%, #FFFFFF 50%);
+            color: #000000;
         }
 
-        .vermelho {
-            background-color: #D13F42;
+        .combination-2 {
+            background: linear-gradient(135deg, #1D345B 50%, #FFFFFF 50%);
+            color: #000000;
         }
 
-        .branco {
-            background-color: #FFFFFF;
-            color: #333; /* Adjust text color for contrast */
-        }
-
-        .azul {
-            background-color: #1D345B;
-        }
-
-        .cinza {
-            background-color: #E4E4E4;
-            color: #333; /* Adjust text color for contrast */
-        }
-
-        .preto {
-            background-color: #000000;
+        .combination-3 {
+            background: linear-gradient(135deg, #D13F42 50%, #000000 50%);
             color: #FFFFFF;
+        }
+
+        .combination-4 {
+            background: linear-gradient(135deg, #1D345B 50%, #E4E4E4 50%);
+            color: #FFFFFF;
+        }
+
+        .combination-5 {
+            background: linear-gradient(135deg, #000000 50%, #FFFFFF 50%);
+            color: #D13F42;
         }
 
         .code-box {
@@ -94,18 +96,27 @@
             overflow-x: auto;
         }
 
+        .color-box p {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
         .copy-btn {
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 15px;
+            padding: 8px 16px;
             background-color: #1D345B;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
 
         .copy-btn:hover {
             background-color: #D13F42;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -119,57 +130,81 @@
     </div>
 
     <div class="container">
-        <h1>Cores para Visualização</h1>
+        <h1>Templates de Combinações de Cores</h1>
         
         <div class="color-boxes">
-            <div class="color-box vermelho">
-                <p>Vermelho</p>
-                <p>#D13F42</p>
-                <button class="copy-btn" onclick="copyToClipboard('#D13F42')">Copiar Código</button>
+            <div class="color-box combination-1">
+                <p>Vermelho + Branco</p>
+                <p>#D13F42 + #FFFFFF</p>
+                <button class="copy-btn" onclick="copyToClipboard('Red: #D13F42, White: #FFFFFF')">Copiar Combinação</button>
             </div>
-            <div class="color-box branco">
-                <p>Branco</p>
-                <p>#FFFFFF</p>
-                <button class="copy-btn" onclick="copyToClipboard('#FFFFFF')">Copiar Código</button>
+            <div class="color-box combination-2">
+                <p>Azul + Branco</p>
+                <p>#1D345B + #FFFFFF</p>
+                <button class="copy-btn" onclick="copyToClipboard('Blue: #1D345B, White: #FFFFFF')">Copiar Combinação</button>
             </div>
-            <div class="color-box azul">
-                <p>Azul</p>
-                <p>#1D345B</p>
-                <button class="copy-btn" onclick="copyToClipboard('#1D345B')">Copiar Código</button>
+            <div class="color-box combination-3">
+                <p>Vermelho + Preto</p>
+                <p>#D13F42 + #000000</p>
+                <button class="copy-btn" onclick="copyToClipboard('Red: #D13F42, Black: #000000')">Copiar Combinação</button>
             </div>
-            <div class="color-box cinza">
-                <p>Cinza</p>
-                <p>#E4E4E4</p>
-                <button class="copy-btn" onclick="copyToClipboard('#E4E4E4')">Copiar Código</button>
+            <div class="color-box combination-4">
+                <p>Azul + Cinza</p>
+                <p>#1D345B + #E4E4E4</p>
+                <button class="copy-btn" onclick="copyToClipboard('Blue: #1D345B, Gray: #E4E4E4')">Copiar Combinação</button>
             </div>
-            <div class="color-box preto">
-                <p>Preto</p>
-                <p>#000000</p>
-                <button class="copy-btn" onclick="copyToClipboard('#000000')">Copiar Código</button>
+            <div class="color-box combination-5">
+                <p>Preto + Branco</p>
+                <p>#000000 + #FFFFFF</p>
+                <button class="copy-btn" onclick="copyToClipboard('Black: #000000, White: #FFFFFF')">Copiar Combinação</button>
             </div>
         </div>
 
         <div class="code-box">
-            <p>Código para as cores:</p>
+            <p>Templates de Combinações de Cores:</p>
             <pre>
-.vermelho { background-color: #D13F42; }
-.branco { background-color: #FFFFFF; color: #333; }
-.azul { background-color: #1D345B; }
-.cinza { background-color: #E4E4E4; color: #333; }
-.preto { background-color: #000000; color: #FFFFFF; }
+/* Template 1: Vermelho + Branco (Botões Primários) */
+.btn-primary { 
+    background-color: #D13F42; 
+    color: #FFFFFF; 
+}
+
+/* Template 2: Azul + Branco (Elementos de Navegação) */
+.nav-element { 
+    background-color: #1D345B; 
+    color: #FFFFFF; 
+}
+
+/* Template 3: Vermelho + Preto (Elementos de Destaque) */
+.highlight { 
+    background-color: #D13F42; 
+    color: #000000; 
+}
+
+/* Template 4: Azul + Cinza (Backgrounds Sutis) */
+.subtle-bg { 
+    background-color: #1D345B; 
+    border: 1px solid #E4E4E4; 
+}
+
+/* Template 5: Preto + Branco (Texto e Contraste) */
+.high-contrast { 
+    background-color: #000000; 
+    color: #FFFFFF; 
+}
             </pre>
         </div>
     </div>
 
     <script>
-        function copyToClipboard(colorCode) {
+        function copyToClipboard(combinationText) {
             const tempInput = document.createElement('input');
-            tempInput.value = colorCode;
+            tempInput.value = combinationText;
             document.body.appendChild(tempInput);
             tempInput.select();
             document.execCommand('copy');
             document.body.removeChild(tempInput);
-            alert('Código copiado: ' + colorCode);
+            alert('Combinação copiada: ' + combinationText);
         }
     </script>
 
