@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quem Somos - Data IESB</title>
-    <link rel="stylesheet" href="./style/home.css"> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="./style/home.css"> 
+    <link rel="stylesheet" href="./style/team-dynamic.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -67,56 +69,8 @@
                 <h2>Equipe Técnica</h2>
 		<p class="subtitle">A equipe técnica do Projeto Big Data - IESB é formada predominantemente por professores, pesquisadores e estudantes dos cursos de "<b>Bacharelado em Ciência de Dados e Inteligência Artificial</b>" e do "<b>Mestrado Profissional em Gestão Estratégica de Organizações</b>" que atuam na gestão, desenvolvimento e implementação das soluções analíticas e tecnologias previstas no projeto.</p>
                 <div class="team-grid">
-                    <div class="team-column">
-                        <h3>Coordenação:</h3>
-                        <div class="team-member">
-                            <p><strong>Professor Sérgio da Costa Côrtes</strong></p>
-                            <p>sergio.cortes@iesb.edu.br</p>
-                        </div>
-                        <div class="team-member">
-                             <p><strong>Professora Simome de Araújo Góes Assis</strong></p>
-                            <p>simone.a.assis@iesb.edu.br</p>
-                        </div>
-                         <div class="team-member">
-                             <p><strong>Professora Natália Ribeiro de Souza Evangelista</strong></p>
-                            <p>natalia.evangelista@iesb.edu.br</p>
-                        </div>
-                    </div>
-                    <div class="team-column">
-                        <h3>Aluno Analista de Infraestrutura e DevOps:</h3>
-                        <div class="team-member">
-                            <p><strong>Roberto Moreira Diniz</strong></p>
-                            <p>roberto.diniz@iesb.edu.br</p>
-                        </div>
-                        
-                        <h3>Alunos Cientistas de Dados e Analistas de IA:</h3>
-                        <div class="team-member-grid">
-                            <div class="team-member">
-                                <p><strong>Guilherme Rocha Duarte</strong></p>
-                                <p>guilherme.duarte@iesb.edu.br</p>
-                            </div>
-                            <div class="team-member">
-                                <p><strong>Leonardo Araújo Pereira</strong></p>
-                                <p>leonardo.a.pereira@iesb.edu.br</p>
-                            </div>
-                             <div class="team-member">
-                                <p><strong>Leonardo Borges Silva Braga</strong></p>
-                                <p>leonardo.braga@iesb.edu.br</p>
-                            </div>
-                            <div class="team-member">
-                                <p><strong>Marley Abe Silva</strong></p>
-                                <p>marley.silva@iesb.edu.br</p>
-                            </div>
-                             <div class="team-member">
-                                <p><strong>Pedro Martins Rodrigues</strong></p>
-                                <p>pedro.m.rodrigues@iesb.edu.br</p>
-                            </div>
-                             <div class="team-member">
-                                <p><strong>William Wallace Ribeiro Matos</strong></p>
-                                <p>william.w.matos@iesb.edu.br</p>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Team data will be loaded dynamically from DynamoDB -->
+                    <div class="loading">Carregando dados da equipe...</div>
                 </div>
             </div>
         </section>
@@ -135,6 +89,9 @@
             </nav>
         </div>
     </footer>
+
+    <!-- Team Data JavaScript -->
+    <script src="./js/team-data.js"></script>
 
 </body>
 </html>
