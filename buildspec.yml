@@ -28,11 +28,11 @@ phases:
           export SITE_URL="https://d2v66tm8wx23ar.cloudfront.net"
         fi
       - echo "Starting $ENVIRONMENT deployment..."
-      - echo "Environment: $ENVIRONMENT"
-      - echo "Region: $AWS_REGION"
-      - echo "S3 Bucket: $S3_BUCKET"
-      - echo "CloudFront Distribution: $CLOUDFRONT_ID"
-      - echo "Site URL: $SITE_URL"
+      - echo "Environment is $ENVIRONMENT"
+      - echo "Region is $AWS_REGION"
+      - echo "S3 Bucket is $S3_BUCKET"
+      - echo "CloudFront Distribution is $CLOUDFRONT_ID"
+      - echo "Site URL is $SITE_URL"
       - aws --version
 
   build:
@@ -46,7 +46,7 @@ phases:
       - echo "Invalidating $ENVIRONMENT CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
       - echo "$ENVIRONMENT deployment completed successfully"
-      - echo "$ENVIRONMENT site: $SITE_URL"
+      - echo "$ENVIRONMENT site is $SITE_URL"
 
 artifacts:
   files:
