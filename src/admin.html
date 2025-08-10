@@ -137,7 +137,7 @@
     function checkAuth() {
       const token = localStorage.getItem("idToken");
       if (!token) {
-        window.location.href = '/login.html';
+        window.location.href = 'https://dataiesb.com/login.html';
         return;
       }
 
@@ -199,7 +199,7 @@
 
     async function loadReports() {
       try {
-        const response = await apiCall('/reports');
+        const response = await apiCall('/dataiesb-auth/reports');
         if (response.ok) {
           const reports = await response.json();
           displayReports(reports);
@@ -267,7 +267,7 @@
       const formData = new FormData(this);
       
       try {
-        const response = await apiCall('/reports', {
+        const response = await apiCall('/dataiesb-auth/reports', {
           method: 'POST',
           body: formData
         });
@@ -301,7 +301,7 @@
       const reportId = document.getElementById('editReportId').value;
 
       try {
-        const response = await apiCall(`/reports/${reportId}`, {
+        const response = await apiCall(`/dataiesb-auth/reports/${reportId}`, {
           method: 'PUT',
           body: formData
         });
@@ -326,7 +326,7 @@
       }
 
       try {
-        const response = await apiCall(`/reports/${id}`, {
+        const response = await apiCall(`/dataiesb-auth/reports/${id}`, {
           method: 'DELETE'
         });
 
@@ -345,7 +345,7 @@
 
     async function restoreReport(id) {
       try {
-        const response = await apiCall(`/reports/${id}/restore`, {
+        const response = await apiCall(`/dataiesb-auth/reports/${id}/restore`, {
           method: 'POST'
         });
 
