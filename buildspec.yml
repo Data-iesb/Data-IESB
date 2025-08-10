@@ -2,8 +2,9 @@ version: 0.2
 
 env:
   variables:
-    ACCOUNT_ID: "248189947068"
-    REPOSITORY: "dataiesb-site"
+    REGION: "sa-east-1"
+    S3_BUCKET: "dataiesb"
+    CLOUDFRONT_DISTRIBUTION_ID: "E371T2F886B5KI"
 
 phases:
   install:
@@ -14,56 +15,24 @@ phases:
 
   pre_build:
     commands:
-      - echo "Detecting branch and setting deployment configuration..."
-      - |
-        if [ -n "$CODEBUILD_WEBHOOK_HEAD_REF" ]; then
-          BRANCH_NAME=$(echo $CODEBUILD_WEBHOOK_HEAD_REF | sed 's/refs\/heads\///')
-        elif [ -n "$CODEBUILD_SOURCE_VERSION" ]; then
-          BRANCH_NAME=$CODEBUILD_SOURCE_VERSION
-        else
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-        fi
-        echo "Detected branch: $BRANCH_NAME"
-        
-        if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "master" ]; then
-          echo "Configuring for PRODUCTION deployment..."
-          export ENVIRONMENT="production"
-          export REGION="sa-east-1"
-          export S3_BUCKET="dataiesb"
-          export CLOUDFRONT_DISTRIBUTION_ID="E371T2F886B5KI"
-          export SITE_URL="https://dataiesb.com"
-        elif [ "$BRANCH_NAME" = "dev" ] || [ "$BRANCH_NAME" = "development" ]; then
-          echo "Configuring for DEVELOPMENT deployment..."
-          export ENVIRONMENT="development"
-          export REGION="us-east-1"
-          export S3_BUCKET="dev-dataiesb"
-          export CLOUDFRONT_DISTRIBUTION_ID="E142Z1CPAKR8S8"
-          export SITE_URL="https://d2v66tm8wx23ar.cloudfront.net"
-        else
-          echo "Unknown branch: $BRANCH_NAME"
-          echo "Supported branches: main, dev"
-          exit 1
-        fi
-        
-        echo "Environment: $ENVIRONMENT"
-        echo "Region: $REGION"
-        echo "S3 Bucket: $S3_BUCKET"
-        echo "CloudFront Distribution: $CLOUDFRONT_DISTRIBUTION_ID"
-        echo "Site URL: $SITE_URL"
+      - echo "Starting deployment to production..."
+      - echo "Region: $REGION"
+      - echo "S3 Bucket: $S3_BUCKET"
+      - echo "CloudFront Distribution: $CLOUDFRONT_DISTRIBUTION_ID"
       - aws --version
 
   build:
     commands:
-      - echo "Uploading files to $ENVIRONMENT S3 bucket ($S3_BUCKET)..."
+      - echo "Uploading files to S3 bucket..."
       - aws s3 sync src/ s3://$S3_BUCKET/ --region $REGION --delete --exclude "*.sh" --exclude "*.json" --exclude ".git/*" --exclude ".github/*" --exclude "*.md"
-      - echo "Files successfully synced to $ENVIRONMENT S3"
+      - echo "Files successfully synced to S3"
 
   post_build:
     commands:
-      - echo "Invalidating $ENVIRONMENT CloudFront cache..."
+      - echo "Invalidating CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
       - echo "Deployment completed successfully!"
-      - echo "Site URL: $SITE_URL"
+      - echo "Site URL: https://dataiesb.com"
 
 artifacts:
   files:
