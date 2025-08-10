@@ -108,5 +108,25 @@
         </div>
     </footer>
 
+    <!-- Amazon Q Business Chatbot Integration -->
+    <script src="./js/qbusiness-chatbot.js"></script>
+    <script>
+        // Configure the chatbot
+        window.qbChatbotConfig = {
+            apiUrl: 'http://localhost:5000', // Update this to your server URL in production
+            title: 'Assistente de Parceiros',
+            welcomeMessage: 'Olá! Sou seu assistente especializado em informações sobre nossos parceiros. Como posso ajudá-lo?',
+            placeholder: 'Pergunte sobre nossos parceiros...',
+            primaryColor: '#232F3E',
+            accentColor: '#007DBA',
+            position: 'bottom-right'
+        };
+        
+        // Initialize the chatbot when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            new QBusinessChatbot(window.qbChatbotConfig);
+        });
+    </script>
+
 </body>
 </html>

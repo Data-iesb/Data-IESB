@@ -1,0 +1,57 @@
+name: Deploy to Development Environment
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Deploy to S3
+      run: |
+        echo "🚀 Deploying to Development Environment"
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Commit: ${{ github.sha }}"
+        
+        # Sync files to dev S3 bucket
+        aws s3 sync src/ s3://dev-dataiesb/ --delete \
+          --exclude "*.sh" \
+          --exclude "*.json" \
+          --exclude ".git/*" \
+          --exclude ".github/*"
+          
+    - name: Invalidate CloudFront
+      run: |
+        # Create CloudFront invalidation
+        INVALIDATION_ID=$(aws cloudfront create-invalidation \
+          --distribution-id E142Z1CPAKR8S8 \
+          --paths "/*" \
+          --query 'Invalidation.Id' \
+          --output text)
+        
+        echo "✅ CloudFront invalidation created: $INVALIDATION_ID"
+        echo "🌐 Development site: https://d2v66tm8wx23ar.cloudfront.net"
+        
+    - name: Deployment Summary
+      run: |
+        echo "## 🎉 Development Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **S3 Bucket:** dev-dataiesb" >> $GITHUB_STEP_SUMMARY
+        echo "- **CloudFront:** E142Z1CPAKR8S8" >> $GITHUB_STEP_SUMMARY
+        echo "- **Dev URL:** https://d2v66tm8wx23ar.cloudfront.net" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status:** ✅ Deployed Successfully" >> $GITHUB_STEP_SUMMARY
