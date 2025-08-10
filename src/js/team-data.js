@@ -1,6 +1,6 @@
 class TeamDataManager {
     constructor() {
-        this.tableName = 'DataIESB-Team';
+        this.tableName = 'DataIESB-TeamMembers';
         this.region = 'us-east-1';
         this.docClient = null;
         this.initializeAWS();
@@ -33,21 +33,17 @@ class TeamDataManager {
 
         try {
             const params = {
-                TableName: this.tableName,
-                FilterExpression: 'active = :active',
-                ExpressionAttributeValues: {
-                    ':active': true
-                }
+                TableName: this.tableName
             };
 
             console.log('Scanning DynamoDB table:', this.tableName);
             const result = await this.docClient.scan(params).promise();
             
             if (result.Items && result.Items.length > 0) {
-                console.log(`Found ${result.Items.length} active team members in DynamoDB`);
+                console.log(`Found ${result.Items.length} team members in DynamoDB`);
                 return result.Items;
             } else {
-                console.log('No active team members found in DynamoDB, using fallback data');
+                console.log('No team members found in DynamoDB, using fallback data');
                 return this.getFallbackData();
             }
         } catch (error) {
