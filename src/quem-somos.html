@@ -9,6 +9,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Creative team design styles -->
+    <style>
+        .team-grid {
+            background: none !important;
+        }
+        
+        .team-grid * {
+            background-image: none !important;
+        }
+        
+        /* Allow our custom gradients but block old ones */
+        .team-member,
+        .role-badge,
+        .team-category * {
+            background-image: none !important;
+            background: none !important;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .team-grid > div > div {
+                grid-template-columns: 1fr !important;
+                gap: 30px !important;
+                padding: 20px !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -55,9 +83,8 @@
                     </div>
                     <div class="project-media">
                         <img src="https://d28lvm9jkyfotx.cloudfront.net/img/campus.jpeg" alt="Laboratório de computadores do IESB">
-                        <div class="project-buttons">
+                        <div class="hero-buttons">
                             <button class="btn btn-primary">Veja nossos estudos publicados</button>
-                            <a href="#" class="btn-link">Entre em contato ></a>
                         </div>
                     </div>
                 </div>
