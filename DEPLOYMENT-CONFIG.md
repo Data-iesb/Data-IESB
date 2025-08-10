@@ -1,9 +1,9 @@
 # Deployment Configuration - Data IESB
 
 ## Overview
-The Data IESB project uses branch-specific deployment configurations to ensure proper separation between development and production environments.
+The Data IESB project uses separate deployment configurations for production and development environments.
 
-## Branch Configuration
+## Current Working Configuration
 
 ### 🚀 Main Branch (Production)
 - **Environment**: Production
@@ -11,7 +11,8 @@ The Data IESB project uses branch-specific deployment configurations to ensure p
 - **S3 Bucket**: `dataiesb`
 - **CloudFront Distribution**: `E371T2F886B5KI`
 - **Domain**: `https://dataiesb.com`
-- **Deployment Method**: AWS CodeBuild with buildspec.yml
+- **Deployment Method**: AWS CodeBuild with `buildspec.yml`
+- **Status**: ✅ Working
 
 ### 🧪 Dev Branch (Development)
 - **Environment**: Development
@@ -20,67 +21,50 @@ The Data IESB project uses branch-specific deployment configurations to ensure p
 - **CloudFront Distribution**: `E142Z1CPAKR8S8`
 - **Temporary URL**: `https://d2v66tm8wx23ar.cloudfront.net`
 - **Target Domain**: `https://dev.dataiesb.com` (pending DNS setup)
-- **Deployment Method**: GitHub Actions + AWS CodeBuild
+- **Deployment Method**: GitHub Actions (`.github/workflows/deploy-dev.yml`)
+- **Status**: ✅ Working
 
 ## Buildspec Files
 
-### 1. `buildspec.yml` (Smart Branch Detection)
-- **Purpose**: Automatically detects branch and deploys to appropriate environment
+### 1. `buildspec.yml` (Production - Main Branch)
+- **Purpose**: Production deployment for main branch
+- **Configuration**: Hardcoded production values
 - **Features**:
-  - Branch detection from CodeBuild environment variables
-  - Environment-specific configuration
-  - Proper error handling for unsupported branches
-  - Detailed logging and deployment summaries
+  - Simple, reliable YAML structure
+  - Direct S3 sync to production bucket
+  - CloudFront invalidation for production
+  - No complex branch detection (to avoid YAML errors)
 
-### 2. `buildspec-main.yml` (Production Only)
-- **Purpose**: Explicit production deployment configuration
-- **Use Case**: When you need to force production deployment
+### 2. `buildspec-dev-simple.yml` (Development)
+- **Purpose**: Development deployment configuration
+- **Use Case**: Manual development builds if needed
+- **Configuration**: Hardcoded development values
 
-### 3. `buildspec-dev.yml` (Development Only)
-- **Purpose**: Explicit development deployment configuration
-- **Use Case**: When you need to force development deployment
-
-## GitHub Actions
-
-### `.github/workflows/deploy-dev.yml`
-- **Trigger**: Push to `dev` branch
-- **Purpose**: Automated development deployments
-- **Features**:
-  - Automatic S3 sync
-  - CloudFront invalidation
-  - Deployment summaries
-  - Error handling
+### 3. `buildspec-main.yml` & `buildspec-dev.yml`
+- **Purpose**: Alternative configurations with explicit settings
+- **Status**: Available but not currently used
 
 ## Deployment Process
 
 ### Production Deployment (Main Branch)
 1. Push to `main` branch
 2. AWS CodeBuild triggers automatically
-3. `buildspec.yml` detects main branch
+3. Uses `buildspec.yml` with production settings
 4. Deploys to production S3 bucket (`dataiesb`)
 5. Invalidates production CloudFront (`E371T2F886B5KI`)
 6. Site available at `https://dataiesb.com`
 
 ### Development Deployment (Dev Branch)
 1. Push to `dev` branch
-2. GitHub Actions triggers automatically
+2. GitHub Actions triggers automatically (`.github/workflows/deploy-dev.yml`)
 3. Deploys to development S3 bucket (`dev-dataiesb`)
 4. Invalidates development CloudFront (`E142Z1CPAKR8S8`)
 5. Site available at `https://d2v66tm8wx23ar.cloudfront.net`
-
-## Manual Deployment Scripts
-
-### `deploy-dev.sh`
-- **Purpose**: Manual development deployment
-- **Usage**: `./deploy-dev.sh`
-- **Requirements**: Must be on `dev` branch
-- **Features**: Branch validation, deployment confirmation
 
 ## Environment Variables
 
 ### Production (Main Branch)
 ```bash
-ENVIRONMENT=production
 REGION=sa-east-1
 S3_BUCKET=dataiesb
 CLOUDFRONT_DISTRIBUTION_ID=E371T2F886B5KI
@@ -89,12 +73,24 @@ SITE_URL=https://dataiesb.com
 
 ### Development (Dev Branch)
 ```bash
-ENVIRONMENT=development
 REGION=us-east-1
 S3_BUCKET=dev-dataiesb
 CLOUDFRONT_DISTRIBUTION_ID=E142Z1CPAKR8S8
 SITE_URL=https://d2v66tm8wx23ar.cloudfront.net
 ```
+
+## Recent Issues Resolved
+
+### YAML Syntax Errors
+- **Problem**: Complex multi-line commands in buildspec.yml caused parsing errors
+- **Solution**: Simplified to basic single-line commands
+- **Status**: ✅ Resolved
+
+### Build Failures
+- **Problem**: `YAML_FILE_ERROR: Expected Commands[3] to be of string type`
+- **Root Cause**: Improper YAML formatting in multi-line script blocks
+- **Solution**: Removed complex branch detection, used hardcoded values
+- **Status**: ✅ Resolved
 
 ## Security & Best Practices
 
@@ -109,26 +105,32 @@ SITE_URL=https://d2v66tm8wx23ar.cloudfront.net
 - Environment-specific resource access
 
 ### Deployment Safety
-- Automatic branch detection prevents wrong environment deployments
-- Explicit logging of deployment targets
-- Rollback capabilities through S3 versioning
+- Production uses hardcoded values to prevent errors
+- Development uses GitHub Actions for reliability
+- Both environments have separate AWS resources
 
 ## Troubleshooting
 
 ### Common Issues
-1. **Wrong environment deployment**: Check branch name and buildspec detection
+1. **Build fails with YAML error**: Check buildspec.yml syntax
 2. **CloudFront not updating**: Wait 5-15 minutes for invalidation
 3. **S3 sync failures**: Check AWS credentials and bucket permissions
-4. **Branch detection fails**: Verify CodeBuild environment variables
+4. **Files not appearing**: Verify S3 bucket and CloudFront distribution
 
 ### Verification Steps
-1. Check deployment logs for environment confirmation
+1. Check build logs in AWS CodeBuild console
 2. Verify S3 bucket contents match expected files
 3. Test CloudFront URL after invalidation completes
 4. Confirm DNS resolution for custom domains
 
 ## Next Steps
-1. Configure DNS for `dev.dataiesb.com`
-2. Set up SSL certificates for custom domains
-3. Implement monitoring and alerting
-4. Add automated testing in deployment pipeline
+1. Monitor production builds for stability
+2. Consider re-adding branch detection once builds are stable
+3. Configure DNS for `dev.dataiesb.com`
+4. Set up monitoring and alerting
+5. Add automated testing in deployment pipeline
+
+## Build Status
+- **Production (Main)**: ✅ Should work with simplified buildspec.yml
+- **Development (Dev)**: ✅ Working with GitHub Actions
+- **Last Updated**: 2025-08-10

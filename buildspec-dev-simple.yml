@@ -1,0 +1,40 @@
+version: 0.2
+
+env:
+  variables:
+    REGION: "us-east-1"
+    S3_BUCKET: "dev-dataiesb"
+    CLOUDFRONT_DISTRIBUTION_ID: "E142Z1CPAKR8S8"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - pip install --upgrade awscli
+
+  pre_build:
+    commands:
+      - echo "Starting deployment to development..."
+      - echo "Region: $REGION"
+      - echo "S3 Bucket: $S3_BUCKET"
+      - echo "CloudFront Distribution: $CLOUDFRONT_DISTRIBUTION_ID"
+      - aws --version
+
+  build:
+    commands:
+      - echo "Uploading files to development S3 bucket..."
+      - aws s3 sync src/ s3://$S3_BUCKET/ --region $REGION --delete --exclude "*.sh" --exclude "*.json" --exclude ".git/*" --exclude ".github/*" --exclude "*.md"
+      - echo "Files successfully synced to development S3"
+
+  post_build:
+    commands:
+      - echo "Invalidating development CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+      - echo "Development deployment completed successfully!"
+      - echo "Site URL: https://d2v66tm8wx23ar.cloudfront.net"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'src'
