@@ -161,32 +161,6 @@ class TeamDataManager {
                 linkedin: 'https://linkedin.com/in/william-matos',
                 active: true
             }
-                active: true
-            },
-            {
-                id: '12',
-                email: 'ana.silva@iesb.edu.br',
-                name: 'Ana Carolina Silva',
-                role: 'Analista de Dados',
-                category: 'Equipe Técnica',
-                active: true
-            },
-            {
-                id: '13',
-                email: 'carlos.santos@iesb.edu.br',
-                name: 'Carlos Eduardo Santos',
-                role: 'Analista de Dados',
-                category: 'Equipe Técnica',
-                active: true
-            },
-            {
-                id: '14',
-                email: 'maria.oliveira@iesb.edu.br',
-                name: 'Maria Fernanda Oliveira',
-                role: 'Analista de Dados Sênior',
-                category: 'Equipe Técnica',
-                active: true
-            }
         ];
     }
 
