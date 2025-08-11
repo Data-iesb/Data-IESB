@@ -86,7 +86,7 @@ class TeamDataManager {
                 email: 'roberto.diniz@iesb.edu.br',
                 name: 'Roberto Moreira Diniz',
                 role: 'Especialista DevOps',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: 'https://linkedin.com/in/roberto-diniz',
                 active: true
@@ -96,7 +96,7 @@ class TeamDataManager {
                 email: 'Ilton.ferreira@iesb.edu.com.br',
                 name: 'Ilton Ferreira Mendes Neto',
                 role: 'Administrador de Banco de Dados',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: null,
                 active: true
@@ -106,7 +106,7 @@ class TeamDataManager {
                 email: 'marley.silva@iesb.edu.br',
                 name: 'Marley Abe Silva',
                 role: 'Desenvolvedor Full Stack',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: 'https://linkedin.com/in/marley-silva',
                 active: true
@@ -116,7 +116,7 @@ class TeamDataManager {
                 email: 'leonardo.a.pereira@iesb.edu.br',
                 name: 'Leonardo Araújo Pereira',
                 role: 'Líder de Data Science',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: 'https://linkedin.com/in/leonardo-pereira',
                 active: true
@@ -126,7 +126,7 @@ class TeamDataManager {
                 email: 'guilherme.duarte@iesb.edu.br',
                 name: 'Guilherme Rocha Duarte',
                 role: 'Analista de Dados e IA',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: 'https://linkedin.com/in/guilherme-duarte',
                 active: true
@@ -136,7 +136,7 @@ class TeamDataManager {
                 email: 'leonardo.braga@iesb.edu.br',
                 name: 'Leonardo Borges Silva Braga',
                 role: 'Analista de Dados e IA',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: null,
                 active: true
@@ -146,7 +146,7 @@ class TeamDataManager {
                 email: 'pedro.m.rodrigues@iesb.edu.br',
                 name: 'Pedro Martins Rodrigues',
                 role: 'Analista de IA',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: 'https://linkedin.com/in/pedro-rodrigues',
                 active: true
@@ -156,7 +156,7 @@ class TeamDataManager {
                 email: 'william.w.matos@iesb.edu.br',
                 name: 'William Wallace Ribeiro Matos',
                 role: 'Especialista em Machine Learning',
-                category: 'Technical Team',
+                category: 'Equipe Técnica',
                 escavador: null,
                 linkedin: 'https://linkedin.com/in/william-matos',
                 active: true
@@ -181,8 +181,8 @@ class TeamDataManager {
     renderTeamMember(member) {
         let socialLink = '';
         
-        // LinkedIn for Technical Team
-        if (member.linkedin && member.category === 'Technical Team') {
+        // LinkedIn for Equipe Técnica
+        if (member.linkedin && member.category === 'Equipe Técnica') {
             socialLink = `
                 <a href="${member.linkedin}" target="_blank" rel="noopener noreferrer" class="social-link linkedin-link" title="Conectar no LinkedIn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -254,7 +254,7 @@ class TeamDataManager {
             
             html += `
                 <div class="team-category ${layoutClass}">
-                    <h3 class="category-title">🔧 Technical Team <span class="member-count">(${technicalMembers.length})</span></h3>
+                    <h3 class="category-title">🔧 Equipe Técnica <span class="member-count">(${technicalMembers.length})</span></h3>
                     <div class="team-members">
             `;
             
