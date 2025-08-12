@@ -176,6 +176,7 @@ cython_debug/
 
 # Especificos do projeto
 uploads/
+tmp/
 
 # rodar localmente
 env_local.bat

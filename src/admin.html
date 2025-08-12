@@ -14,12 +14,14 @@
     button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; margin-right: 5px; }
     .btn-danger { background: #dc3545; }
     .btn-success { background: #28a745; }
+    .btn-warning { background: #ffc107; color: #212529; }
     .btn-small { padding: 5px 10px; font-size: 12px; }
     .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
     .success { background: #d4edda; color: #155724; }
     .error { background: #f8d7da; color: #721c24; }
     .reports-section { margin-top: 40px; }
     .report-item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .report-item.deleted { border-color: #dc3545; background-color: #f8f9fa; opacity: 0.7; }
     .report-title { font-weight: bold; margin-bottom: 5px; }
     .report-meta { font-size: 12px; color: #666; margin-bottom: 10px; }
     .report-actions { margin-top: 10px; }
@@ -27,6 +29,12 @@
                      background: white; border: 2px solid #ccc; padding: 20px; border-radius: 5px; z-index: 1000; }
     .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
                background: rgba(0,0,0,0.5); z-index: 999; }
+    .tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+    .tab { padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; }
+    .tab.active { border-bottom-color: #007bff; color: #007bff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .deleted-label { color: #dc3545; font-weight: bold; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -66,24 +74,35 @@
   </form>
 
   <div class="reports-section">
-    <h2>Meus Relatórios</h2>
-    <div id="reportsList">Carregando relatórios...</div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('active')">Relatórios Ativos</div>
+      <div class="tab" onclick="switchTab('deleted')">Relatórios Excluídos</div>
+    </div>
+    
+    <div id="activeReports" class="tab-content active">
+      <div id="activeReportsList">Carregando relatórios...</div>
+    </div>
+    
+    <div id="deletedReports" class="tab-content">
+      <div id="deletedReportsList">Carregando relatórios excluídos...</div>
+    </div>
   </div>
 
   <!-- Confirmation Dialog -->
   <div class="overlay" id="overlay"></div>
   <div class="confirm-dialog" id="confirmDialog">
-    <h3>Confirmar Exclusão</h3>
-    <p>Tem certeza que deseja excluir este relatório?</p>
-    <p><strong id="reportToDelete"></strong></p>
-    <button onclick="confirmDelete()" class="btn-danger">Sim, Excluir</button>
-    <button onclick="cancelDelete()">Cancelar</button>
+    <h3 id="confirmTitle">Confirmar Ação</h3>
+    <p id="confirmMessage">Tem certeza que deseja realizar esta ação?</p>
+    <p><strong id="reportToAction"></strong></p>
+    <button id="confirmBtn" onclick="confirmAction()" class="btn-danger">Confirmar</button>
+    <button onclick="cancelAction()">Cancelar</button>
   </div>
 
   <script>
     let currentUser = null;
     let authToken = null;
-    let reportToDeleteId = null;
+    let actionToConfirm = null;
+    let currentTab = 'active';
 
     function showMessage(text, type) {
       const div = document.getElementById('message');
@@ -115,6 +134,19 @@
       }
     }
 
+    function switchTab(tab) {
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab:nth-child(${tab === 'active' ? '1' : '2'})`).classList.add('active');
+      
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.getElementById(tab === 'active' ? 'activeReports' : 'deletedReports').classList.add('active');
+      
+      currentTab = tab;
+      loadReports();
+    }
+
     async function loadReports() {
       if (!authToken) return;
 
@@ -140,11 +172,36 @@
       }
     }
 
+    async function loadDeletedReports() {
+      if (!authToken) return;
+
+      try {
+        const response = await fetch('https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports?deleted=true', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const reports = await response.json();
+          displayDeletedReports(reports);
+        } else if (response.status === 401) {
+          logout();
+        } else {
+          showMessage('Erro ao carregar relatórios excluídos', 'error');
+        }
+      } catch (error) {
+        showMessage('Erro de conexão ao carregar relatórios excluídos', 'error');
+      }
+    }
+
     function displayReports(reports) {
-      const container = document.getElementById('reportsList');
+      const container = document.getElementById('activeReportsList');
       
       if (Object.keys(reports).length === 0) {
-        container.innerHTML = '<p>Você ainda não possui relatórios.</p>';
+        container.innerHTML = '<p>Você ainda não possui relatórios ativos.</p>';
         return;
       }
 
@@ -163,8 +220,45 @@
               <button onclick="downloadReport('${id}')" class="btn-success btn-small">
                 📥 Download
               </button>
+              <button onclick="showSoftDeleteConfirm('${id}', '${report.titulo}')" class="btn-warning btn-small">
+                🗂️ Ocultar
+              </button>
               <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn-danger btn-small">
-                🗑️ Excluir
+                🗑️ Excluir Permanente
+              </button>
+            </div>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    function displayDeletedReports(reports) {
+      const container = document.getElementById('deletedReportsList');
+      
+      if (Object.keys(reports).length === 0) {
+        container.innerHTML = '<p>Nenhum relatório excluído.</p>';
+        return;
+      }
+
+      let html = '';
+      for (const [id, report] of Object.entries(reports)) {
+        html += `
+          <div class="report-item deleted">
+            <div class="deleted-label">EXCLUÍDO</div>
+            <div class="report-title">${report.titulo}</div>
+            <div>Autor: ${report.autor}</div>
+            <div>${report.descricao}</div>
+            <div class="report-meta">
+              Criado: ${new Date(report.created_at).toLocaleDateString('pt-BR')} | 
+              Excluído: ${new Date(report.deleted_at).toLocaleDateString('pt-BR')}
+            </div>
+            <div class="report-actions">
+              <button onclick="showRestoreConfirm('${id}', '${report.titulo}')" class="btn-success btn-small">
+                ↩️ Restaurar
+              </button>
+              <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn-danger btn-small">
+                🗑️ Excluir Permanente
               </button>
             </div>
           </div>
@@ -208,48 +302,109 @@
       }
     }
 
-    function showDeleteConfirm(reportId, reportTitle) {
-      reportToDeleteId = reportId;
-      document.getElementById('reportToDelete').textContent = reportTitle;
+    function showSoftDeleteConfirm(reportId, reportTitle) {
+      actionToConfirm = { type: 'soft_delete', id: reportId };
+      document.getElementById('confirmTitle').textContent = 'Ocultar Relatório';
+      document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja ocultar este relatório? Ele poderá ser restaurado posteriormente.';
+      document.getElementById('reportToAction').textContent = reportTitle;
+      document.getElementById('confirmBtn').textContent = 'Sim, Ocultar';
+      document.getElementById('confirmBtn').className = 'btn-warning';
       document.getElementById('overlay').style.display = 'block';
       document.getElementById('confirmDialog').style.display = 'block';
     }
 
-    function cancelDelete() {
-      reportToDeleteId = null;
+    function showDeleteConfirm(reportId, reportTitle) {
+      actionToConfirm = { type: 'permanent_delete', id: reportId };
+      document.getElementById('confirmTitle').textContent = 'Excluir Permanentemente';
+      document.getElementById('confirmMessage').textContent = 'ATENÇÃO: Esta ação não pode ser desfeita! O relatório será excluído permanentemente.';
+      document.getElementById('reportToAction').textContent = reportTitle;
+      document.getElementById('confirmBtn').textContent = 'Sim, Excluir';
+      document.getElementById('confirmBtn').className = 'btn-danger';
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('confirmDialog').style.display = 'block';
+    }
+
+    function showRestoreConfirm(reportId, reportTitle) {
+      actionToConfirm = { type: 'restore', id: reportId };
+      document.getElementById('confirmTitle').textContent = 'Restaurar Relatório';
+      document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja restaurar este relatório?';
+      document.getElementById('reportToAction').textContent = reportTitle;
+      document.getElementById('confirmBtn').textContent = 'Sim, Restaurar';
+      document.getElementById('confirmBtn').className = 'btn-success';
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('confirmDialog').style.display = 'block';
+    }
+
+    function cancelAction() {
+      actionToConfirm = null;
       document.getElementById('overlay').style.display = 'none';
       document.getElementById('confirmDialog').style.display = 'none';
     }
 
-    async function confirmDelete() {
-      if (!reportToDeleteId || !authToken) {
-        cancelDelete();
+    async function confirmAction() {
+      if (!actionToConfirm || !authToken) {
+        cancelAction();
         return;
       }
 
       try {
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportToDeleteId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        let response;
+        const { type, id } = actionToConfirm;
 
-        if (response.ok) {
-          showMessage('Relatório excluído com sucesso!', 'success');
-          loadReports(); // Reload reports list
-        } else if (response.status === 401) {
+        if (type === 'soft_delete') {
+          response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            showMessage('Relatório ocultado com sucesso!', 'success');
+          }
+        } else if (type === 'restore') {
+          response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${id}/restore`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            showMessage('Relatório restaurado com sucesso!', 'success');
+          }
+        } else if (type === 'permanent_delete') {
+          response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${id}?permanent=true`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            showMessage('Relatório excluído permanentemente!', 'success');
+          }
+        }
+
+        if (response && response.status === 401) {
           logout();
-        } else {
+        } else if (response && !response.ok) {
           const errorText = await response.text();
-          showMessage(`Erro ao excluir relatório: ${errorText}`, 'error');
+          showMessage(`Erro: ${errorText}`, 'error');
+        } else {
+          loadReports();
+          if (currentTab === 'deleted') {
+            loadDeletedReports();
+          }
         }
       } catch (error) {
-        showMessage('Erro de conexão ao excluir relatório', 'error');
+        showMessage('Erro de conexão', 'error');
       }
 
-      cancelDelete();
+      cancelAction();
     }
 
     document.getElementById('form').onsubmit = async function(e) {
@@ -277,9 +432,9 @@
 
         if (response.ok) {
           const result = await response.json();
-          showMessage('Relatório criado com sucesso!', 'success');
+          showMessage(`Relatório criado com sucesso! Arquivo salvo em: s3://dataiesb-reports`, 'success');
           document.getElementById('form').reset();
-          loadReports(); // Reload reports list
+          loadReports();
         } else if (response.status === 401) {
           logout();
         } else {
