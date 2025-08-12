@@ -5,7 +5,7 @@
 
 set -e
 
-LAMBDA_FUNCTION_NAME="dataiesb-reports-handler"
+LAMBDA_FUNCTION_NAME="dataiesb-admin-reports"
 REPORTS_BUCKET="dataiesb-reports"
 DATASETS_BUCKET="dataiesb-datasets"
 REGION="us-east-1"
