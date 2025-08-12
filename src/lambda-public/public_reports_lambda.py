@@ -57,8 +57,8 @@ def lambda_handler(event, context):
                 'descricao': processed_item.get('descricao', ''),
                 'created_at': processed_item.get('created_at', ''),
                 'updated_at': processed_item.get('updated_at', ''),
-                # Keep backward compatibility fields
-                'id_s3': f"{report_id}/",
+                # Correct id_s3 format - just the report ID
+                'id_s3': report_id,
                 'deletado': False  # All returned reports are non-deleted
             }
             
