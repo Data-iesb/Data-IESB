@@ -1,7 +1,6 @@
 import json
 import boto3
 import base64
-import uuid
 from datetime import datetime
 import os
 
@@ -51,6 +50,35 @@ def lambda_handler(event, context):
         print(f"Error: {str(e)}")
         return error_response(f'Internal server error: {str(e)}', 500)
 
+def get_next_report_id():
+    """Generate the next incremental report ID"""
+    try:
+        table = dynamodb.Table(REPORTS_TABLE)
+        
+        # Scan table to find the highest existing report ID
+        response = table.scan(
+            ProjectionExpression='report_id'
+        )
+        
+        max_id = 0
+        for item in response['Items']:
+            try:
+                # Try to convert report_id to integer
+                current_id = int(item['report_id'])
+                if current_id > max_id:
+                    max_id = current_id
+            except (ValueError, TypeError):
+                # Skip non-numeric IDs
+                continue
+        
+        # Return next incremental ID
+        return str(max_id + 1)
+        
+    except Exception as e:
+        print(f"Error getting next report ID: {str(e)}")
+        # Fallback to timestamp-based ID if there's an error
+        return str(int(datetime.utcnow().timestamp()))
+
 def get_user_from_token(auth_header):
     """Extract user email from JWT token"""
     try:
@@ -81,8 +109,8 @@ def create_report(event, user_email):
             if field not in form_data:
                 return error_response(f'Missing required field: {field}', 400)
         
-        # Generate unique ID for the report
-        report_id = str(uuid.uuid4())
+        # Generate incremental ID for the report
+        report_id = get_next_report_id()
         timestamp = datetime.utcnow().isoformat()
         
         # Upload Python file to correct S3 bucket (dataiesb-reports)
