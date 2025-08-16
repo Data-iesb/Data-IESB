@@ -17,47 +17,39 @@
     .form-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 5px; font-weight: 500; }
     input, textarea, select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; }
-    button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; margin-right: 5px; border-radius: 5px; }
-    .btn-danger { background: #dc3545; }
-    .btn-success { background: #28a745; }
-    .btn-warning { background: #ffc107; color: #212529; }
-    .btn-info { background: #17a2b8; }
-    .btn-small { padding: 5px 10px; font-size: 12px; }
     .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
     .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .reports-section { margin-top: 40px; }
-    .report-item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; background: white; }
-    .report-item.deleted { border-color: #dc3545; background-color: #f8f9fa; opacity: 0.7; }
-    .report-title { font-weight: bold; margin-bottom: 5px; font-size: 16px; }
-    .report-meta { font-size: 12px; color: #666; margin-bottom: 10px; }
-    .report-actions { margin-top: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
-    .report-status { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
-    .status-active { background: #d4edda; color: #155724; }
-    .status-inactive { background: #f8d7da; color: #721c24; }
-    .status-draft { background: #fff3cd; color: #856404; }
+    .report-item { border: 1px solid #ddd; padding: 20px; margin: 15px 0; border-radius: 8px; background: white; }
+    .report-item.hidden { border-color: #ffc107; background-color: #fff3cd; opacity: 0.8; }
+    .report-title { font-weight: bold; margin-bottom: 8px; font-size: 18px; }
+    .report-meta { font-size: 14px; color: #666; margin-bottom: 15px; }
+    .report-actions { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .report-status { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .status-visible { background: #d4edda; color: #155724; }
+    .status-hidden { background: #fff3cd; color: #856404; }
     .confirm-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                     background: white; border: 2px solid #ccc; padding: 20px; border-radius: 8px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                     background: white; border: 2px solid #ccc; padding: 30px; border-radius: 8px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
                background: rgba(0,0,0,0.5); z-index: 999; }
     .tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
     .tab { padding: 12px 24px; cursor: pointer; border-bottom: 2px solid transparent; background: none; border: none; font-size: 14px; }
-    .tab.active { border-bottom-color: #007bff; color: #007bff; font-weight: 500; }
+    .tab.active { border-bottom-color: #D13F42; color: #D13F42; font-weight: 500; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .deleted-label { color: #dc3545; font-weight: bold; font-size: 12px; }
-    .code-editor-container { margin-top: 20px; }
-    .code-editor { width: 100%; height: 400px; font-family: 'Courier New', monospace; font-size: 14px; 
-                   border: 1px solid #ddd; border-radius: 5px; padding: 10px; resize: vertical; }
-    .editor-actions { margin-top: 10px; display: flex; gap: 10px; }
-    .status-selector { display: inline-block; margin-left: 10px; }
-    .status-selector select { width: auto; padding: 4px 8px; font-size: 12px; }
-    .push-changes-btn { background: #28a745; margin-left: 10px; }
+    .hidden-label { color: #856404; font-weight: bold; font-size: 12px; }
+    .code-editor-container { margin-top: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa; }
+    .code-editor { width: 100%; height: 500px; font-family: 'Courier New', monospace; font-size: 14px; 
+                   border: 1px solid #ddd; border-radius: 5px; padding: 15px; resize: vertical; background: white; }
+    .editor-actions { margin-top: 15px; display: flex; gap: 10px; }
     .admin-main { margin-top: 20px; }
+    .edit-form { display: none; margin-top: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f8f9fa; }
+    .edit-form input, .edit-form textarea { margin-bottom: 10px; }
   </style>
 </head>
 <body>
-  <!-- Navigation Header from index.html -->
+  <!-- Navigation Header -->
   <header>
     <div class="container nav-container">
         <div class="logo">
@@ -80,7 +72,6 @@
                     <li><a href="parceiros.html">Parceiros</a></li>
                     <li><a href="contato.html">Contato</a></li>
                     <li><a href="cadastrar.html">Cadastrar</a></li>
-                    <li><a href="login.html">Login</a></li>
                     <li><a class="active" href="admin.html">Admin</a></li>
                 </ul>
             </nav>
@@ -116,54 +107,43 @@
           <label>Descrição:</label>
           <textarea id="descricao" rows="3" required></textarea>
         </div>
-
-        <div class="form-group">
-          <label>Status Inicial:</label>
-          <select id="initialStatus">
-            <option value="active">Ativo</option>
-            <option value="inactive">Inativo</option>
-            <option value="draft">Rascunho</option>
-          </select>
-        </div>
         
         <div class="form-group">
-          <label>Arquivo Python:</label>
+          <label>Arquivo Python (main.py):</label>
           <input type="file" id="arquivo" accept=".py" required>
         </div>
         
-        <button type="submit">Criar Relatório</button>
-        <button type="button" class="push-changes-btn" onclick="pushAllChanges()">📤 Aplicar Todas as Mudanças</button>
+        <button type="submit" class="btn btn-primary">Criar Relatório</button>
       </form>
 
       <div class="reports-section">
         <div class="tabs">
-          <button class="tab active" onclick="switchTab('active')">Relatórios Ativos</button>
-          <button class="tab" onclick="switchTab('deleted')">Relatórios Excluídos</button>
+          <button class="tab active" onclick="switchTab('visible')">Relatórios Visíveis</button>
+          <button class="tab" onclick="switchTab('hidden')">Relatórios Ocultos</button>
         </div>
         
-        <div id="activeReports" class="tab-content active">
-          <div id="activeReportsList">Carregando relatórios...</div>
+        <div id="visibleReports" class="tab-content active">
+          <div id="visibleReportsList">Carregando relatórios...</div>
         </div>
         
-        <div id="deletedReports" class="tab-content">
-          <div id="deletedReportsList">Clique na aba para carregar relatórios excluídos...</div>
+        <div id="hiddenReports" class="tab-content">
+          <div id="hiddenReportsList">Clique na aba para carregar relatórios ocultos...</div>
         </div>
       </div>
 
-      <!-- Code Editor Modal -->
+      <!-- Code Editor -->
       <div class="code-editor-container" id="codeEditorContainer" style="display: none;">
         <h3>Editor de Código - <span id="editingReportTitle"></span></h3>
         <textarea class="code-editor" id="codeEditor" placeholder="Carregando código..."></textarea>
         <div class="editor-actions">
-          <button onclick="saveCode()" class="btn-success">💾 Salvar Código</button>
-          <button onclick="closeEditor()" class="btn-danger">❌ Fechar Editor</button>
-          <button onclick="downloadCode()" class="btn-info">📥 Download</button>
+          <button onclick="saveCode()" class="btn btn-primary">💾 Salvar Código</button>
+          <button onclick="closeEditor()" class="btn btn-secondary">❌ Fechar Editor</button>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Footer from index.html -->
+  <!-- Footer -->
   <footer>
     <div class="container footer-container">
       <p>&copy; 2025. Criado pelo Data IESB.</p>
@@ -173,19 +153,27 @@
           <li><a href="quem-somos.html">Quem Somos</a></li>
           <li><a href="parceiros.html">Parceiros</a></li>
           <li><a href="contato.html">Contato</a></li>
-          <li><a href="login.html">Login</a></li>
         </ul>
       </nav>
     </div>
   </footer>
 
+  <!-- Confirmation Dialog -->
+  <div class="overlay" id="overlay"></div>
+  <div class="confirm-dialog" id="confirmDialog">
+    <h3 id="confirmTitle">Confirmar Ação</h3>
+    <p id="confirmMessage">Tem certeza que deseja realizar esta ação?</p>
+    <p><strong id="reportToAction"></strong></p>
+    <button id="confirmBtn" onclick="confirmAction()" class="btn btn-primary">Confirmar</button>
+    <button onclick="cancelAction()" class="btn btn-secondary">Cancelar</button>
+  </div>
+
   <script>
     let currentUser = null;
     let authToken = null;
     let actionToConfirm = null;
-    let currentTab = 'active';
+    let currentTab = 'visible';
     let currentEditingReport = null;
-    let pendingChanges = [];
 
     function showMessage(text, type) {
       const div = document.getElementById('message');
@@ -220,17 +208,17 @@
     function switchTab(tab) {
       // Update tab buttons
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`.tab:nth-child(${tab === 'active' ? '1' : '2'})`).classList.add('active');
+      document.querySelector(`.tab:nth-child(${tab === 'visible' ? '1' : '2'})`).classList.add('active');
       
       // Update tab content
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.getElementById(tab === 'active' ? 'activeReports' : 'deletedReports').classList.add('active');
+      document.getElementById(tab === 'visible' ? 'visibleReports' : 'hiddenReports').classList.add('active');
       
       currentTab = tab;
       
       // Load the appropriate reports for the selected tab
-      if (tab === 'deleted') {
-        loadDeletedReports();
+      if (tab === 'hidden') {
+        loadHiddenReports();
       } else {
         loadReports();
       }
@@ -239,8 +227,8 @@
     async function loadReports() {
       if (!authToken) return;
 
-      if (currentTab === 'deleted') {
-        loadDeletedReports();
+      if (currentTab === 'hidden') {
+        loadHiddenReports();
         return;
       }
 
@@ -266,7 +254,7 @@
       }
     }
 
-    async function loadDeletedReports() {
+    async function loadHiddenReports() {
       if (!authToken) return;
 
       try {
@@ -280,71 +268,57 @@
 
         if (response.ok) {
           const reports = await response.json();
-          displayDeletedReports(reports);
+          displayHiddenReports(reports);
         } else if (response.status === 401) {
           logout();
         } else {
-          showMessage('Erro ao carregar relatórios excluídos', 'error');
+          showMessage('Erro ao carregar relatórios ocultos', 'error');
         }
       } catch (error) {
-        showMessage('Erro de conexão ao carregar relatórios excluídos', 'error');
+        showMessage('Erro de conexão ao carregar relatórios ocultos', 'error');
       }
-    }
-
-    function getStatusBadge(status) {
-      const statusMap = {
-        'active': { class: 'status-active', text: 'Ativo' },
-        'inactive': { class: 'status-inactive', text: 'Inativo' },
-        'draft': { class: 'status-draft', text: 'Rascunho' }
-      };
-      const statusInfo = statusMap[status] || statusMap['active'];
-      return `<span class="report-status ${statusInfo.class}">${statusInfo.text}</span>`;
-    }
-
-    function createStatusSelector(reportId, currentStatus) {
-      return `
-        <div class="status-selector">
-          <select onchange="updateReportStatus('${reportId}', this.value)">
-            <option value="active" ${currentStatus === 'active' ? 'selected' : ''}>Ativo</option>
-            <option value="inactive" ${currentStatus === 'inactive' ? 'selected' : ''}>Inativo</option>
-            <option value="draft" ${currentStatus === 'draft' ? 'selected' : ''}>Rascunho</option>
-          </select>
-        </div>
-      `;
     }
 
     function displayReports(reports) {
-      const container = document.getElementById('activeReportsList');
+      const container = document.getElementById('visibleReportsList');
       
       if (Object.keys(reports).length === 0) {
-        container.innerHTML = '<p>Você ainda não possui relatórios ativos.</p>';
+        container.innerHTML = '<p>Você ainda não possui relatórios visíveis.</p>';
         return;
       }
 
       let html = '';
       for (const [id, report] of Object.entries(reports)) {
-        const status = report.status || 'active';
         html += `
           <div class="report-item">
-            <div class="report-title">${report.titulo} ${getStatusBadge(status)}</div>
-            <div>Autor: ${report.autor}</div>
-            <div>${report.descricao}</div>
+            <div class="report-title">${report.titulo} <span class="report-status status-visible">Visível</span></div>
+            <div><strong>Autor:</strong> ${report.autor}</div>
+            <div><strong>Descrição:</strong> ${report.descricao}</div>
             <div class="report-meta">
               Criado: ${new Date(report.created_at).toLocaleDateString('pt-BR')} | 
               Atualizado: ${new Date(report.updated_at).toLocaleDateString('pt-BR')}
-              ${createStatusSelector(id, status)}
             </div>
+            
+            <!-- Edit Form (hidden by default) -->
+            <div class="edit-form" id="editForm${id}">
+              <input type="text" id="editTitulo${id}" value="${report.titulo}" placeholder="Título">
+              <input type="text" id="editAutor${id}" value="${report.autor}" placeholder="Autor">
+              <textarea id="editDescricao${id}" rows="2" placeholder="Descrição">${report.descricao}</textarea>
+              <button onclick="saveMetadata('${id}')" class="btn btn-primary">Salvar Alterações</button>
+              <button onclick="cancelEdit('${id}')" class="btn btn-secondary">Cancelar</button>
+            </div>
+            
             <div class="report-actions">
-              <button onclick="downloadReport('${id}')" class="btn-success btn-small">
-                📥 Download
-              </button>
-              <button onclick="editCode('${id}', '${report.titulo}')" class="btn-info btn-small">
+              <button onclick="editCode('${id}', '${report.titulo}')" class="btn btn-primary">
                 📝 Editar Código
               </button>
-              <button onclick="showSoftDeleteConfirm('${id}', '${report.titulo}')" class="btn-warning btn-small">
-                🗂️ Ocultar
+              <button onclick="toggleEditForm('${id}')" class="btn btn-secondary">
+                ✏️ Editar Dados
               </button>
-              <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn-danger btn-small">
+              <button onclick="showHideConfirm('${id}', '${report.titulo}')" class="btn btn-secondary">
+                👁️‍🗨️ Ocultar
+              </button>
+              <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn" style="background: #dc3545; color: white;">
                 🗑️ Excluir Permanente
               </button>
             </div>
@@ -354,31 +328,31 @@
       container.innerHTML = html;
     }
 
-    function displayDeletedReports(reports) {
-      const container = document.getElementById('deletedReportsList');
+    function displayHiddenReports(reports) {
+      const container = document.getElementById('hiddenReportsList');
       
       if (Object.keys(reports).length === 0) {
-        container.innerHTML = '<p>Nenhum relatório excluído.</p>';
+        container.innerHTML = '<p>Nenhum relatório oculto.</p>';
         return;
       }
 
       let html = '';
       for (const [id, report] of Object.entries(reports)) {
         html += `
-          <div class="report-item deleted">
-            <div class="deleted-label">EXCLUÍDO</div>
-            <div class="report-title">${report.titulo}</div>
-            <div>Autor: ${report.autor}</div>
-            <div>${report.descricao}</div>
+          <div class="report-item hidden">
+            <div class="hidden-label">OCULTO</div>
+            <div class="report-title">${report.titulo} <span class="report-status status-hidden">Oculto</span></div>
+            <div><strong>Autor:</strong> ${report.autor}</div>
+            <div><strong>Descrição:</strong> ${report.descricao}</div>
             <div class="report-meta">
               Criado: ${new Date(report.created_at).toLocaleDateString('pt-BR')} | 
-              Excluído: ${new Date(report.deleted_at).toLocaleDateString('pt-BR')}
+              Ocultado: ${new Date(report.deleted_at).toLocaleDateString('pt-BR')}
             </div>
             <div class="report-actions">
-              <button onclick="showRestoreConfirm('${id}', '${report.titulo}')" class="btn-success btn-small">
-                ↩️ Restaurar
+              <button onclick="showRestoreConfirm('${id}', '${report.titulo}')" class="btn btn-primary">
+                ↩️ Tornar Visível
               </button>
-              <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn-danger btn-small">
+              <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn" style="background: #dc3545; color: white;">
                 🗑️ Excluir Permanente
               </button>
             </div>
@@ -388,57 +362,48 @@
       container.innerHTML = html;
     }
 
-    async function updateReportStatus(reportId, newStatus) {
-      if (!authToken) {
-        logout();
-        return;
+    function toggleEditForm(reportId) {
+      const form = document.getElementById(`editForm${reportId}`);
+      if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+      } else {
+        form.style.display = 'none';
       }
-
-      // Add to pending changes
-      pendingChanges.push({
-        type: 'status_update',
-        reportId: reportId,
-        newStatus: newStatus,
-        timestamp: new Date().toISOString()
-      });
-
-      showMessage(`Status alterado para "${newStatus}". Use "Aplicar Todas as Mudanças" para salvar.`, 'success');
     }
 
-    async function pushAllChanges() {
-      if (pendingChanges.length === 0) {
-        showMessage('Nenhuma mudança pendente para aplicar.', 'error');
-        return;
-      }
+    function cancelEdit(reportId) {
+      document.getElementById(`editForm${reportId}`).style.display = 'none';
+    }
 
+    async function saveMetadata(reportId) {
       if (!authToken) {
         logout();
         return;
       }
 
+      const titulo = document.getElementById(`editTitulo${reportId}`).value;
+      const autor = document.getElementById(`editAutor${reportId}`).value;
+      const descricao = document.getElementById(`editDescricao${reportId}`).value;
+
       try {
-        for (const change of pendingChanges) {
-          if (change.type === 'status_update') {
-            const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${change.reportId}/status`, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${authToken}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ status: change.newStatus })
-            });
+        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/metadata`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ titulo, autor, descricao })
+        });
 
-            if (!response.ok) {
-              throw new Error(`Erro ao atualizar status do relatório ${change.reportId}`);
-            }
-          }
+        if (response.ok) {
+          showMessage('Dados atualizados com sucesso!', 'success');
+          document.getElementById(`editForm${reportId}`).style.display = 'none';
+          loadReports();
+        } else {
+          showMessage('Erro ao atualizar dados', 'error');
         }
-
-        pendingChanges = [];
-        showMessage(`${pendingChanges.length} mudanças aplicadas com sucesso!`, 'success');
-        loadReports();
       } catch (error) {
-        showMessage(`Erro ao aplicar mudanças: ${error.message}`, 'error');
+        showMessage('Erro de conexão ao atualizar dados', 'error');
       }
     }
 
@@ -492,7 +457,7 @@
         });
 
         if (response.ok) {
-          showMessage('Código salvo com sucesso!', 'success');
+          showMessage('Código salvo com sucesso! Arquivo main.py atualizado.', 'success');
         } else {
           showMessage('Erro ao salvar código', 'error');
         }
@@ -506,61 +471,12 @@
       currentEditingReport = null;
     }
 
-    function downloadCode() {
-      const code = document.getElementById('codeEditor').value;
-      const blob = new Blob([code], { type: 'text/x-python' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `report_${currentEditingReport}.py`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    }
-
-    async function downloadReport(reportId) {
-      if (!authToken) {
-        logout();
-        return;
-      }
-
-      try {
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/download`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
-        });
-
-        if (response.ok) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `report_${reportId}.py`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-          showMessage('Download iniciado!', 'success');
-        } else if (response.status === 401) {
-          logout();
-        } else {
-          showMessage('Erro ao fazer download do relatório', 'error');
-        }
-      } catch (error) {
-        showMessage('Erro de conexão ao fazer download', 'error');
-      }
-    }
-
-    function showSoftDeleteConfirm(reportId, reportTitle) {
-      actionToConfirm = { type: 'soft_delete', id: reportId };
+    function showHideConfirm(reportId, reportTitle) {
+      actionToConfirm = { type: 'hide', id: reportId };
       document.getElementById('confirmTitle').textContent = 'Ocultar Relatório';
       document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja ocultar este relatório? Ele poderá ser restaurado posteriormente.';
       document.getElementById('reportToAction').textContent = reportTitle;
       document.getElementById('confirmBtn').textContent = 'Sim, Ocultar';
-      document.getElementById('confirmBtn').className = 'btn-warning';
       document.getElementById('overlay').style.display = 'block';
       document.getElementById('confirmDialog').style.display = 'block';
     }
@@ -571,18 +487,16 @@
       document.getElementById('confirmMessage').textContent = 'ATENÇÃO: Esta ação não pode ser desfeita! O relatório será excluído permanentemente.';
       document.getElementById('reportToAction').textContent = reportTitle;
       document.getElementById('confirmBtn').textContent = 'Sim, Excluir';
-      document.getElementById('confirmBtn').className = 'btn-danger';
       document.getElementById('overlay').style.display = 'block';
       document.getElementById('confirmDialog').style.display = 'block';
     }
 
     function showRestoreConfirm(reportId, reportTitle) {
       actionToConfirm = { type: 'restore', id: reportId };
-      document.getElementById('confirmTitle').textContent = 'Restaurar Relatório';
-      document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja restaurar este relatório?';
+      document.getElementById('confirmTitle').textContent = 'Tornar Visível';
+      document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja tornar este relatório visível novamente?';
       document.getElementById('reportToAction').textContent = reportTitle;
-      document.getElementById('confirmBtn').textContent = 'Sim, Restaurar';
-      document.getElementById('confirmBtn').className = 'btn-success';
+      document.getElementById('confirmBtn').textContent = 'Sim, Tornar Visível';
       document.getElementById('overlay').style.display = 'block';
       document.getElementById('confirmDialog').style.display = 'block';
     }
@@ -603,7 +517,7 @@
         let response;
         const { type, id } = actionToConfirm;
 
-        if (type === 'soft_delete') {
+        if (type === 'hide') {
           response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${id}`, {
             method: 'DELETE',
             headers: {
@@ -625,7 +539,7 @@
           });
           
           if (response.ok) {
-            showMessage('Relatório restaurado com sucesso!', 'success');
+            showMessage('Relatório tornado visível com sucesso!', 'success');
           }
         } else if (type === 'permanent_delete') {
           response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${id}?permanent=true`, {
@@ -648,8 +562,8 @@
           showMessage(`Erro: ${errorText}`, 'error');
         } else {
           // Reload the appropriate tab based on current view
-          if (currentTab === 'deleted') {
-            loadDeletedReports();
+          if (currentTab === 'hidden') {
+            loadHiddenReports();
           } else {
             loadReports();
           }
@@ -673,7 +587,6 @@
       formData.append('titulo', document.getElementById('titulo').value);
       formData.append('autor', document.getElementById('autor').value);
       formData.append('descricao', document.getElementById('descricao').value);
-      formData.append('status', document.getElementById('initialStatus').value);
       formData.append('main', document.getElementById('arquivo').files[0]);
 
       try {
@@ -687,7 +600,7 @@
 
         if (response.ok) {
           const result = await response.json();
-          showMessage(`Relatório criado com sucesso! Arquivo salvo em: s3://dataiesb-reports`, 'success');
+          showMessage(`Relatório criado com sucesso! Arquivo main.py salvo.`, 'success');
           document.getElementById('form').reset();
           loadReports();
         } else if (response.status === 401) {

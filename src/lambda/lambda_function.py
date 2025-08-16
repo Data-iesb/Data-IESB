@@ -53,6 +53,8 @@ def lambda_handler(event, context):
                 return update_report_code(event, user_email)
             elif '/status' in path:
                 return update_report_status(event, user_email)
+            elif '/metadata' in path:
+                return update_report_metadata(event, user_email)
         elif method == 'DELETE' and '/reports' in path:
             return soft_delete_report(event, user_email)
         else:
@@ -549,6 +551,63 @@ def update_report_status(event, user_email):
     except Exception as e:
         print(f"Error updating report status: {str(e)}")
         return error_response(f'Error updating report status: {str(e)}', 500)
+
+def update_report_metadata(event, user_email):
+    """Update the metadata (titulo, autor, descricao) of a report"""
+    try:
+        # Extract report_id from path
+        path_parts = event['path'].split('/')
+        report_id = path_parts[-2]  # /reports/{id}/metadata
+        
+        # Parse request body
+        body = json.loads(event['body'])
+        titulo = body.get('titulo', '').strip()
+        autor = body.get('autor', '').strip()
+        descricao = body.get('descricao', '').strip()
+        
+        if not titulo or not autor or not descricao:
+            return error_response('Título, autor e descrição são obrigatórios', 400)
+        
+        table = dynamodb.Table(REPORTS_TABLE)
+        
+        # Get report metadata
+        response = table.get_item(
+            Key={'report_id': report_id}
+        )
+        
+        if 'Item' not in response:
+            return error_response('Report not found', 404)
+        
+        report = response['Item']
+        if report['user_email'] != user_email:
+            return error_response('Unauthorized to update this report', 403)
+        
+        if report.get('is_deleted', False):
+            return error_response('Cannot update metadata of deleted report', 400)
+        
+        # Update metadata in DynamoDB
+        table.update_item(
+            Key={'report_id': report_id},
+            UpdateExpression='SET titulo = :titulo, autor = :autor, descricao = :descricao, updated_at = :updated_at',
+            ExpressionAttributeValues={
+                ':titulo': titulo,
+                ':autor': autor,
+                ':descricao': descricao,
+                ':updated_at': datetime.utcnow().isoformat()
+            }
+        )
+        
+        return success_response({
+            'message': 'Metadata updated successfully',
+            'report_id': report_id,
+            'titulo': titulo,
+            'autor': autor,
+            'descricao': descricao
+        })
+        
+    except Exception as e:
+        print(f"Error updating report metadata: {str(e)}")
+        return error_response(f'Error updating report metadata: {str(e)}', 500)
 
 def parse_multipart_form_data(body, content_type):
     """Parse multipart form data"""
