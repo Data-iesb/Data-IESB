@@ -29,8 +29,9 @@ def lambda_handler(event, context):
         table = dynamodb.Table(table_name)
         
         # Scan the table for all non-deleted reports
+        # Fixed filter: only return records where is_deleted is false
         response = table.scan(
-            FilterExpression='attribute_not_exists(is_deleted) OR is_deleted = :deleted',
+            FilterExpression='is_deleted = :deleted',
             ExpressionAttributeValues={
                 ':deleted': False
             }
