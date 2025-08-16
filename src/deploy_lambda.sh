@@ -16,7 +16,7 @@ echo "🚀 Starting deployment of DataIESB Reports Lambda Function..."
 echo "📦 Creating deployment package..."
 rm -rf lambda-package
 mkdir lambda-package
-cp lambda_function.py lambda-package/
+cp lambda/lambda_function.py lambda-package/
 
 # Create requirements.txt for Lambda
 cat > lambda-package/requirements.txt << EOF

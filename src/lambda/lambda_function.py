@@ -38,7 +38,12 @@ def lambda_handler(event, context):
             if '/download' in path:
                 return download_report(event, user_email)
             else:
-                return list_reports(user_email)
+                # Check if requesting deleted reports
+                query_params = event.get('queryStringParameters') or {}
+                if query_params.get('deleted') == 'true':
+                    return list_deleted_reports(user_email)
+                else:
+                    return list_reports(user_email)
         elif method == 'DELETE' and '/reports' in path:
             return soft_delete_report(event, user_email)
         elif method == 'PUT' and '/reports' in path and '/restore' in path:
@@ -114,11 +119,12 @@ def create_report(event, user_email):
         timestamp = datetime.utcnow().isoformat()
         
         # Upload Python file to correct S3 bucket (dataiesb-reports)
-        file_key = f"{report_id}/main.py"
+        file_key = f"{report_id}/"
+        s3_object_key = f"{file_key}main.py"
         
         s3_client.put_object(
             Bucket=REPORTS_BUCKET,
-            Key=file_key,
+            Key=s3_object_key,
             Body=form_data['main']['content'],
             ContentType='text/x-python',
             Metadata={
@@ -137,7 +143,7 @@ def create_report(event, user_email):
                 'titulo': form_data['titulo'],
                 'autor': form_data['autor'],
                 'descricao': form_data['descricao'],
-                's3_key': file_key,
+                'id_s3': file_key,  # Store the S3 prefix, not the full key
                 'created_at': timestamp,
                 'updated_at': timestamp,
                 'is_deleted': False,  # Soft delete flag
@@ -149,12 +155,42 @@ def create_report(event, user_email):
             'message': 'Report created successfully',
             'report_id': report_id,
             's3_bucket': REPORTS_BUCKET,
-            's3_key': file_key
+            's3_key': s3_object_key
         })
         
     except Exception as e:
         print(f"Error creating report: {str(e)}")
         return error_response(f'Error creating report: {str(e)}', 500)
+
+def list_deleted_reports(user_email):
+    """List all deleted reports for the user"""
+    try:
+        table = dynamodb.Table(REPORTS_TABLE)
+        
+        response = table.scan(
+            FilterExpression='user_email = :user_email AND is_deleted = :is_deleted',
+            ExpressionAttributeValues={
+                ':user_email': user_email,
+                ':is_deleted': True
+            }
+        )
+        
+        reports = {}
+        for item in response['Items']:
+            reports[item['report_id']] = {
+                'titulo': item['titulo'],
+                'autor': item['autor'],
+                'descricao': item['descricao'],
+                'created_at': item['created_at'],
+                'updated_at': item['updated_at'],
+                'deleted_at': item.get('deleted_at')
+            }
+        
+        return success_response(reports)
+        
+    except Exception as e:
+        print(f"Error listing deleted reports: {str(e)}")
+        return error_response(f'Error listing deleted reports: {str(e)}', 500)
 
 def list_reports(user_email):
     """List all non-deleted reports for the user"""
@@ -291,10 +327,13 @@ def download_report(event, user_email):
         if report.get('is_deleted', False):
             return error_response('Report is deleted', 404)
         
+        # Construct S3 key from id_s3 column
+        s3_key = f"{report['id_s3']}main.py"
+        
         # Get file from S3
         s3_response = s3_client.get_object(
             Bucket=REPORTS_BUCKET,
-            Key=report['s3_key']
+            Key=s3_key
         )
         
         file_content = s3_response['Body'].read()
