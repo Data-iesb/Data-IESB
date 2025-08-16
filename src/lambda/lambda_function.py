@@ -54,6 +54,7 @@ def lambda_handler(event, context):
             elif '/status' in path:
                 return update_report_status(event, user_email)
         elif method == 'DELETE' and '/reports' in path:
+            return soft_delete_report(event, user_email)
         else:
             return error_response('Method not allowed', 405)
             
