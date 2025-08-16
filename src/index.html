@@ -139,11 +139,17 @@
       // Debugging - Log the reports to check structure
       console.log("Reports data from DynamoDB: ", reports);
 
+      // Filter and display only non-deleted reports
+
       // Ensure 'reports' is an object and it is not empty
       if (typeof reports === 'object' && reports !== null && !Array.isArray(reports)) {
-        const reportIds = Object.keys(reports);
+        // Filter out deleted items explicitly
+        const validReportIds = Object.keys(reports).filter(id => {
+          const report = reports[id];
+          return report && !report.deletado && report.titulo && report.descricao && report.autor;
+        });
         
-        if (reportIds.length === 0) {
+        if (validReportIds.length === 0) {
           container.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #666;">
               <p>Nenhum relatório disponível no momento.</p>
@@ -153,7 +159,7 @@
         }
 
         // Sort reports by creation date if available, or by title
-        reportIds.sort((a, b) => {
+        validReportIds.sort((a, b) => {
           const reportA = reports[a];
           const reportB = reports[b];
           
@@ -166,11 +172,11 @@
           return reportA.titulo.localeCompare(reportB.titulo);
         });
 
-        reportIds.forEach((id) => {
+        validReportIds.forEach((id) => {
           const report = reports[id];
 
-          // Ensure the report is valid (deletado is already filtered out by the API)
-          if (report && report.titulo && report.descricao && report.autor) {
+          // Ensure the report is valid and explicitly check it's not deleted
+          if (report && report.titulo && report.descricao && report.autor && !report.deletado) {
             const reportUrl = `http://app.dataiesb.com/report/?id=${id}`;
             const card = document.createElement("div");
             card.innerHTML = `
