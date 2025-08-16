@@ -113,7 +113,6 @@
 <script>
   async function loadReports() {
     const container = document.getElementById("cards-container");
-    // Updated to use DynamoDB API endpoint instead of reports.json
     const reportsApiUrl = "https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/public-reports";
 
     try {
@@ -132,22 +131,51 @@
       }
       
       const reports = await response.json();
-
-      // Clear loading state
       container.innerHTML = '';
 
-      // Debugging - Log the reports to check structure
-      console.log("Reports data from DynamoDB: ", reports);
+      console.log("🔍 Raw API Response:", reports);
 
-      // Filter and display only non-deleted reports
-
-      // Ensure 'reports' is an object and it is not empty
       if (typeof reports === 'object' && reports !== null && !Array.isArray(reports)) {
-        // Filter out deleted items explicitly
+        // Enhanced filtering with multiple deletion checks
         const validReportIds = Object.keys(reports).filter(id => {
           const report = reports[id];
-          return report && !report.deletado && report.titulo && report.descricao && report.autor;
+          
+          // Comprehensive deletion checks
+          const isNotDeleted = report && 
+                              !report.deletado && 
+                              report.deletado !== true && 
+                              report.deletado !== 'true' && 
+                              !report.deleted_at &&
+                              !report.deleted &&
+                              report.deleted !== true;
+          
+          const hasValidContent = report.titulo && 
+                                 report.titulo.trim() !== '' &&
+                                 report.descricao && 
+                                 report.descricao.trim() !== '' &&
+                                 report.autor && 
+                                 report.autor.trim() !== '';
+          
+          const isValid = isNotDeleted && hasValidContent;
+          
+          // Debug logging
+          if (!isValid) {
+            console.log(`❌ Filtering out report ${id}:`, {
+              titulo: report.titulo,
+              deletado: report.deletado,
+              deleted_at: report.deleted_at,
+              deleted: report.deleted,
+              isNotDeleted,
+              hasValidContent
+            });
+          } else {
+            console.log(`✅ Including report ${id}: ${report.titulo}`);
+          }
+          
+          return isValid;
         });
+        
+        console.log(`📊 Filtered: ${validReportIds.length}/${Object.keys(reports).length} reports`);
         
         if (validReportIds.length === 0) {
           container.innerHTML = `
@@ -158,48 +186,43 @@
           return;
         }
 
-        // Sort reports by creation date if available, or by title
+        // Sort by creation date (newest first) or by title
         validReportIds.sort((a, b) => {
           const reportA = reports[a];
           const reportB = reports[b];
           
-          // If created_at exists, sort by date (newest first)
           if (reportA.created_at && reportB.created_at) {
             return new Date(reportB.created_at) - new Date(reportA.created_at);
           }
           
-          // Otherwise sort by title
           return reportA.titulo.localeCompare(reportB.titulo);
         });
 
+        // Display valid reports
         validReportIds.forEach((id) => {
           const report = reports[id];
-
-          // Ensure the report is valid and explicitly check it's not deleted
-          if (report && report.titulo && report.descricao && report.autor && !report.deletado) {
-            const reportUrl = `http://app.dataiesb.com/report/?id=${id}`;
-            const card = document.createElement("div");
-            card.innerHTML = `
-              <div class="panel-card" style="background-color: #f9f9f9; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer;" 
-                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.15)'" 
-                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 10px rgba(0,0,0,0.1)'">
-                <a href="${reportUrl}" style="text-decoration: none; color: inherit;">
-                  <h3 style="font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 15px;">${report.titulo}</h3>
-                  <p style="font-size: 1rem; color: #555; margin-bottom: 15px; line-height: 1.5;">${report.descricao}</p>
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <p style="font-size: 0.9rem; color: #777; margin: 0;">Autor: <strong>${report.autor}</strong></p>
-                    <span style="font-size: 0.8rem; color: #007bff; font-weight: 500;">Ver relatório →</span>
-                  </div>
-                </a>
-              </div>
-            `;
-            container.appendChild(card);
-          } else {
-            console.warn(`Skipping invalid report with ID: ${id}`, report);
-          }
+          const reportUrl = `http://app.dataiesb.com/report/?id=${id}`;
+          
+          const card = document.createElement("div");
+          card.innerHTML = `
+            <div class="panel-card" style="background-color: #f9f9f9; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer;" 
+                 onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.15)'" 
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 10px rgba(0,0,0,0.1)'">
+              <a href="${reportUrl}" style="text-decoration: none; color: inherit;">
+                <h3 style="font-size: 1.5rem; font-weight: 600; color: #333; margin-bottom: 15px;">${report.titulo}</h3>
+                <p style="font-size: 1rem; color: #555; margin-bottom: 15px; line-height: 1.5;">${report.descricao}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <p style="font-size: 0.9rem; color: #777; margin: 0;">Autor: <strong>${report.autor}</strong></p>
+                  <span style="font-size: 0.8rem; color: #007bff; font-weight: 500;">Ver relatório →</span>
+                </div>
+              </a>
+            </div>
+          `;
+          container.appendChild(card);
         });
+        
       } else {
-        console.error("Reports data is not an object or is empty:", reports);
+        console.error("❌ Invalid reports data:", reports);
         container.innerHTML = `
           <div style="text-align: center; padding: 40px; color: #dc3545;">
             <p>Erro ao carregar os dados dos relatórios.</p>
@@ -207,7 +230,7 @@
         `;
       }
     } catch (error) {
-      console.error("Erro ao carregar os relatórios:", error);
+      console.error("❌ Error loading reports:", error);
       container.innerHTML = `
         <div style="text-align: center; padding: 40px; color: #dc3545;">
           <p>Erro ao carregar os relatórios. Tente novamente mais tarde.</p>
@@ -234,4 +257,4 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </html>
-<!-- Test deployment Sun Aug 10 11:39:05 AM -03 2025 -->
+<!-- Enhanced filtering to exclude deleted reports - created in tmp/ -->
