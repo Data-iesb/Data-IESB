@@ -397,13 +397,16 @@
       const autor = document.getElementById(`editAutor${reportId}`).value;
       const descricao = document.getElementById(`editDescricao${reportId}`).value;
 
-      console.log(`🔄 Salvando metadados do relatório ID: ${reportId}`);
+      console.log(`🔄 Salvando metadados via query parameter do relatório ID: ${reportId}`);
       console.log('📝 Dados:', { titulo, autor, descricao });
 
       try {
-        // Use the correct endpoint: /reports/{id} instead of /reports/{id}/metadata
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}`, {
-          method: 'PUT',
+        // Use query parameter instead of path parameter to avoid API Gateway routing issues
+        const url = `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports?action=update&id=${reportId}`;
+        console.log('🔗 URL:', url);
+        
+        const response = await fetch(url, {
+          method: 'POST', // Use POST instead of PUT to avoid API Gateway issues
           headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json'
@@ -425,13 +428,18 @@
         } else {
           const errorText = await response.text();
           console.log(`❌ Erro ao salvar: ${response.status} - ${errorText}`);
-          showMessage(`Erro ao atualizar dados: ${errorText}`, 'error');
+          
+          if (errorText.includes('Missing Authentication Token')) {
+            showMessage('Erro: Problema de roteamento no API Gateway. Usando workaround com query parameters.', 'error');
+          } else {
+            showMessage(`Erro ao atualizar dados: ${errorText}`, 'error');
+          }
         }
       } catch (error) {
         console.error('❌ Erro de conexão ao salvar metadados:', error);
         
         if (error.message.includes('NetworkError')) {
-          showMessage(`Erro de rede ao atualizar dados: ${error.message}`, 'error');
+          showMessage(`Erro de rede ao atualizar dados: ${error.message}. Tentando workaround com query parameters.`, 'error');
         } else {
           showMessage(`Erro de conexão ao atualizar dados: ${error.message}`, 'error');
         }
@@ -444,18 +452,20 @@
         return;
       }
 
-      console.log(`🔄 Baixando código via /download para relatório ID: ${reportId}`);
+      console.log(`🔄 Baixando código via query parameter para relatório ID: ${reportId}`);
       
       currentEditingReport = reportId;
-      document.getElementById('editingReportTitle').textContent = `${reportTitle} (ID: ${reportId}) - Via Download`;
-      document.getElementById('codeEditor').value = '# Baixando código via endpoint /download...\n# Aguarde...';
+      document.getElementById('editingReportTitle').textContent = `${reportTitle} (ID: ${reportId}) - Via Query Parameter`;
+      document.getElementById('codeEditor').value = '# Baixando código via query parameter...\n# Aguarde...';
       document.getElementById('codeEditorContainer').style.display = 'block';
 
       try {
-        console.log('🔗 URL:', `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/download`);
+        // Use query parameter instead of path parameter to avoid API Gateway routing issues
+        const url = `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports?action=download&id=${reportId}`;
+        console.log('🔗 URL:', url);
         console.log('🔑 Token:', authToken ? 'Present' : 'Missing');
         
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/download`, {
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -465,7 +475,6 @@
 
         console.log(`📡 Download Status: ${response.status}`);
         console.log(`📡 Content-Type: ${response.headers.get('content-type')}`);
-        console.log(`📡 Content-Length: ${response.headers.get('content-length')}`);
 
         if (response.status === 200) {
           const contentType = response.headers.get('content-type');
@@ -482,7 +491,7 @@
               
               console.log(`✅ Código decodificado, tamanho: ${codeData.length} caracteres`);
               document.getElementById('codeEditor').value = codeData;
-              showMessage(`Código carregado via download de s3://dataiesb-reports/${reportId}/main.py`, 'success');
+              showMessage(`Código carregado via query parameter de s3://dataiesb-reports/${reportId}/main.py`, 'success');
             } catch (decodeError) {
               console.log('❌ Erro ao decodificar ArrayBuffer, tentando como texto...');
               
@@ -494,11 +503,11 @@
                 const decodedData = atob(textData);
                 console.log(`✅ Base64 decodificado, tamanho: ${decodedData.length} caracteres`);
                 document.getElementById('codeEditor').value = decodedData;
-                showMessage(`Código carregado e decodificado de s3://dataiesb-reports/${reportId}/main.py`, 'success');
+                showMessage(`Código carregado e decodificado via query parameter`, 'success');
               } catch (base64Error) {
                 console.log('❌ Não é base64, usando texto direto');
                 document.getElementById('codeEditor').value = textData;
-                showMessage(`Dados carregados como texto`, 'success');
+                showMessage(`Dados carregados como texto via query parameter`, 'success');
               }
             }
           } else {
@@ -518,7 +527,7 @@
               // Não é JSON, usa como texto
               document.getElementById('codeEditor').value = textData;
             }
-            showMessage(`Dados carregados via download`, 'success');
+            showMessage(`Dados carregados via query parameter`, 'success');
           }
         } else if (response.status === 401) {
           console.log('❌ Token expirado no download');
@@ -543,12 +552,12 @@ if __name__ == "__main__":
           const errorText = await response.text();
           console.log(`❌ Erro download: ${response.status} - ${errorText}`);
           
-          // Verifica se o erro é do site-auth Lambda
-          if (errorText.includes('Missing Authentication Token') || errorText.includes('UnboundLocalError')) {
-            showMessage('Erro: Requisição sendo interceptada pelo Lambda errado. Problema de roteamento no API Gateway.', 'error');
+          // Verifica se o erro é de roteamento do API Gateway
+          if (errorText.includes('Missing Authentication Token') || errorText.includes('MissingAuthenticationTokenException')) {
+            showMessage('Erro: Problema de roteamento no API Gateway. Usando workaround com query parameters.', 'error');
             document.getElementById('codeEditor').value = `# ERRO DE ROTEAMENTO API GATEWAY
-# A requisição está sendo enviada para o Lambda errado (dataiesb-site-auth)
-# Em vez do Lambda correto (dataiesb-admin-reports)
+# Tentando workaround com query parameters
+# URL usada: ${url}
 # 
 # Erro detectado: ${errorText}
 #
@@ -571,13 +580,14 @@ if __name__ == "__main__":
         console.error('❌ Erro de conexão download:', error);
         
         if (error.message.includes('NetworkError') || error.message.includes('CORS')) {
-          showMessage(`Erro CORS: ${error.message}. Verifique a configuração do API Gateway.`, 'error');
+          showMessage(`Erro CORS: ${error.message}. Tentando workaround com query parameters.`, 'error');
         } else {
           showMessage(`Erro de conexão: ${error.message}`, 'error');
         }
         
         document.getElementById('codeEditor').value = `# Erro de conexão: ${error.message}
 # Tipo de erro: ${error.name}
+# Tentativa com query parameter: ?action=download&id=${reportId}
 
 # Código de exemplo:
 import pandas as pd
@@ -598,14 +608,16 @@ if __name__ == "__main__":
         return;
       }
 
-      console.log(`🔄 Tornando visível diretamente relatório ID: ${reportId}`);
+      console.log(`🔄 Tornando visível via query parameter relatório ID: ${reportId}`);
       
       try {
-        console.log('🔗 URL:', `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/restore`);
+        // Use query parameter instead of path parameter to avoid API Gateway routing issues
+        const url = `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports?action=restore&id=${reportId}`;
+        console.log('🔗 URL:', url);
         console.log('🔑 Token:', authToken ? 'Present' : 'Missing');
         
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/restore`, {
-          method: 'POST', // Using POST instead of PUT as that's what's configured in API Gateway
+        const response = await fetch(url, {
+          method: 'POST', // Using POST method with query parameters
           headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json'
@@ -630,7 +642,7 @@ if __name__ == "__main__":
           console.log(`❌ Erro restore: ${response.status} - ${errorText}`);
           
           if (errorText.includes('Missing Authentication Token')) {
-            showMessage('Erro: Problema de configuração no API Gateway. Endpoint não configurado corretamente.', 'error');
+            showMessage('Erro: Problema de roteamento no API Gateway. Usando workaround com query parameters.', 'error');
           } else {
             showMessage(`Erro ao tornar visível: ${errorText}`, 'error');
           }
@@ -639,7 +651,7 @@ if __name__ == "__main__":
         console.error('❌ Erro geral makeVisibleDirectly:', error);
         
         if (error.message.includes('NetworkError')) {
-          showMessage(`Erro de rede: ${error.message}. API Gateway pode estar mal configurado.`, 'error');
+          showMessage(`Erro de rede: ${error.message}. Tentando workaround com query parameters.`, 'error');
         } else {
           showMessage(`Erro de conexão: ${error.message}`, 'error');
         }

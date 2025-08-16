@@ -31,6 +31,26 @@ def lambda_handler(event, context):
         
         method = event['httpMethod']
         path = event.get('path', '')
+        query_params = event.get('queryStringParameters') or {}
+        
+        # Handle query parameter actions for API Gateway routing workaround
+        if query_params.get('action'):
+            action = query_params.get('action')
+            report_id = query_params.get('id')
+            
+            if action == 'download' and method == 'GET':
+                # Simulate download path for query parameter
+                event['path'] = f"/dataiesb-auth/reports/{report_id}/download"
+                return download_report(event, user_email)
+            elif action == 'update' and method == 'POST':
+                # Simulate update path for query parameter (using POST instead of PUT)
+                event['path'] = f"/dataiesb-auth/reports/{report_id}"
+                event['httpMethod'] = 'PUT'  # Change method to PUT for internal processing
+                return update_report(event, user_email)
+            elif action == 'restore' and method == 'POST':
+                # Simulate restore path for query parameter
+                event['path'] = f"/dataiesb-auth/reports/{report_id}/restore"
+                return restore_report(event, user_email)
         
         if method == 'POST' and '/reports' in path:
             return create_report(event, user_email)
@@ -41,7 +61,6 @@ def lambda_handler(event, context):
                 return get_report_code(event, user_email)
             else:
                 # Check if requesting deleted reports
-                query_params = event.get('queryStringParameters') or {}
                 if query_params.get('deleted') == 'true':
                     return list_deleted_reports(user_email)
                 else:
