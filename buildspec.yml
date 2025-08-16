@@ -1,8 +1,5 @@
 version: 0.2
 
-# Simplified buildspec for prod branch only
-# Deploys to production environment in sa-east-1
-
 phases:
   install:
     runtime-versions:
@@ -13,11 +10,11 @@ phases:
   pre_build:
     commands:
       - echo "Starting production deployment..."
-      - echo "Branch: $CODEBUILD_SOURCE_VERSION"
-      - echo "Region: sa-east-1"
-      - echo "S3 Bucket: dataiesb"
-      - echo "CloudFront Distribution: E371T2F886B5KI"
-      - echo "Site URL: https://dataiesb.com"
+      - echo "Branch - $CODEBUILD_SOURCE_VERSION"
+      - echo "Region - sa-east-1"
+      - echo "S3 Bucket - dataiesb"
+      - echo "CloudFront Distribution - E371T2F886B5KI"
+      - echo "Site URL - https://dataiesb.com"
       - aws --version
 
   build:
@@ -31,7 +28,7 @@ phases:
       - echo "Invalidating production CloudFront cache..."
       - aws cloudfront create-invalidation --distribution-id E371T2F886B5KI --paths "/*"
       - echo "Production deployment completed successfully"
-      - echo "Production site: https://dataiesb.com"
+      - echo "Production site - https://dataiesb.com"
 
 artifacts:
   files:
