@@ -117,6 +117,12 @@
       </form>
 
       <div class="reports-section">
+        <div style="margin-bottom: 20px;">
+          <button onclick="testCORS()" class="btn btn-secondary" style="background: #17a2b8; color: white;">
+            🧪 Test CORS
+          </button>
+        </div>
+        
         <div class="tabs">
           <button class="tab active" onclick="switchTab('visible')">Relatórios Visíveis</button>
           <button class="tab" onclick="switchTab('hidden')">Relatórios Ocultos</button>
@@ -419,6 +425,34 @@
       }
     }
 
+    async function testCORS() {
+      console.log('🧪 Testing CORS with download endpoint...');
+      
+      try {
+        const response = await fetch('https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/1/download', {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer test-token'
+          }
+        });
+        
+        console.log('✅ CORS test successful! Status:', response.status);
+        console.log('📡 Response headers:', [...response.headers.entries()]);
+        
+        if (response.status === 401) {
+          console.log('✅ Expected 401 Unauthorized - CORS is working!');
+          showMessage('CORS test successful! Download endpoint is accessible.', 'success');
+        } else {
+          const text = await response.text();
+          console.log('📄 Response body:', text);
+        }
+        
+      } catch (error) {
+        console.error('❌ CORS test failed:', error);
+        showMessage(`CORS test failed: ${error.message}`, 'error');
+      }
+    }
+
     async function downloadCodeDirectly(reportId, reportTitle) {
       if (!authToken) {
         logout();
@@ -433,6 +467,9 @@
       document.getElementById('codeEditorContainer').style.display = 'block';
 
       try {
+        console.log('🔗 URL:', `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/download`);
+        console.log('🔑 Token:', authToken ? 'Present' : 'Missing');
+        
         const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/download`, {
           method: 'GET',
           headers: {
@@ -444,6 +481,11 @@
         console.log(`📡 Download Status: ${response.status}`);
         console.log(`📡 Content-Type: ${response.headers.get('content-type')}`);
         console.log(`📡 Content-Length: ${response.headers.get('content-length')}`);
+        console.log(`📡 CORS Headers:`, {
+          'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+          'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+          'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods')
+        });
 
         if (response.status === 200) {
           const contentType = response.headers.get('content-type');
@@ -497,9 +539,16 @@ if __name__ == "__main__":
         }
       } catch (error) {
         console.error('❌ Erro de conexão download:', error);
-        showMessage(`Erro de conexão: ${error.message}`, 'error');
+        
+        if (error.message.includes('NetworkError') || error.message.includes('CORS')) {
+          showMessage(`Erro CORS: ${error.message}. Verifique a configuração do API Gateway.`, 'error');
+        } else {
+          showMessage(`Erro de conexão: ${error.message}`, 'error');
+        }
+        
         document.getElementById('codeEditor').value = `# Erro de conexão: ${error.message}
-# Verifique sua conexão com a internet
+# Tipo de erro: ${error.name}
+# Possível problema de CORS no API Gateway
 
 # Código de exemplo:
 import pandas as pd
