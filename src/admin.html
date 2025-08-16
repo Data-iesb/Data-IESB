@@ -315,8 +315,8 @@
             </div>
             
             <div class="report-actions">
-              <button onclick="editCodeNew('${id}', '${report.titulo.replace(/'/g, "\\'")}', '${reportUrl}')" class="btn btn-primary">
-                📝 Editar Código
+              <button onclick="downloadCodeDirectly('${id}', '${report.titulo.replace(/'/g, "\\'")}', '${reportUrl}')" class="btn btn-primary">
+                📝 Editar Código (Teste)
               </button>
               <button onclick="toggleEditForm('${id}')" class="btn btn-secondary">
                 ✏️ Editar Dados
@@ -361,8 +361,8 @@
               Ocultado: ${new Date(report.deleted_at).toLocaleDateString('pt-BR')}
             </div>
             <div class="report-actions">
-              <button onclick="makeVisible('${id}', '${report.titulo.replace(/'/g, "\\'")}')" class="btn btn-primary">
-                ↩️ Tornar Visível
+              <button onclick="makeVisibleDirectly('${id}', '${report.titulo.replace(/'/g, "\\'")}')" class="btn btn-primary">
+                ↩️ Tornar Visível (Teste)
               </button>
               <button onclick="showDeleteConfirm('${id}', '${report.titulo.replace(/'/g, "\\'")}', 'permanent')" class="btn" style="background: #dc3545; color: white;">
                 🗑️ Excluir Permanente
@@ -419,43 +419,162 @@
       }
     }
 
-    async function makeVisible(reportId, reportTitle) {
+    async function downloadCodeDirectly(reportId, reportTitle) {
       if (!authToken) {
         logout();
         return;
       }
 
-      console.log(`🔄 Tornando visível relatório ID: ${reportId}`);
+      console.log(`🔄 Baixando código via /download para relatório ID: ${reportId}`);
       
+      currentEditingReport = reportId;
+      document.getElementById('editingReportTitle').textContent = `${reportTitle} (ID: ${reportId}) - Via Download`;
+      document.getElementById('codeEditor').value = '# Baixando código via endpoint /download...\n# Aguarde...';
+      document.getElementById('codeEditorContainer').style.display = 'block';
+
       try {
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/restore`, {
-          method: 'PUT',
+        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/download`, {
+          method: 'GET',
           headers: {
             'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
+            'Accept': 'text/plain, application/octet-stream, */*'
           }
         });
 
-        console.log(`📡 Status da resposta makeVisible: ${response.status}`);
+        console.log(`📡 Download Status: ${response.status}`);
+        console.log(`📡 Content-Type: ${response.headers.get('content-type')}`);
+        console.log(`📡 Content-Length: ${response.headers.get('content-length')}`);
 
-        if (response.ok) {
-          const result = await response.json();
-          console.log(`✅ Relatório tornado visível: ${JSON.stringify(result)}`);
-          showMessage(`Relatório "${reportTitle}" tornado visível com sucesso!`, 'success');
+        if (response.status === 200) {
+          const contentType = response.headers.get('content-type');
           
-          // Recarregar as listas
-          loadHiddenReports();
-          loadReports();
+          if (contentType && (contentType.includes('application/octet-stream') || contentType.includes('text/plain'))) {
+            // É um arquivo - baixar como texto
+            const codeData = await response.text();
+            console.log(`✅ Código baixado, tamanho: ${codeData.length} caracteres`);
+            document.getElementById('codeEditor').value = codeData;
+            showMessage(`Código carregado via download de s3://dataiesb-reports/${reportId}/main.py`, 'success');
+          } else {
+            // Pode ser JSON com erro ou dados
+            const textData = await response.text();
+            console.log(`📄 Response text:`, textData);
+            
+            try {
+              const jsonData = JSON.parse(textData);
+              if (jsonData.error) {
+                throw new Error(jsonData.error);
+              }
+              document.getElementById('codeEditor').value = textData;
+            } catch (parseError) {
+              document.getElementById('codeEditor').value = textData;
+            }
+            showMessage(`Dados carregados via download`, 'success');
+          }
         } else if (response.status === 401) {
-          console.log('❌ Token expirado');
+          console.log('❌ Token expirado no download');
           logout();
+        } else if (response.status === 404) {
+          console.log('❌ Arquivo main.py não encontrado');
+          document.getElementById('codeEditor').value = `# Arquivo main.py não encontrado no S3
+# Caminho: s3://dataiesb-reports/${reportId}/main.py
+# Crie um novo código Python aqui
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def main():
+    print("Hello, Data IESB!")
+    # Seu código aqui
+    
+if __name__ == "__main__":
+    main()`;
+          showMessage('Arquivo main.py não encontrado. Você pode criar um novo código.', 'error');
         } else {
           const errorText = await response.text();
-          console.log(`❌ Erro makeVisible: ${response.status} - ${errorText}`);
-          showMessage(`Erro ao tornar visível: ${errorText}`, 'error');
+          console.log(`❌ Erro download: ${response.status} - ${errorText}`);
+          showMessage(`Erro ao baixar código: ${errorText}`, 'error');
+          closeEditor();
         }
       } catch (error) {
-        console.error('❌ Erro de conexão makeVisible:', error);
+        console.error('❌ Erro de conexão download:', error);
+        showMessage(`Erro de conexão: ${error.message}`, 'error');
+        document.getElementById('codeEditor').value = `# Erro de conexão: ${error.message}
+# Verifique sua conexão com a internet
+
+# Código de exemplo:
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def main():
+    print("Hello, Data IESB!")
+    # Seu código aqui
+    
+if __name__ == "__main__":
+    main()`;
+      }
+    }
+
+    async function makeVisibleDirectly(reportId, reportTitle) {
+      if (!authToken) {
+        logout();
+        return;
+      }
+
+      console.log(`🔄 Tentando tornar visível diretamente relatório ID: ${reportId}`);
+      
+      try {
+        // Tentar diferentes URLs para restore
+        const urls = [
+          `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/restore`,
+          `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/reports/${reportId}/restore`,
+          `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/status`
+        ];
+
+        for (let i = 0; i < urls.length; i++) {
+          const url = urls[i];
+          console.log(`🔗 Tentando restore URL ${i + 1}: ${url}`);
+          
+          try {
+            const body = i === 2 ? JSON.stringify({ status: 'active' }) : undefined;
+            const response = await fetch(url, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: body
+            });
+
+            console.log(`📡 Restore URL ${i + 1} Status: ${response.status}`);
+
+            if (response.status === 200) {
+              const result = await response.json();
+              console.log(`✅ Sucesso restore URL ${i + 1}:`, result);
+              showMessage(`Relatório "${reportTitle}" tornado visível com sucesso!`, 'success');
+              
+              // Recarregar listas
+              loadHiddenReports();
+              loadReports();
+              return;
+            } else if (response.status === 401) {
+              console.log(`❌ Restore URL ${i + 1}: Token expirado`);
+              if (i === urls.length - 1) {
+                logout();
+                return;
+              }
+            } else {
+              const errorText = await response.text();
+              console.log(`❌ Restore URL ${i + 1} Error: ${response.status} - ${errorText}`);
+            }
+          } catch (fetchError) {
+            console.error(`❌ Restore URL ${i + 1} Fetch Error:`, fetchError);
+          }
+        }
+
+        showMessage('Erro: Não foi possível tornar o relatório visível', 'error');
+
+      } catch (error) {
+        console.error('❌ Erro geral makeVisibleDirectly:', error);
         showMessage(`Erro de conexão: ${error.message}`, 'error');
       }
     }
