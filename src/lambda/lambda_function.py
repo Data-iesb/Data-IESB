@@ -239,11 +239,15 @@ def list_reports(user_email):
         return error_response(f'Error listing reports: {str(e)}', 500)
 
 def soft_delete_report(event, user_email):
-    """Soft delete a report (mark as deleted instead of actually deleting)"""
+    """Soft delete a report (mark as deleted) or permanently delete if permanent=true"""
     try:
         # Extract report_id from path
         path_parts = event['path'].split('/')
         report_id = path_parts[-1]
+        
+        # Check if this is a permanent deletion
+        query_params = event.get('queryStringParameters') or {}
+        is_permanent = query_params.get('permanent') == 'true'
         
         table = dynamodb.Table(REPORTS_TABLE)
         
@@ -259,21 +263,64 @@ def soft_delete_report(event, user_email):
         if report['user_email'] != user_email:
             return error_response('Unauthorized to delete this report', 403)
         
-        if report.get('is_deleted', False):
-            return error_response('Report already deleted', 400)
-        
-        # Soft delete - mark as deleted
-        table.update_item(
-            Key={'report_id': report_id},
-            UpdateExpression='SET is_deleted = :deleted, deleted_at = :deleted_at, updated_at = :updated_at',
-            ExpressionAttributeValues={
-                ':deleted': True,
-                ':deleted_at': datetime.utcnow().isoformat(),
-                ':updated_at': datetime.utcnow().isoformat()
-            }
-        )
-        
-        return success_response({'message': 'Report deleted successfully'})
+        if is_permanent:
+            # Permanent deletion - remove from DynamoDB and S3
+            try:
+                # Delete from S3 first
+                s3_key = f"{report['id_s3']}main.py"
+                s3_client.delete_object(
+                    Bucket=REPORTS_BUCKET,
+                    Key=s3_key
+                )
+                
+                # Also delete any backup files
+                try:
+                    backup_prefix = f"{report['id_s3']}main_backup_"
+                    backup_objects = s3_client.list_objects_v2(
+                        Bucket=REPORTS_BUCKET,
+                        Prefix=backup_prefix
+                    )
+                    
+                    if 'Contents' in backup_objects:
+                        for obj in backup_objects['Contents']:
+                            s3_client.delete_object(
+                                Bucket=REPORTS_BUCKET,
+                                Key=obj['Key']
+                            )
+                except:
+                    # If backup deletion fails, continue anyway
+                    pass
+                
+                # Delete from DynamoDB
+                table.delete_item(
+                    Key={'report_id': report_id}
+                )
+                
+                return success_response({
+                    'message': 'Report permanently deleted',
+                    'deleted_files': [s3_key],
+                    'report_id': report_id
+                })
+                
+            except Exception as s3_error:
+                print(f"Error deleting S3 files: {str(s3_error)}")
+                return error_response(f'Error deleting files: {str(s3_error)}', 500)
+        else:
+            # Soft delete - mark as deleted
+            if report.get('is_deleted', False):
+                return error_response('Report already deleted', 400)
+            
+            table.update_item(
+                Key={'report_id': report_id},
+                UpdateExpression='SET is_deleted = :deleted, deleted_at = :deleted_at, updated_at = :updated_at',
+                ExpressionAttributeValues={
+                    ':deleted': True,
+                    ':deleted_at': datetime.utcnow().isoformat(),
+                    ':updated_at': datetime.utcnow().isoformat()
+                }
+            )
+            
+            return success_response({'message': 'Report hidden successfully'})
         
     except Exception as e:
         print(f"Error deleting report: {str(e)}")
