@@ -397,8 +397,12 @@
       const autor = document.getElementById(`editAutor${reportId}`).value;
       const descricao = document.getElementById(`editDescricao${reportId}`).value;
 
+      console.log(`🔄 Salvando metadados do relatório ID: ${reportId}`);
+      console.log('📝 Dados:', { titulo, autor, descricao });
+
       try {
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/metadata`, {
+        // Use the correct endpoint: /reports/{id} instead of /reports/{id}/metadata
+        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -407,15 +411,30 @@
           body: JSON.stringify({ titulo, autor, descricao })
         });
 
-        if (response.ok) {
+        console.log(`📡 Save Status: ${response.status}`);
+
+        if (response.status === 200) {
+          const result = await response.json();
+          console.log('✅ Metadados salvos:', result);
           showMessage('Dados atualizados com sucesso!', 'success');
           document.getElementById(`editForm${reportId}`).style.display = 'none';
           loadReports();
+        } else if (response.status === 401) {
+          console.log('❌ Token expirado ao salvar');
+          logout();
         } else {
-          showMessage('Erro ao atualizar dados', 'error');
+          const errorText = await response.text();
+          console.log(`❌ Erro ao salvar: ${response.status} - ${errorText}`);
+          showMessage(`Erro ao atualizar dados: ${errorText}`, 'error');
         }
       } catch (error) {
-        showMessage('Erro de conexão ao atualizar dados', 'error');
+        console.error('❌ Erro de conexão ao salvar metadados:', error);
+        
+        if (error.message.includes('NetworkError')) {
+          showMessage(`Erro de rede ao atualizar dados: ${error.message}`, 'error');
+        } else {
+          showMessage(`Erro de conexão ao atualizar dados: ${error.message}`, 'error');
+        }
       }
     }
 
