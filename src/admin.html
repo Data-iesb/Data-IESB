@@ -579,62 +579,51 @@ if __name__ == "__main__":
         return;
       }
 
-      console.log(`🔄 Tentando tornar visível diretamente relatório ID: ${reportId}`);
+      console.log(`🔄 Tornando visível diretamente relatório ID: ${reportId}`);
       
       try {
-        // Tentar diferentes URLs para restore
-        const urls = [
-          `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/restore`,
-          `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/reports/${reportId}/restore`,
-          `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/status`
-        ];
+        console.log('🔗 URL:', `https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/restore`);
+        console.log('🔑 Token:', authToken ? 'Present' : 'Missing');
+        
+        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/restore`, {
+          method: 'POST', // Using POST instead of PUT as that's what's configured in API Gateway
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-        for (let i = 0; i < urls.length; i++) {
-          const url = urls[i];
-          console.log(`🔗 Tentando restore URL ${i + 1}: ${url}`);
+        console.log(`📡 Restore Status: ${response.status}`);
+
+        if (response.status === 200) {
+          const result = await response.json();
+          console.log(`✅ Sucesso restore:`, result);
+          showMessage(`Relatório "${reportTitle}" tornado visível com sucesso!`, 'success');
           
-          try {
-            const body = i === 2 ? JSON.stringify({ status: 'active' }) : undefined;
-            const response = await fetch(url, {
-              method: 'PUT',
-              headers: {
-                'Authorization': `Bearer ${authToken}`,
-                'Content-Type': 'application/json'
-              },
-              body: body
-            });
-
-            console.log(`📡 Restore URL ${i + 1} Status: ${response.status}`);
-
-            if (response.status === 200) {
-              const result = await response.json();
-              console.log(`✅ Sucesso restore URL ${i + 1}:`, result);
-              showMessage(`Relatório "${reportTitle}" tornado visível com sucesso!`, 'success');
-              
-              // Recarregar listas
-              loadHiddenReports();
-              loadReports();
-              return;
-            } else if (response.status === 401) {
-              console.log(`❌ Restore URL ${i + 1}: Token expirado`);
-              if (i === urls.length - 1) {
-                logout();
-                return;
-              }
-            } else {
-              const errorText = await response.text();
-              console.log(`❌ Restore URL ${i + 1} Error: ${response.status} - ${errorText}`);
-            }
-          } catch (fetchError) {
-            console.error(`❌ Restore URL ${i + 1} Fetch Error:`, fetchError);
+          // Recarregar listas
+          loadHiddenReports();
+          loadReports();
+        } else if (response.status === 401) {
+          console.log(`❌ Token expirado`);
+          logout();
+        } else {
+          const errorText = await response.text();
+          console.log(`❌ Erro restore: ${response.status} - ${errorText}`);
+          
+          if (errorText.includes('Missing Authentication Token')) {
+            showMessage('Erro: Problema de configuração no API Gateway. Endpoint não configurado corretamente.', 'error');
+          } else {
+            showMessage(`Erro ao tornar visível: ${errorText}`, 'error');
           }
         }
-
-        showMessage('Erro: Não foi possível tornar o relatório visível', 'error');
-
       } catch (error) {
         console.error('❌ Erro geral makeVisibleDirectly:', error);
-        showMessage(`Erro de conexão: ${error.message}`, 'error');
+        
+        if (error.message.includes('NetworkError')) {
+          showMessage(`Erro de rede: ${error.message}. API Gateway pode estar mal configurado.`, 'error');
+        } else {
+          showMessage(`Erro de conexão: ${error.message}`, 'error');
+        }
       }
     }
 
