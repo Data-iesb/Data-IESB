@@ -84,7 +84,7 @@
     </div>
     
     <div id="deletedReports" class="tab-content">
-      <div id="deletedReportsList">Carregando relatórios excluídos...</div>
+      <div id="deletedReportsList">Clique na aba para carregar relatórios excluídos...</div>
     </div>
   </div>
 
@@ -144,11 +144,22 @@
       document.getElementById(tab === 'active' ? 'activeReports' : 'deletedReports').classList.add('active');
       
       currentTab = tab;
-      loadReports();
+      
+      // Load the appropriate reports for the selected tab
+      if (tab === 'deleted') {
+        loadDeletedReports();
+      } else {
+        loadReports();
+      }
     }
 
     async function loadReports() {
       if (!authToken) return;
+
+      if (currentTab === 'deleted') {
+        loadDeletedReports();
+        return;
+      }
 
       try {
         const response = await fetch('https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports', {
@@ -395,9 +406,11 @@
           const errorText = await response.text();
           showMessage(`Erro: ${errorText}`, 'error');
         } else {
-          loadReports();
+          // Reload the appropriate tab based on current view
           if (currentTab === 'deleted') {
             loadDeletedReports();
+          } else {
+            loadReports();
           }
         }
       } catch (error) {
