@@ -117,6 +117,12 @@
       </form>
 
       <div class="reports-section">
+        <div style="margin-bottom: 20px;">
+          <button onclick="testEndpoints()" class="btn btn-secondary" style="background: #28a745; color: white;">
+            🔧 Test Endpoints
+          </button>
+        </div>
+        
         <div class="tabs">
           <button class="tab active" onclick="switchTab('visible')">Relatórios Visíveis</button>
           <button class="tab" onclick="switchTab('hidden')">Relatórios Ocultos</button>
@@ -385,6 +391,44 @@
 
     function cancelEdit(reportId) {
       document.getElementById(`editForm${reportId}`).style.display = 'none';
+    }
+
+    // Diagnostic function to test endpoints
+    async function testEndpoints() {
+      console.log('🧪 Testing endpoints from browser...');
+      
+      const endpoints = [
+        { name: 'Download', url: 'https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/1/download', method: 'GET' },
+        { name: 'Update', url: 'https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/1', method: 'PUT' },
+        { name: 'Restore', url: 'https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/1/restore', method: 'POST' }
+      ];
+      
+      for (const endpoint of endpoints) {
+        try {
+          console.log(`🔗 Testing ${endpoint.name}: ${endpoint.method} ${endpoint.url}`);
+          
+          const response = await fetch(endpoint.url, {
+            method: endpoint.method,
+            headers: {
+              'Authorization': 'Bearer test-token',
+              'Content-Type': 'application/json'
+            },
+            body: endpoint.method !== 'GET' ? JSON.stringify({}) : undefined
+          });
+          
+          console.log(`✅ ${endpoint.name}: Status ${response.status}`);
+          
+          if (response.status === 401) {
+            console.log(`✅ ${endpoint.name}: Correctly returns 401 Unauthorized`);
+          } else {
+            const text = await response.text();
+            console.log(`📄 ${endpoint.name}: Response: ${text}`);
+          }
+          
+        } catch (error) {
+          console.error(`❌ ${endpoint.name}: ${error.message}`);
+        }
+      }
     }
 
     async function saveMetadata(reportId) {
