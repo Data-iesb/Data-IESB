@@ -37,6 +37,8 @@ def lambda_handler(event, context):
         elif method == 'GET' and '/reports' in path:
             if '/download' in path:
                 return download_report(event, user_email)
+            elif '/code' in path:
+                return get_report_code(event, user_email)
             else:
                 # Check if requesting deleted reports
                 query_params = event.get('queryStringParameters') or {}
@@ -44,10 +46,14 @@ def lambda_handler(event, context):
                     return list_deleted_reports(user_email)
                 else:
                     return list_reports(user_email)
+        elif method == 'PUT' and '/reports' in path:
+            if '/restore' in path:
+                return restore_report(event, user_email)
+            elif '/code' in path:
+                return update_report_code(event, user_email)
+            elif '/status' in path:
+                return update_report_status(event, user_email)
         elif method == 'DELETE' and '/reports' in path:
-            return soft_delete_report(event, user_email)
-        elif method == 'PUT' and '/reports' in path and '/restore' in path:
-            return restore_report(event, user_email)
         else:
             return error_response('Method not allowed', 405)
             
@@ -114,6 +120,12 @@ def create_report(event, user_email):
             if field not in form_data:
                 return error_response(f'Missing required field: {field}', 400)
         
+        # Get initial status (default to 'active')
+        initial_status = form_data.get('status', 'active')
+        valid_statuses = ['active', 'inactive', 'draft']
+        if initial_status not in valid_statuses:
+            initial_status = 'active'
+        
         # Generate incremental ID for the report
         report_id = get_next_report_id()
         timestamp = datetime.utcnow().isoformat()
@@ -144,6 +156,7 @@ def create_report(event, user_email):
                 'autor': form_data['autor'],
                 'descricao': form_data['descricao'],
                 'id_s3': file_key,  # Store the S3 prefix, not the full key
+                'status': initial_status,  # Add status field
                 'created_at': timestamp,
                 'updated_at': timestamp,
                 'is_deleted': False,  # Soft delete flag
@@ -211,6 +224,7 @@ def list_reports(user_email):
                 'titulo': item['titulo'],
                 'autor': item['autor'],
                 'descricao': item['descricao'],
+                'status': item.get('status', 'active'),  # Include status
                 'created_at': item['created_at'],
                 'updated_at': item['updated_at']
             }
@@ -352,6 +366,188 @@ def download_report(event, user_email):
     except Exception as e:
         print(f"Error downloading report: {str(e)}")
         return error_response(f'Error downloading report: {str(e)}', 500)
+
+def get_report_code(event, user_email):
+    """Get the Python code for a report"""
+    try:
+        # Extract report_id from path
+        path_parts = event['path'].split('/')
+        report_id = path_parts[-2]  # /reports/{id}/code
+        
+        table = dynamodb.Table(REPORTS_TABLE)
+        
+        # Get report metadata
+        response = table.get_item(
+            Key={'report_id': report_id}
+        )
+        
+        if 'Item' not in response:
+            return error_response('Report not found', 404)
+        
+        report = response['Item']
+        if report['user_email'] != user_email:
+            return error_response('Unauthorized to access this report', 403)
+        
+        if report.get('is_deleted', False):
+            return error_response('Report is deleted', 404)
+        
+        # Construct S3 key from id_s3 column
+        s3_key = f"{report['id_s3']}main.py"
+        
+        # Get file from S3
+        s3_response = s3_client.get_object(
+            Bucket=REPORTS_BUCKET,
+            Key=s3_key
+        )
+        
+        file_content = s3_response['Body'].read().decode('utf-8')
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'text/plain'
+            },
+            'body': file_content
+        }
+        
+    except Exception as e:
+        print(f"Error getting report code: {str(e)}")
+        return error_response(f'Error getting report code: {str(e)}', 500)
+
+def update_report_code(event, user_email):
+    """Update the Python code for a report"""
+    try:
+        # Extract report_id from path
+        path_parts = event['path'].split('/')
+        report_id = path_parts[-2]  # /reports/{id}/code
+        
+        # Parse request body
+        body = json.loads(event['body'])
+        new_code = body.get('code', '')
+        
+        if not new_code:
+            return error_response('Code content is required', 400)
+        
+        table = dynamodb.Table(REPORTS_TABLE)
+        
+        # Get report metadata
+        response = table.get_item(
+            Key={'report_id': report_id}
+        )
+        
+        if 'Item' not in response:
+            return error_response('Report not found', 404)
+        
+        report = response['Item']
+        if report['user_email'] != user_email:
+            return error_response('Unauthorized to update this report', 403)
+        
+        if report.get('is_deleted', False):
+            return error_response('Cannot update deleted report', 400)
+        
+        # Construct S3 key from id_s3 column
+        s3_key = f"{report['id_s3']}main.py"
+        
+        # Create backup of current file
+        backup_key = f"{report['id_s3']}main_backup_{int(datetime.utcnow().timestamp())}.py"
+        
+        try:
+            # Copy current file to backup
+            s3_client.copy_object(
+                Bucket=REPORTS_BUCKET,
+                CopySource={'Bucket': REPORTS_BUCKET, 'Key': s3_key},
+                Key=backup_key
+            )
+        except:
+            # If backup fails, continue anyway
+            pass
+        
+        # Upload new code to S3
+        s3_client.put_object(
+            Bucket=REPORTS_BUCKET,
+            Key=s3_key,
+            Body=new_code.encode('utf-8'),
+            ContentType='text/x-python',
+            Metadata={
+                'user': user_email,
+                'report_id': report_id,
+                'updated_by': 'admin_panel'
+            }
+        )
+        
+        # Update timestamp in DynamoDB
+        table.update_item(
+            Key={'report_id': report_id},
+            UpdateExpression='SET updated_at = :updated_at',
+            ExpressionAttributeValues={
+                ':updated_at': datetime.utcnow().isoformat()
+            }
+        )
+        
+        return success_response({
+            'message': 'Code updated successfully',
+            'backup_created': backup_key
+        })
+        
+    except Exception as e:
+        print(f"Error updating report code: {str(e)}")
+        return error_response(f'Error updating report code: {str(e)}', 500)
+
+def update_report_status(event, user_email):
+    """Update the status of a report"""
+    try:
+        # Extract report_id from path
+        path_parts = event['path'].split('/')
+        report_id = path_parts[-2]  # /reports/{id}/status
+        
+        # Parse request body
+        body = json.loads(event['body'])
+        new_status = body.get('status', '')
+        
+        valid_statuses = ['active', 'inactive', 'draft']
+        if new_status not in valid_statuses:
+            return error_response(f'Invalid status. Must be one of: {", ".join(valid_statuses)}', 400)
+        
+        table = dynamodb.Table(REPORTS_TABLE)
+        
+        # Get report metadata
+        response = table.get_item(
+            Key={'report_id': report_id}
+        )
+        
+        if 'Item' not in response:
+            return error_response('Report not found', 404)
+        
+        report = response['Item']
+        if report['user_email'] != user_email:
+            return error_response('Unauthorized to update this report', 403)
+        
+        if report.get('is_deleted', False):
+            return error_response('Cannot update status of deleted report', 400)
+        
+        # Update status in DynamoDB
+        table.update_item(
+            Key={'report_id': report_id},
+            UpdateExpression='SET #status = :status, updated_at = :updated_at',
+            ExpressionAttributeNames={
+                '#status': 'status'  # 'status' is a reserved word in DynamoDB
+            },
+            ExpressionAttributeValues={
+                ':status': new_status,
+                ':updated_at': datetime.utcnow().isoformat()
+            }
+        )
+        
+        return success_response({
+            'message': f'Status updated to {new_status}',
+            'report_id': report_id,
+            'new_status': new_status
+        })
+        
+    except Exception as e:
+        print(f"Error updating report status: {str(e)}")
+        return error_response(f'Error updating report status: {str(e)}', 500)
 
 def parse_multipart_form_data(body, content_type):
     """Parse multipart form data"""
