@@ -228,9 +228,9 @@
         <!-- Main Dashboard Link -->
         <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #007bff; margin-bottom: 15px;">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <a href="http://app.dataiesb.com/?path=dev" target="_blank" 
+            <a href="http://app.dataiesb.com/report/?path=dev" target="_blank" 
                style="color: #007bff; font-weight: 600; font-size: 18px; text-decoration: none; word-break: break-all;">
-              app.dataiesb.com/?path=dev
+              app.dataiesb.com/report/?path=dev
             </a>
             <button onclick="copyDashboardUrl()" class="btn btn-secondary" style="padding: 8px 15px; font-size: 14px;">
               📋 Copiar URL
@@ -954,7 +954,7 @@ if __name__ == "__main__":
     }
 
     function copyDashboardUrl() {
-      const url = 'http://app.dataiesb.com/?path=dev';
+      const url = 'http://app.dataiesb.com/report/?path=dev';
       
       if (navigator.clipboard && window.isSecureContext) {
         // Use modern clipboard API
@@ -988,11 +988,11 @@ if __name__ == "__main__":
         if (successful) {
           showMessage('URL do dashboard copiada para a área de transferência!', 'success');
         } else {
-          showMessage('Não foi possível copiar a URL. Copie manualmente: http://app.dataiesb.com/?path=dev', 'error');
+          showMessage('Não foi possível copiar a URL. Copie manualmente: http://app.dataiesb.com/report/?path=dev', 'error');
         }
       } catch (err) {
         console.error('Fallback: Erro ao copiar URL:', err);
-        showMessage('Não foi possível copiar a URL. Copie manualmente: http://app.dataiesb.com/?path=dev', 'error');
+        showMessage('Não foi possível copiar a URL. Copie manualmente: http://app.dataiesb.com/report/?path=dev', 'error');
       }
       
       document.body.removeChild(textArea);
