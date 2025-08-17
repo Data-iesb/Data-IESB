@@ -4,296 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Data IESB</title>
-    <link rel="stylesheet" href="./style/home.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .login-section {
-            padding: 80px 0;
-            min-height: calc(100vh - 200px);
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        
-        .login-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 100%;
-            max-width: 450px;
-        }
-        
-        .login-title {
+        .redirect-container {
             text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-            font-size: 28px;
-            font-weight: 600;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
         }
-        
-        .form-group {
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #D13F42;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            color: #666;
+            font-size: 16px;
             margin-bottom: 20px;
         }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-            box-sizing: border-box;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-        }
-        
-        .btn-login:active {
-            transform: translateY(0);
-        }
-        
-        .login-message {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: 500;
-        }
-        
-        .text-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .text-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .domain-info {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .domain-info strong {
-            color: #856404;
-        }
-        
-        .forgot-password {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .forgot-password a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-        
-        .forgot-password a:hover {
-            color: #0056b3;
-            text-decoration: underline;
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #D13F42;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-
-    <header>
-        <div class="container nav-container">
-            <div class="logo">
-                <img src="https://d28lvm9jkyfotx.cloudfront.net/logo.png" alt="Data IESB Logo" style="width: 80px; height: 40px;">
-            </div>
-
-            <input type="checkbox" id="menu-toggle" class="menu-toggle">
-            
-            <label for="menu-toggle" class="hamburger-menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </label>
-
-            <div class="nav-collapse">
-                <nav>
-                    <ul>
-                        <li><a href="index.html">Painéis e Estudos</a></li>
-                        <li><a href="quem-somos.html">Quem somos</a></li>
-                        <li><a href="parceiros.html">Parceiros</a></li>
-                        <li><a href="contato.html">Contato</a></li>
-                        <li><a href="cadastrar.html">Cadastrar</a></li>
-                        <li><a class="active" href="login.html">Login</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <section class="login-section">
-            <div class="container">
-                <div class="login-container">
-                    <h2 class="login-title">Acesso Administrativo</h2>
-                    
-                    <div class="domain-info">
-                        <strong>⚠️ Acesso Restrito</strong><br>
-                        Apenas e-mails com domínio <code>@iesb.edu.br</code> podem acessar esta área.
-                    </div>
-                    
-                    <div style="text-align: center; padding: 20px;">
-                        <div style="margin: 20px 0;">
-                            <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
-                        </div>
-                        <p style="margin-bottom: 30px; color: #666; font-size: 16px;">
-                            Redirecionando para a página de login segura...
-                        </p>
-                    </div>
-                    
-                    <style>
-                        @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                        }
-                    </style>
-                    
-                    <script>
-                        // Automatically redirect to Cognito using new client and direct admin redirect
-                        window.location.href = "https://auth.dataiesb.com/oauth2/authorize?client_id=71am2v0jcp9uqpihrh9hjqtp6o&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html";
-                    </script>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container footer-container">
-            <p>&copy; 2025. Criado pelo Data IESB.</p>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="quem-somos.html">Quem Somos</a></li>
-                    <li><a href="parceiros.html">Parceiros</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                    <li><a href="cadastrar.html">Cadastrar</a></li>
-                </ul>
-            </nav>
-        </div>
-    </footer>
-
+    <div class="redirect-container">
+        <div class="logo">🎓 Data IESB</div>
+        <div class="spinner"></div>
+        <div class="message">Redirecionando para login seguro...</div>
+    </div>
+    
     <script>
-        document.getElementById("loginForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
-
-            const username = document.getElementById("username").value.trim();
-            const password = document.getElementById("password").value.trim();
-            const message = document.getElementById("loginMessage");
-            
-            // Reset message
-            message.style.display = "none";
-            message.textContent = "";
-            message.className = "login-message";
-
-            // Validate IESB domain
-            if (!username.endsWith("@iesb.edu.br")) {
-                message.style.display = "block";
-                message.className = "login-message text-danger";
-                message.textContent = "Apenas e-mails com domínio @iesb.edu.br são permitidos.";
-                return;
-            }
-
-            try {
-                const response = await fetch("https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const contentType = response.headers.get("Content-Type") || "";
-                let data = {};
-
-                if (contentType.includes("application/json")) {
-                    data = await response.json();
-                } else {
-                    const text = await response.text();
-                    console.warn("Non-JSON response:", text);
-                    data = { message: text };
-                }
-
-                console.log("API Response:", data);
-
-                if (response.ok) {
-                    message.style.display = "block";
-                    message.className = "login-message text-success";
-                    message.textContent = data.message || "Login realizado com sucesso! Redirecionando...";
-
-                    // Store ID token (optional)
-                    localStorage.setItem("idToken", data.idToken);
-
-                    // Redirect to admin.html
-                    setTimeout(() => {
-                        window.location.href = "admin.html";
-                    }, 2000);
-                } else {
-                    message.style.display = "block";
-                    message.className = "login-message text-danger";
-                    message.textContent = data.message || "Erro ao fazer login. Verifique suas credenciais.";
-                }
-            } catch (error) {
-                console.error("Erro ao conectar:", error);
-                message.style.display = "block";
-                message.className = "login-message text-danger";
-                message.textContent = "Erro de conexão com o servidor. Tente novamente.";
-            }
-        });
-        
-        // Function to redirect to Cognito hosted UI for password reset
-        function redirectToForgotPassword() {
-            const cognitoUrl = 'https://auth.dataiesb.com/forgotPassword';
-            const clientId = '2mpcqrmv19qk8ajqk9j2cemimj';
-            const redirectUri = encodeURIComponent('https://dataiesb.com/login.html');
-            
-            // Construct the forgot password URL
-            const forgotPasswordUrl = `${cognitoUrl}?client_id=${clientId}&response_type=code&scope=email+openid+phone&redirect_uri=${redirectUri}`;
-            
-            // Redirect to Cognito hosted UI
-            window.location.href = forgotPasswordUrl;
-        }
+        // Immediate redirect to Cognito
+        window.location.replace("https://auth.dataiesb.com/oauth2/authorize?client_id=71am2v0jcp9uqpihrh9hjqtp6o&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html");
     </script>
-
 </body>
 </html>

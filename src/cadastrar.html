@@ -1,101 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Test deployment with buildspec.yml - 2025-08-17 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar - Data IESB</title>
-    <link rel="stylesheet" href="./style/home.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .redirect-container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #D13F42;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #D13F42;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-
-    <header>
-    <div class="container nav-container">
-        <div class="logo">
-  	    <img src="https://d28lvm9jkyfotx.cloudfront.net/logo.png" alt="Data IESB Logo" style="width: 80px; height: 40px;">
-	</div>
-
-
-        <input type="checkbox" id="menu-toggle" class="menu-toggle">
-        
-        <label for="menu-toggle" class="hamburger-menu">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </label>
-
-        <div class="nav-collapse">
-            <nav>
-                <ul>
-                    <li><a href="index.html">Painéis e Estudos</a></li>
-                    <li><a href="quem-somos.html">Quem somos</a></li>
-                    <li><a href="parceiros.html">Parceiros</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                    <li><a class="active" href="cadastrar.html">Cadastrar</a></li>
-                    <li><a href="login.html">Login</a></li>
-                </ul>
-            </nav>
-        </div>
+    <div class="redirect-container">
+        <div class="logo">🎓 Data IESB</div>
+        <div class="spinner"></div>
+        <div class="message">Redirecionando para cadastro seguro...</div>
     </div>
-    </header>
-
-    <main>
-        <section class="hero">
-            <div class="container hero-container">
-                <div class="hero-text">
-                    <h1>Cadastro de Novo Usuário</h1>
-                    <p>Preencha o formulário abaixo para criar sua conta.</p>
-                    <p style="color: #dc3545; font-weight: 600; margin-top: 20px;">
-                        ⚠️ Atenção: apenas e-mails com o domínio <code>@iesb.edu.br</code> poderão ser usados para login na plataforma.
-                    </p>
-                    
-                    <div class="signup-form-container" style="background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 40px; margin-top: 30px; max-width: 500px; text-align: center;">
-                        <div style="margin: 20px 0;">
-                            <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
-                        </div>
-                        <p style="margin-bottom: 30px; color: #666; font-size: 16px;">
-                            Redirecionando para a página de cadastro segura...
-                        </p>
-                    </div>
-                    
-                    <style>
-                        @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                        }
-                    </style>
-                    
-                    <script>
-                        // Automatically redirect to Cognito using new client and direct admin redirect
-                        window.location.href = "https://auth.dataiesb.com/oauth2/authorize?client_id=71am2v0jcp9uqpihrh9hjqtp6o&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html&signup=true";
-                    </script>
-                </div>
-                <div class="hero-image">
-                    <img src="https://d28lvm9jkyfotx.cloudfront.net/img/meeting.png" alt="Pessoas trabalhando em um escritório">
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container footer-container">
-            <p>&copy; 2025. Criado pelo Data IESB.</p>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="quem-somos.html">Quem Somos</a></li>
-                    <li><a href="parceiros.html">Parceiros</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                    <li><a href="login.html">Login</a></li>
-                </ul>
-            </nav>
-        </div>
-    </footer>
-
+    
+    <script>
+        // Immediate redirect to Cognito signup
+        window.location.replace("https://auth.dataiesb.com/oauth2/authorize?client_id=71am2v0jcp9uqpihrh9hjqtp6o&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html&signup=true");
+    </script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </html>
-
