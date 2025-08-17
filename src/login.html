@@ -176,24 +176,25 @@
                     </div>
                     
                     <div style="text-align: center; padding: 20px;">
+                        <div style="margin: 20px 0;">
+                            <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
+                        </div>
                         <p style="margin-bottom: 30px; color: #666; font-size: 16px;">
-                            Clique no botão abaixo para fazer login de forma segura.
+                            Redirecionando para a página de login segura...
                         </p>
-                        
-                        <a href="https://auth.dataiesb.com/login?client_id=2mpcqrmv19qk8ajqk9j2cemimj&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html" 
-                           class="btn-login" 
-                           style="display: inline-block; padding: 14px 30px; text-decoration: none; color: white; border-radius: 8px; font-weight: 500; font-size: 16px; margin-bottom: 20px;">
-                            Fazer Login
-                        </a>
-                        
-                        <div style="margin-top: 20px;">
-                            <a href="javascript:void(0)" onclick="redirectToForgotPassword()" style="color: #007bff; text-decoration: none; font-size: 14px;">Esqueceu sua senha?</a>
-                        </div>
-                        
-                        <div style="text-align: center; margin-top: 30px;">
-                            <p>Não tem uma conta? <a href="cadastrar.html" style="color: #007bff; text-decoration: none;">Cadastrar</a></p>
-                        </div>
                     </div>
+                    
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                    
+                    <script>
+                        // Automatically redirect to Cognito login
+                        window.location.href = "https://auth.dataiesb.com/login?client_id=2mpcqrmv19qk8ajqk9j2cemimj&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html";
+                    </script>
                 </div>
             </div>
         </section>

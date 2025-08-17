@@ -53,20 +53,25 @@
                     </p>
                     
                     <div class="signup-form-container" style="background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 40px; margin-top: 30px; max-width: 500px; text-align: center;">
-                        <p style="margin-bottom: 30px; color: #666; font-size: 16px;">
-                            Clique no botão abaixo para ser redirecionado para a página de cadastro segura.
-                        </p>
-                        
-                        <a href="https://auth.dataiesb.com/signup?client_id=2mpcqrmv19qk8ajqk9j2cemimj&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com" 
-                           class="btn btn-primary" 
-                           style="display: inline-block; padding: 14px 30px; text-decoration: none; color: white; border-radius: 8px; font-weight: 500; font-size: 16px;">
-                            Criar Conta
-                        </a>
-                        
-                        <div style="text-align: center; margin-top: 30px;">
-                            <p>Já tem uma conta? <a href="login.html" style="color: #007bff; text-decoration: none;">Fazer Login</a></p>
+                        <div style="margin: 20px 0;">
+                            <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
                         </div>
+                        <p style="margin-bottom: 30px; color: #666; font-size: 16px;">
+                            Redirecionando para a página de cadastro segura...
+                        </p>
                     </div>
+                    
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                    
+                    <script>
+                        // Automatically redirect to Cognito signup
+                        window.location.href = "https://auth.dataiesb.com/signup?client_id=2mpcqrmv19qk8ajqk9j2cemimj&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html";
+                    </script>
                 </div>
                 <div class="hero-image">
                     <img src="https://d28lvm9jkyfotx.cloudfront.net/img/meeting.png" alt="Pessoas trabalhando em um escritório">
