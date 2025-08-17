@@ -244,6 +244,20 @@
   </div>
 
   <script>
+    // Handle OAuth callback from Cognito
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    
+    if (code) {
+      // User just logged in via Cognito, clean up the URL
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+      
+      // Store authentication state
+      localStorage.setItem('cognitoAuth', 'true');
+      localStorage.setItem('authCode', code);
+    }
+
     let currentUser = null;
     let authToken = null;
     let actionToConfirm = null;
