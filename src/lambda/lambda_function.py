@@ -3,6 +3,8 @@ import boto3
 import base64
 from datetime import datetime
 import os
+import hmac
+import hashlib
 
 s3_client = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
@@ -13,8 +15,12 @@ REPORTS_TABLE = os.environ.get('REPORTS_TABLE', 'dataiesb-reports')
 
 def lambda_handler(event, context):
     try:
+        print(f"🚀 Lambda invoked with method: {event.get('httpMethod', 'UNKNOWN')}")
+        print(f"📍 Path: {event.get('path', 'UNKNOWN')}")
+        
         # Handle CORS preflight
         if event['httpMethod'] == 'OPTIONS':
+            print("✅ Handling CORS preflight")
             return {
                 'statusCode': 200,
                 'headers': {
@@ -27,13 +33,19 @@ def lambda_handler(event, context):
         method = event['httpMethod']
         path = event.get('path', '')
         
+        print(f"🔍 Processing {method} request to {path}")
+        
         # Handle login endpoint (no authentication required)
         if method == 'POST' and (path == '/dataiesb-auth' or path.endswith('/dataiesb-auth')):
+            print("🔐 Routing to login handler")
             return handle_login(event)
+        
+        print("🔒 Checking authentication for protected endpoint")
         
         # Get user info from JWT token for all other endpoints
         user_email = get_user_from_token(event.get('headers', {}).get('Authorization', ''))
         if not user_email:
+            print("❌ No valid authentication found")
             return error_response('Unauthorized', 401)
         
         method = event['httpMethod']
@@ -822,20 +834,40 @@ def success_response(data):
         'body': json.dumps(data)
     }
 
+def calculate_secret_hash(username, client_id, client_secret):
+    """Calculate SECRET_HASH for Cognito authentication"""
+    message = username + client_id
+    dig = hmac.new(
+        client_secret.encode('utf-8'),
+        message.encode('utf-8'),
+        hashlib.sha256
+    ).digest()
+    return base64.b64encode(dig).decode()
+
 def handle_login(event):
     """Handle user login with AWS Cognito"""
     try:
+        print(f"🔍 Login attempt started")
+        print(f"📋 Event: {json.dumps(event, default=str)}")
+        
         # Parse request body
         body = json.loads(event.get('body', '{}'))
         username = body.get('username', '').strip()
         password = body.get('password', '').strip()
         
+        print(f"👤 Username: {username}")
+        print(f"🔑 Password length: {len(password) if password else 0}")
+        
         if not username or not password:
+            print("❌ Missing username or password")
             return error_response('Username and password are required', 400)
         
         # Validate IESB domain
         if not username.endswith('@iesb.edu.br'):
+            print(f"❌ Invalid domain for username: {username}")
             return error_response('Only @iesb.edu.br emails are allowed', 400)
+        
+        print("✅ Domain validation passed")
         
         # Initialize Cognito client
         cognito_client = boto3.client('cognito-idp', region_name='us-east-1')
@@ -843,24 +875,39 @@ def handle_login(event):
         # Cognito User Pool configuration
         USER_POOL_ID = 'us-east-1_QvLQs82bE'  # Actual pool ID from AWS
         CLIENT_ID = '2mpcqrmv19qk8ajqk9j2cemimj'  # From your login.html
+        CLIENT_SECRET = '8q5ukrt7p17krgl6j6vm02mrqm7pe2rt4fk5be65mn5oeg0u30j'  # From AWS CLI output
+        
+        print(f"🏊 Using User Pool: {USER_POOL_ID}")
+        print(f"📱 Using Client ID: {CLIENT_ID}")
+        
+        # Calculate SECRET_HASH
+        secret_hash = calculate_secret_hash(username, CLIENT_ID, CLIENT_SECRET)
+        print(f"🔐 SECRET_HASH calculated")
         
         try:
+            print("🔐 Attempting Cognito authentication...")
             # Authenticate with Cognito
             response = cognito_client.admin_initiate_auth(
                 UserPoolId=USER_POOL_ID,
                 ClientId=CLIENT_ID,
-                AuthFlow='ADMIN_NO_SRP_AUTH',
+                AuthFlow='ADMIN_USER_PASSWORD_AUTH',
                 AuthParameters={
                     'USERNAME': username,
-                    'PASSWORD': password
+                    'PASSWORD': password,
+                    'SECRET_HASH': secret_hash
                 }
             )
+            
+            print("✅ Cognito authentication successful!")
+            print(f"📄 Response keys: {list(response.keys())}")
             
             # Extract tokens
             auth_result = response['AuthenticationResult']
             id_token = auth_result['IdToken']
             access_token = auth_result['AccessToken']
             refresh_token = auth_result['RefreshToken']
+            
+            print("🎟️ Tokens extracted successfully")
             
             return success_response({
                 'message': 'Login successful',
@@ -869,20 +916,26 @@ def handle_login(event):
                 'refreshToken': refresh_token
             })
             
-        except cognito_client.exceptions.NotAuthorizedException:
+        except cognito_client.exceptions.NotAuthorizedException as e:
+            print(f"❌ Cognito NotAuthorizedException: {str(e)}")
             return error_response('Invalid username or password', 401)
-        except cognito_client.exceptions.UserNotConfirmedException:
+        except cognito_client.exceptions.UserNotConfirmedException as e:
+            print(f"❌ Cognito UserNotConfirmedException: {str(e)}")
             return error_response('User account not confirmed. Please check your email.', 401)
-        except cognito_client.exceptions.UserNotFoundException:
+        except cognito_client.exceptions.UserNotFoundException as e:
+            print(f"❌ Cognito UserNotFoundException: {str(e)}")
             return error_response('User not found', 401)
         except Exception as cognito_error:
-            print(f"Cognito error: {str(cognito_error)}")
+            print(f"❌ Cognito error: {str(cognito_error)}")
+            print(f"❌ Cognito error type: {type(cognito_error)}")
             return error_response('Authentication service error', 500)
             
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(f"❌ JSON decode error: {str(e)}")
         return error_response('Invalid JSON in request body', 400)
     except Exception as e:
-        print(f"Login error: {str(e)}")
+        print(f"❌ General login error: {str(e)}")
+        print(f"❌ Error type: {type(e)}")
         return error_response('Internal server error during login', 500)
 
 def error_response(message, status_code):
