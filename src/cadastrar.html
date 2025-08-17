@@ -51,138 +51,21 @@
                         ⚠️ Atenção: apenas e-mails com o domínio <code>@iesb.edu.br</code> poderão ser usados para login na plataforma.
                     </p>
                     
-                    <div class="signup-form-container" style="background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 40px; margin-top: 30px; max-width: 500px;">
-                        <form id="signupForm">
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label for="email" style="display: block; margin-bottom: 8px; color: #555; font-weight: 500;">E-mail Institucional</label>
-                                <input type="email" id="email" required placeholder="seu.email@iesb.edu.br" 
-                                       style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; box-sizing: border-box;" />
-                            </div>
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label for="password" style="display: block; margin-bottom: 8px; color: #555; font-weight: 500;">Senha</label>
-                                <input type="password" id="password" required placeholder="••••••••" 
-                                       style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; box-sizing: border-box;" />
-                                <small style="color: #666; font-size: 12px;">Mínimo 8 caracteres, incluindo maiúscula, minúscula, número e símbolo</small>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <label for="confirmPassword" style="display: block; margin-bottom: 8px; color: #555; font-weight: 500;">Confirmar Senha</label>
-                                <input type="password" id="confirmPassword" required placeholder="••••••••" 
-                                       style="width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; box-sizing: border-box;" />
-                            </div>
-                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 10px;">Criar Conta</button>
-                        </form>
+                    <div class="signup-form-container" style="background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 40px; margin-top: 30px; max-width: 500px; text-align: center;">
+                        <p style="margin-bottom: 30px; color: #666; font-size: 16px;">
+                            Clique no botão abaixo para ser redirecionado para a página de cadastro segura.
+                        </p>
                         
-                        <div id="signupMessage" style="margin-top: 20px; padding: 12px; border-radius: 6px; text-align: center; font-weight: 500; display: none;"></div>
+                        <a href="https://auth.dataiesb.com/signup?client_id=2mpcqrmv19qk8ajqk9j2cemimj&response_type=code&scope=email+openid+profile&redirect_uri=https://dataiesb.com" 
+                           class="btn btn-primary" 
+                           style="display: inline-block; padding: 14px 30px; text-decoration: none; color: white; border-radius: 8px; font-weight: 500; font-size: 16px;">
+                            Criar Conta
+                        </a>
                         
-                        <div style="text-align: center; margin-top: 20px;">
+                        <div style="text-align: center; margin-top: 30px;">
                             <p>Já tem uma conta? <a href="login.html" style="color: #007bff; text-decoration: none;">Fazer Login</a></p>
                         </div>
                     </div>
-                    
-                    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1563.0.min.js"></script>
-                    <script>
-                        // Configure AWS Cognito
-                        AWS.config.region = 'us-east-1';
-                        const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider();
-                        
-                        document.getElementById("signupForm").addEventListener("submit", async function (e) {
-                            e.preventDefault();
-
-                            const email = document.getElementById("email").value.trim();
-                            const password = document.getElementById("password").value.trim();
-                            const confirmPassword = document.getElementById("confirmPassword").value.trim();
-                            const message = document.getElementById("signupMessage");
-                            
-                            // Reset message
-                            message.style.display = "none";
-                            message.textContent = "";
-                            message.className = "";
-
-                            // Validate IESB domain
-                            if (!email.endsWith("@iesb.edu.br")) {
-                                showMessage("Apenas e-mails com domínio @iesb.edu.br são permitidos.", "error");
-                                return;
-                            }
-                            
-                            // Validate password match
-                            if (password !== confirmPassword) {
-                                showMessage("As senhas não coincidem.", "error");
-                                return;
-                            }
-                            
-                            // Validate password strength
-                            if (password.length < 8 || 
-                                !/[A-Z]/.test(password) || 
-                                !/[a-z]/.test(password) || 
-                                !/[0-9]/.test(password) || 
-                                !/[^A-Za-z0-9]/.test(password)) {
-                                showMessage("A senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e símbolo.", "error");
-                                return;
-                            }
-
-                            try {
-                                showMessage("Criando conta...", "info");
-                                
-                                const params = {
-                                    ClientId: '2mpcqrmv19qk8ajqk9j2cemimj',
-                                    Username: email,
-                                    Password: password,
-                                    UserAttributes: [
-                                        {
-                                            Name: 'email',
-                                            Value: email
-                                        }
-                                    ]
-                                };
-                                
-                                const result = await cognitoIdentityServiceProvider.signUp(params).promise();
-                                
-                                showMessage("Conta criada com sucesso! Verifique seu e-mail para confirmar a conta.", "success");
-                                
-                                // Clear form
-                                document.getElementById("signupForm").reset();
-                                
-                                // Redirect to login after 3 seconds
-                                setTimeout(() => {
-                                    window.location.href = "login.html";
-                                }, 3000);
-                                
-                            } catch (error) {
-                                console.error("Erro ao criar conta:", error);
-                                let errorMessage = "Erro ao criar conta. Tente novamente.";
-                                
-                                if (error.code === 'UsernameExistsException') {
-                                    errorMessage = "Este e-mail já está cadastrado.";
-                                } else if (error.code === 'InvalidPasswordException') {
-                                    errorMessage = "Senha não atende aos requisitos de segurança.";
-                                } else if (error.message) {
-                                    errorMessage = error.message;
-                                }
-                                
-                                showMessage(errorMessage, "error");
-                            }
-                        });
-                        
-                        function showMessage(text, type) {
-                            const message = document.getElementById("signupMessage");
-                            message.style.display = "block";
-                            message.textContent = text;
-                            
-                            if (type === "success") {
-                                message.style.backgroundColor = "#d4edda";
-                                message.style.color = "#155724";
-                                message.style.border = "1px solid #c3e6cb";
-                            } else if (type === "error") {
-                                message.style.backgroundColor = "#f8d7da";
-                                message.style.color = "#721c24";
-                                message.style.border = "1px solid #f5c6cb";
-                            } else if (type === "info") {
-                                message.style.backgroundColor = "#d1ecf1";
-                                message.style.color = "#0c5460";
-                                message.style.border = "1px solid #bee5eb";
-                            }
-                        }
-                    </script>
                 </div>
                 <div class="hero-image">
                     <img src="https://d28lvm9jkyfotx.cloudfront.net/img/meeting.png" alt="Pessoas trabalhando em um escritório">
