@@ -69,8 +69,8 @@
                     </style>
                     
                     <script>
-                        // Automatically redirect to Cognito signup (using AWS domain temporarily)
-                        window.location.href = "https://dataiesb-auth-1755396859.auth.us-east-1.amazoncognito.com/signup?client_id=2mpcqrmv19qk8ajqk9j2cemimj&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html";
+                        // Automatically redirect to Cognito OAuth2 authorize (for signup)
+                        window.location.href = "https://dataiesb-auth-1755396859.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=2mpcqrmv19qk8ajqk9j2cemimj&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html&signup=true";
                     </script>
                 </div>
                 <div class="hero-image">
