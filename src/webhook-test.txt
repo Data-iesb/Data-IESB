@@ -1,0 +1,3 @@
+Webhook test - Git trigger configured successfully
+Timestamp: 2025-08-17T03:47:00Z
+This file tests the CodeBuild webhook trigger functionality.
