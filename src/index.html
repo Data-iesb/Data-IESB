@@ -111,6 +111,17 @@
 
 </body>
 <script>
+  // Handle OAuth callback from Cognito
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  
+  if (code) {
+    // User just logged in via Cognito, redirect to admin
+    localStorage.setItem('cognitoAuth', 'true');
+    localStorage.setItem('authCode', code);
+    window.location.href = 'admin.html';
+  }
+
   async function loadReports() {
     const container = document.getElementById("cards-container");
     const reportsApiUrl = "https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/public-reports";
