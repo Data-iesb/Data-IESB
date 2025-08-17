@@ -51,6 +51,11 @@ def lambda_handler(event, context):
                 # Simulate restore path for query parameter
                 event['path'] = f"/dataiesb-auth/reports/{report_id}/restore"
                 return restore_report(event, user_email)
+            elif action == 'save-code' and method == 'POST':
+                # Simulate save code path for query parameter
+                event['path'] = f"/dataiesb-auth/reports/{report_id}/code"
+                event['httpMethod'] = 'PUT'  # Change method to PUT for internal processing
+                return update_report_code(event, user_email)
         
         if method == 'POST' and '/reports' in path:
             # Check if it's a restore request (old path-based approach)
@@ -545,7 +550,16 @@ def update_report_code(event, user_email):
     try:
         # Extract report_id from path
         path_parts = event['path'].split('/')
-        report_id = path_parts[-2]  # /reports/{id}/code
+        
+        # Handle different path formats:
+        # /reports/{id}/code -> path_parts[-2]
+        # /reports/{id} -> path_parts[-1]
+        if path_parts[-1] == 'code':
+            report_id = path_parts[-2]  # /reports/{id}/code
+        else:
+            report_id = path_parts[-1]  # /reports/{id}
+        
+        print(f"Save Code: Extracting report_id from path: {event['path']} -> {report_id}")
         
         # Parse request body
         body = json.loads(event['body'])
