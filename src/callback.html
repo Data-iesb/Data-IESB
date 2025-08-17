@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processando - Data IESB</title>
+    <link rel="stylesheet" href="./style/home.css">
+</head>
+<body>
+    <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center;">
+        <div>
+            <h2>Processando sua solicitação...</h2>
+            <p id="status">Aguarde enquanto processamos seu cadastro/login.</p>
+            <div style="margin: 20px 0;">
+                <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        // Handle OAuth callback from Cognito
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const error = urlParams.get('error');
+        const statusElement = document.getElementById('status');
+
+        if (error) {
+            statusElement.innerHTML = `<span style="color: red;">Erro: ${error}</span><br><a href="index.html">Voltar ao início</a>`;
+        } else if (code) {
+            // Success - user completed signup/login
+            statusElement.innerHTML = `<span style="color: green;">✅ Cadastro/Login realizado com sucesso!</span><br>Redirecionando...`;
+            
+            // Store some indication that user is authenticated
+            localStorage.setItem('cognitoCallback', 'success');
+            localStorage.setItem('cognitoCode', code);
+            
+            // Redirect to main page after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        } else {
+            statusElement.innerHTML = `<span style="color: orange;">Nenhum código de autorização encontrado.</span><br><a href="index.html">Voltar ao início</a>`;
+        }
+    </script>
+</body>
+</html>
