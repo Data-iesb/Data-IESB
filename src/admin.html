@@ -39,7 +39,75 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     .hidden-label { color: #495057; font-weight: bold; font-size: 12px; }
-    .code-editor-container { margin-top: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa; }
+    .code-editor-container { 
+      margin-top: 20px; 
+      padding: 20px; 
+      border: 2px solid #007bff; 
+      border-radius: 8px; 
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,123,255,0.2);
+    }
+    
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .editor-header h3 {
+      margin: 0;
+      color: #007bff;
+    }
+
+    .editing-indicator {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      box-shadow: 0 2px 5px rgba(0,123,255,0.3);
+    }
+
+    .editing-label {
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .editing-title {
+      font-weight: 500;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .report-item.editing {
+      border: 3px solid #007bff !important;
+      background: linear-gradient(135deg, #e3f2fd, #f8f9fa) !important;
+      box-shadow: 0 4px 15px rgba(0,123,255,0.3) !important;
+      transform: scale(1.02);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .report-item.editing::before {
+      content: "🔧 EDITANDO";
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #007bff;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      z-index: 10;
+    }
     .code-editor { width: 100%; height: 500px; font-family: 'Courier New', monospace; font-size: 14px; 
                    border: 1px solid #ddd; border-radius: 5px; padding: 15px; resize: vertical; background: white; }
     .editor-actions { margin-top: 15px; display: flex; gap: 10px; }
@@ -133,7 +201,13 @@
 
       <!-- Code Editor -->
       <div class="code-editor-container" id="codeEditorContainer" style="display: none;">
-        <h3>Editor de Código - <span id="editingReportTitle"></span></h3>
+        <div class="editor-header">
+          <h3>🔧 Editor de Código</h3>
+          <div class="editing-indicator">
+            <span class="editing-label">📝 Editando:</span>
+            <span class="editing-title" id="editingReportTitle"></span>
+          </div>
+        </div>
         <textarea class="code-editor" id="codeEditor" placeholder="Carregando código..."></textarea>
         <div class="editor-actions">
           <button onclick="saveCodeNew()" class="btn btn-primary">💾 Salvar Código</button>
@@ -291,7 +365,7 @@
       for (const [id, report] of Object.entries(reports)) {
         const reportUrl = `http://app.dataiesb.com/report/?id=${id}`;
         html += `
-          <div class="report-item">
+          <div class="report-item" data-report-id="${id}">
             <div class="report-title">
               ${report.titulo} 
               <span class="report-status status-visible">Visível</span>
@@ -346,7 +420,7 @@
       for (const [id, report] of Object.entries(reports)) {
         const reportUrl = `http://app.dataiesb.com/report/?id=${id}`;
         html += `
-          <div class="report-item hidden">
+          <div class="report-item hidden" data-report-id="${id}">
             <div class="hidden-label">OCULTO</div>
             <div class="report-title">
               ${report.titulo} 
@@ -455,9 +529,12 @@
       console.log(`🔄 Baixando código via query parameter para relatório ID: ${reportId}`);
       
       currentEditingReport = reportId;
-      document.getElementById('editingReportTitle').textContent = `${reportTitle} (ID: ${reportId}) - Via Query Parameter`;
+      document.getElementById('editingReportTitle').textContent = `${reportTitle} (ID: ${reportId})`;
       document.getElementById('codeEditor').value = '# Baixando código via query parameter...\n# Aguarde...';
       document.getElementById('codeEditorContainer').style.display = 'block';
+      
+      // Highlight the report being edited
+      highlightEditingReport(reportId);
 
       try {
         // Use query parameter instead of path parameter to avoid API Gateway routing issues
@@ -677,6 +754,9 @@ if __name__ == "__main__":
       document.getElementById('editingReportTitle').textContent = `${reportTitle} (ID: ${reportId})`;
       document.getElementById('codeEditor').value = '# Carregando código do arquivo main.py...\n# Aguarde...';
       document.getElementById('codeEditorContainer').style.display = 'block';
+      
+      // Highlight the report being edited
+      highlightEditingReport(reportId);
 
       try {
         const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}/code`, {
@@ -773,8 +853,31 @@ if __name__ == "__main__":
       }
     }
 
+    function highlightEditingReport(reportId) {
+      // Remove previous editing highlights
+      document.querySelectorAll('.report-item.editing').forEach(item => {
+        item.classList.remove('editing');
+      });
+      
+      // Add editing highlight to current report
+      if (reportId) {
+        const reportItem = document.querySelector(`[data-report-id="${reportId}"]`);
+        if (reportItem) {
+          reportItem.classList.add('editing');
+          // Scroll to the editing report
+          reportItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+
     function closeEditor() {
       document.getElementById('codeEditorContainer').style.display = 'none';
+      
+      // Remove editing highlights
+      document.querySelectorAll('.report-item.editing').forEach(item => {
+        item.classList.remove('editing');
+      });
+      
       currentEditingReport = null;
     }
 
