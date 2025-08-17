@@ -46,13 +46,17 @@ def lambda_handler(event, context):
                 # Simulate update path for query parameter (using POST instead of PUT)
                 event['path'] = f"/dataiesb-auth/reports/{report_id}"
                 event['httpMethod'] = 'PUT'  # Change method to PUT for internal processing
-                return update_report(event, user_email)
+                return update_report_metadata(event, user_email)
             elif action == 'restore' and method == 'POST':
                 # Simulate restore path for query parameter
                 event['path'] = f"/dataiesb-auth/reports/{report_id}/restore"
                 return restore_report(event, user_email)
         
         if method == 'POST' and '/reports' in path:
+            # Check if it's a restore request (old path-based approach)
+            if '/restore' in path:
+                return restore_report(event, user_email)
+            # Otherwise it's a create request
             return create_report(event, user_email)
         elif method == 'GET' and '/reports' in path:
             if '/download' in path:
@@ -73,6 +77,9 @@ def lambda_handler(event, context):
             elif '/status' in path:
                 return update_report_status(event, user_email)
             elif '/metadata' in path:
+                return update_report_metadata(event, user_email)
+            else:
+                # Default PUT to /reports/{id} should update metadata
                 return update_report_metadata(event, user_email)
         elif method == 'DELETE' and '/reports' in path:
             return soft_delete_report(event, user_email)
