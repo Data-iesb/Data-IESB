@@ -214,6 +214,61 @@
           <button onclick="closeEditor()" class="btn btn-secondary">❌ Fechar Editor</button>
         </div>
       </div>
+
+      <!-- Dashboard Emulation Section -->
+      <div class="dashboard-emulation-section" style="margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px solid #007bff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,123,255,0.2);">
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+          <span style="font-size: 24px; margin-right: 10px;">🚀</span>
+          <h3 style="margin: 0; color: #007bff;">Emulação do Dashboard</h3>
+        </div>
+        <p style="margin-bottom: 15px; color: #495057; font-size: 16px;">
+          Você pode emular e testar o dashboard completo do Data IESB acessando:
+        </p>
+        
+        <!-- Main Dashboard Link -->
+        <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #007bff; margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <a href="http://app.dataiesb.com/?path=dev" target="_blank" 
+               style="color: #007bff; font-weight: 600; font-size: 18px; text-decoration: none; word-break: break-all;">
+              app.dataiesb.com/?path=dev
+            </a>
+            <button onclick="copyDashboardUrl()" class="btn btn-secondary" style="padding: 8px 15px; font-size: 14px;">
+              📋 Copiar URL
+            </button>
+          </div>
+          <div style="margin-top: 8px; font-size: 14px; color: #666;">
+            Dashboard principal com todos os relatórios
+          </div>
+        </div>
+
+        <!-- Report Emulator Link -->
+        <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <a href="http://app.dataiesb.com/report/?path=dev" target="_blank" 
+               style="color: #28a745; font-weight: 600; font-size: 18px; text-decoration: none; word-break: break-all;">
+              app.dataiesb.com/report/?path=dev
+            </a>
+            <button onclick="copyReportEmulatorUrl()" class="btn btn-secondary" style="padding: 8px 15px; font-size: 14px;">
+              📋 Copiar URL
+            </button>
+          </div>
+          <div style="margin-top: 8px; font-size: 14px; color: #666;">
+            Emulador de relatórios individuais para desenvolvimento
+          </div>
+        </div>
+        
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 12px; margin-top: 10px;">
+          <div style="display: flex; align-items: flex-start;">
+            <span style="font-size: 18px; margin-right: 8px;">💡</span>
+            <div>
+              <strong style="color: #856404;">Dica:</strong>
+              <span style="color: #856404; margin-left: 5px;">
+                O parâmetro <code>?path=dev</code> permite testar funcionalidades em desenvolvimento antes de publicá-las na versão principal.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -879,6 +934,68 @@ if __name__ == "__main__":
       });
       
       currentEditingReport = null;
+    }
+
+    function copyReportEmulatorUrl() {
+      const url = 'http://app.dataiesb.com/report/?path=dev';
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        // Use modern clipboard API
+        navigator.clipboard.writeText(url).then(() => {
+          showMessage('URL do emulador de relatórios copiada para a área de transferência!', 'success');
+        }).catch(err => {
+          console.error('Erro ao copiar URL:', err);
+          fallbackCopyTextToClipboard(url);
+        });
+      } else {
+        // Fallback for older browsers or non-secure contexts
+        fallbackCopyTextToClipboard(url);
+      }
+    }
+
+    function copyDashboardUrl() {
+      const url = 'http://app.dataiesb.com/?path=dev';
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        // Use modern clipboard API
+        navigator.clipboard.writeText(url).then(() => {
+          showMessage('URL do dashboard copiada para a área de transferência!', 'success');
+        }).catch(err => {
+          console.error('Erro ao copiar URL:', err);
+          fallbackCopyTextToClipboard(url);
+        });
+      } else {
+        // Fallback for older browsers or non-secure contexts
+        fallbackCopyTextToClipboard(url);
+      }
+    }
+
+    function fallbackCopyTextToClipboard(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // Avoid scrolling to bottom
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          showMessage('URL do dashboard copiada para a área de transferência!', 'success');
+        } else {
+          showMessage('Não foi possível copiar a URL. Copie manualmente: http://app.dataiesb.com/?path=dev', 'error');
+        }
+      } catch (err) {
+        console.error('Fallback: Erro ao copiar URL:', err);
+        showMessage('Não foi possível copiar a URL. Copie manualmente: http://app.dataiesb.com/?path=dev', 'error');
+      }
+      
+      document.body.removeChild(textArea);
     }
 
     function showHideConfirm(reportId, reportTitle, action) {
