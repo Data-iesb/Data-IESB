@@ -357,7 +357,16 @@ def restore_report(event, user_email):
     try:
         # Extract report_id from path
         path_parts = event['path'].split('/')
-        report_id = path_parts[-2]  # /reports/{id}/restore
+        
+        # Handle different path formats:
+        # /reports/{id}/restore -> path_parts[-2]
+        # /reports/{id} -> path_parts[-1]
+        if path_parts[-1] == 'restore':
+            report_id = path_parts[-2]  # /reports/{id}/restore
+        else:
+            report_id = path_parts[-1]  # /reports/{id}
+        
+        print(f"Restore: Extracting report_id from path: {event['path']} -> {report_id}")
         
         table = dynamodb.Table(REPORTS_TABLE)
         
@@ -398,7 +407,16 @@ def download_report(event, user_email):
     try:
         # Extract report_id from path
         path_parts = event['path'].split('/')
-        report_id = path_parts[-2]  # /reports/{id}/download
+        
+        # Handle different path formats:
+        # /reports/{id}/download -> path_parts[-2]
+        # /reports/{id} -> path_parts[-1]
+        if path_parts[-1] == 'download':
+            report_id = path_parts[-2]  # /reports/{id}/download
+        else:
+            report_id = path_parts[-1]  # /reports/{id}
+        
+        print(f"Download: Extracting report_id from path: {event['path']} -> {report_id}")
         
         table = dynamodb.Table(REPORTS_TABLE)
         
@@ -630,7 +648,16 @@ def update_report_metadata(event, user_email):
     try:
         # Extract report_id from path
         path_parts = event['path'].split('/')
-        report_id = path_parts[-2]  # /reports/{id}/metadata
+        
+        # Handle different path formats:
+        # /reports/{id}/metadata -> path_parts[-2]
+        # /reports/{id} -> path_parts[-1]
+        if path_parts[-1] == 'metadata':
+            report_id = path_parts[-2]  # /reports/{id}/metadata
+        else:
+            report_id = path_parts[-1]  # /reports/{id}
+        
+        print(f"Extracting report_id from path: {event['path']} -> {report_id}")
         
         # Parse request body
         body = json.loads(event['body'])
