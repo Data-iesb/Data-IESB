@@ -874,7 +874,7 @@ def handle_login(event):
         
         # Cognito User Pool configuration
         USER_POOL_ID = 'us-east-1_QvLQs82bE'  # Actual pool ID from AWS
-        CLIENT_ID = '2mpcqrmv19qk8ajqk9j2cemimj'  # From your login.html
+        CLIENT_ID = '71am2v0jcp9uqpihrh9hjqtp6o'  # Correct new client ID
         CLIENT_SECRET = '8q5ukrt7p17krgl6j6vm02mrqm7pe2rt4fk5be65mn5oeg0u30j'  # From AWS CLI output
         
         print(f"🏊 Using User Pool: {USER_POOL_ID}")
