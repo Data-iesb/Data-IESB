@@ -478,8 +478,15 @@
 
         if (response.status === 200) {
           const contentType = response.headers.get('content-type');
+          console.log(`📡 Content-Type: ${contentType}`);
           
-          if (contentType && contentType.includes('application/octet-stream')) {
+          if (contentType && contentType.includes('text/plain')) {
+            // É texto simples - usar diretamente
+            const textData = await response.text();
+            console.log(`📄 Texto simples recebido, tamanho: ${textData.length} caracteres`);
+            document.getElementById('codeEditor').value = textData;
+            showMessage(`Código carregado via query parameter de s3://dataiesb-reports/${reportId}/main.py`, 'success');
+          } else if (contentType && contentType.includes('application/octet-stream')) {
             // É um arquivo binário - precisa decodificar base64
             console.log('📄 Detectado arquivo binário, tentando decodificar...');
             
@@ -511,9 +518,9 @@
               }
             }
           } else {
-            // É texto simples
+            // Fallback: tenta como texto
             const textData = await response.text();
-            console.log(`📄 Texto simples, tamanho: ${textData.length} caracteres`);
+            console.log(`📄 Fallback texto, tamanho: ${textData.length} caracteres`);
             
             // Verifica se é JSON com erro
             try {

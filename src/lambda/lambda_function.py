@@ -446,16 +446,47 @@ def download_report(event, user_email):
         
         file_content = s3_response['Body'].read()
         
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/octet-stream',
-                'Content-Disposition': f'attachment; filename="{report["titulo"]}.py"'
-            },
-            'body': base64.b64encode(file_content).decode('utf-8'),
-            'isBase64Encoded': True
-        }
+        # Check if this is for code editing (query parameter approach) or file download
+        query_params = event.get('queryStringParameters') or {}
+        is_code_editing = query_params.get('action') == 'download'
+        
+        if is_code_editing:
+            # For code editing, return as plain text
+            try:
+                # Decode as UTF-8 text
+                text_content = file_content.decode('utf-8')
+                return {
+                    'statusCode': 200,
+                    'headers': {
+                        'Access-Control-Allow-Origin': '*',
+                        'Content-Type': 'text/plain; charset=utf-8'
+                    },
+                    'body': text_content
+                }
+            except UnicodeDecodeError:
+                # If it's not valid UTF-8, fall back to base64
+                return {
+                    'statusCode': 200,
+                    'headers': {
+                        'Access-Control-Allow-Origin': '*',
+                        'Content-Type': 'application/octet-stream',
+                        'Content-Disposition': f'attachment; filename="{report["titulo"]}.py"'
+                    },
+                    'body': base64.b64encode(file_content).decode('utf-8'),
+                    'isBase64Encoded': True
+                }
+        else:
+            # For file download, return as binary
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/octet-stream',
+                    'Content-Disposition': f'attachment; filename="{report["titulo"]}.py"'
+                },
+                'body': base64.b64encode(file_content).decode('utf-8'),
+                'isBase64Encoded': True
+            }
         
     except Exception as e:
         print(f"Error downloading report: {str(e)}")
