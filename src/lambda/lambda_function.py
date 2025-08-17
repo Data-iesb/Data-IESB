@@ -24,7 +24,14 @@ def lambda_handler(event, context):
                 }
             }
         
-        # Get user info from JWT token
+        method = event['httpMethod']
+        path = event.get('path', '')
+        
+        # Handle login endpoint (no authentication required)
+        if method == 'POST' and (path == '/dataiesb-auth' or path.endswith('/dataiesb-auth')):
+            return handle_login(event)
+        
+        # Get user info from JWT token for all other endpoints
         user_email = get_user_from_token(event.get('headers', {}).get('Authorization', ''))
         if not user_email:
             return error_response('Unauthorized', 401)
@@ -814,6 +821,69 @@ def success_response(data):
         },
         'body': json.dumps(data)
     }
+
+def handle_login(event):
+    """Handle user login with AWS Cognito"""
+    try:
+        # Parse request body
+        body = json.loads(event.get('body', '{}'))
+        username = body.get('username', '').strip()
+        password = body.get('password', '').strip()
+        
+        if not username or not password:
+            return error_response('Username and password are required', 400)
+        
+        # Validate IESB domain
+        if not username.endswith('@iesb.edu.br'):
+            return error_response('Only @iesb.edu.br emails are allowed', 400)
+        
+        # Initialize Cognito client
+        cognito_client = boto3.client('cognito-idp', region_name='us-east-1')
+        
+        # Cognito User Pool configuration
+        USER_POOL_ID = 'us-east-1_QvLQs82bE'  # Actual pool ID from AWS
+        CLIENT_ID = '2mpcqrmv19qk8ajqk9j2cemimj'  # From your login.html
+        
+        try:
+            # Authenticate with Cognito
+            response = cognito_client.admin_initiate_auth(
+                UserPoolId=USER_POOL_ID,
+                ClientId=CLIENT_ID,
+                AuthFlow='ADMIN_NO_SRP_AUTH',
+                AuthParameters={
+                    'USERNAME': username,
+                    'PASSWORD': password
+                }
+            )
+            
+            # Extract tokens
+            auth_result = response['AuthenticationResult']
+            id_token = auth_result['IdToken']
+            access_token = auth_result['AccessToken']
+            refresh_token = auth_result['RefreshToken']
+            
+            return success_response({
+                'message': 'Login successful',
+                'idToken': id_token,
+                'accessToken': access_token,
+                'refreshToken': refresh_token
+            })
+            
+        except cognito_client.exceptions.NotAuthorizedException:
+            return error_response('Invalid username or password', 401)
+        except cognito_client.exceptions.UserNotConfirmedException:
+            return error_response('User account not confirmed. Please check your email.', 401)
+        except cognito_client.exceptions.UserNotFoundException:
+            return error_response('User not found', 401)
+        except Exception as cognito_error:
+            print(f"Cognito error: {str(cognito_error)}")
+            return error_response('Authentication service error', 500)
+            
+    except json.JSONDecodeError:
+        return error_response('Invalid JSON in request body', 400)
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        return error_response('Internal server error during login', 500)
 
 def error_response(message, status_code):
     """Return error response with CORS headers"""
