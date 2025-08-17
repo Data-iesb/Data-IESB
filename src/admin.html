@@ -139,7 +139,7 @@
                     <li><a href="quem-somos.html">Quem somos</a></li>
                     <li><a href="parceiros.html">Parceiros</a></li>
                     <li><a href="contato.html">Contato</a></li>
-                    <li><a href="cadastrar.html">Cadastrar</a></li>
+                    <li><a href="https://auth.dataiesb.com/oauth2/authorize?client_id=71am2v0jcp9uqpihrh9hjqtp6o&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html&signup=true">Cadastrar</a></li>
                     <li><a class="active" href="admin.html">Admin</a></li>
                 </ul>
             </nav>
@@ -272,13 +272,13 @@
 
     function logout() {
       localStorage.removeItem('idToken');
-      window.location.href = 'login.html';
+      window.location.href = 'https://auth.dataiesb.com/oauth2/authorize?client_id=71am2v0jcp9uqpihrh9hjqtp6o&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html';
     }
 
     function checkAuth() {
       authToken = localStorage.getItem('idToken');
       if (!authToken) {
-        window.location.href = 'login.html';
+        window.location.href = 'https://auth.dataiesb.com/oauth2/authorize?client_id=71am2v0jcp9uqpihrh9hjqtp6o&response_type=code&scope=email+openid&redirect_uri=https://dataiesb.com/admin.html';
         return false;
       }
 
