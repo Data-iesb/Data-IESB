@@ -160,6 +160,166 @@
       </div>
       
       <div id="message"></div>
+
+      <!-- Botão para mostrar/ocultar ajuda -->
+      <div style="text-align: center; margin: 20px 0;">
+        <button onclick="toggleHelp()" id="helpToggle" class="btn btn-primary" style="background: linear-gradient(135deg, #2196f3, #1976d2); border: none; padding: 12px 24px; font-size: 16px; border-radius: 25px; box-shadow: 0 4px 15px rgba(33,150,243,0.3);">
+          📚 Mostrar Guia de Uso
+        </button>
+      </div>
+
+      <!-- Seção de Ajuda e Instruções -->
+      <div id="helpSection" style="display: none; background: linear-gradient(135deg, #e3f2fd, #f8f9fa); border: 2px solid #2196f3; border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 4px 15px rgba(33,150,243,0.2);">
+        <h2 style="color: #1976d2; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+          📚 Como Usar o Painel Administrativo
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+          
+          <!-- Criar Relatórios -->
+          <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50;">
+            <h3 style="color: #2e7d32; margin-top: 0;">🆕 Criar Novo Relatório</h3>
+            <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+              <li><strong>Título:</strong> Nome do seu relatório (ex: "Análise de Vendas 2024")</li>
+              <li><strong>Autor:</strong> Seu nome ou equipe responsável</li>
+              <li><strong>Descrição:</strong> Explique brevemente o que o relatório faz</li>
+              <li><strong>Arquivo Python:</strong> Selecione seu arquivo <code>main.py</code> com o código</li>
+            </ul>
+            <p style="margin-bottom: 0; font-size: 14px; color: #666;">
+              💡 <strong>Dica:</strong> Seu arquivo Python deve ter uma função <code>main()</code> que será executada.
+            </p>
+          </div>
+
+          <!-- Gerenciar Relatórios -->
+          <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800;">
+            <h3 style="color: #f57c00; margin-top: 0;">⚙️ Como Editar Relatórios</h3>
+            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ff9800;">
+              <p style="margin: 0; font-weight: bold; color: #e65100;">
+                ⚠️ <strong>IMPORTANTE:</strong> Para editar um relatório, ele deve estar na aba "Relatórios Visíveis"
+              </p>
+            </div>
+            <p style="margin-bottom: 15px; color: #333;">
+              <strong>Fluxo de trabalho:</strong>
+            </p>
+            <ol style="margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li><strong>Vá para "Relatórios Visíveis"</strong> - Só relatórios visíveis podem ser editados</li>
+              <li><strong>📝 Editar Código:</strong> Clique para modificar o arquivo Python no navegador</li>
+              <li><strong>✏️ Editar Dados:</strong> Altere título, autor e descrição do relatório</li>
+              <li><strong>👁️🗨️ Ocultar:</strong> Move o relatório para "Relatórios Ocultos" (reversível)</li>
+              <li><strong>🗑️ Excluir Permanente:</strong> Remove completamente (NÃO pode ser desfeito)</li>
+            </ol>
+            <div style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin-top: 15px;">
+              <p style="margin: 0; font-size: 14px; color: #2e7d32;">
+                💡 <strong>Dica:</strong> Se quiser editar um relatório oculto, primeiro restaure ele para "Visíveis"
+              </p>
+            </div>
+          </div>
+
+          <!-- Abas e Organização -->
+          <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+            <h3 style="color: #7b1fa2; margin-top: 0;">📂 Entendendo as Abas</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+              <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                <h4 style="margin: 0 0 10px 0; color: #2e7d32;">✅ Relatórios Visíveis</h4>
+                <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+                  <li>Aparecem no site público (dataiesb.com)</li>
+                  <li><strong>Podem ser editados</strong> (código, dados, etc.)</li>
+                  <li>Podem ser ocultados ou excluídos</li>
+                </ul>
+              </div>
+              
+              <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                <h4 style="margin: 0 0 10px 0; color: #f57c00;">👁️🗨️ Relatórios Ocultos</h4>
+                <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+                  <li>NÃO aparecem no site público</li>
+                  <li><strong>NÃO podem ser editados</strong> enquanto ocultos</li>
+                  <li>Podem ser restaurados (voltam para "Visíveis")</li>
+                  <li>Podem ser excluídos permanentemente</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #2196f3;">
+              <p style="margin: 0; font-size: 14px; color: #1976d2;">
+                🔄 <strong>Para editar um relatório oculto:</strong> Primeiro clique em "↩️ Tornar Visível", depois vá para a aba "Relatórios Visíveis" para editá-lo.
+              </p>
+            </div>
+          </div>
+
+          <!-- Editor de Código -->
+          <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #f44336;">
+            <h3 style="color: #d32f2f; margin-top: 0;">🔧 Editor de Código</h3>
+            <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+              <li><strong>Edição Online:</strong> Modifique o código sem baixar arquivos</li>
+              <li><strong>💾 Salvar:</strong> Suas alterações são salvas automaticamente no S3</li>
+              <li><strong>❌ Fechar:</strong> Sai do editor sem perder alterações salvas</li>
+            </ul>
+            <p style="margin-bottom: 0; font-size: 14px; color: #666;">
+              💡 <strong>Dica:</strong> Teste seu código no <a href="http://app.dataiesb.com/report/?path=dev" target="_blank" style="color: #d32f2f;">ambiente de desenvolvimento</a>.
+            </p>
+          </div>
+
+          <!-- Links Úteis -->
+          <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #607d8b;">
+            <h3 style="color: #455a64; margin-top: 0;">🔗 Links Úteis</h3>
+            <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+              <li><a href="http://app.dataiesb.com/report/?path=dev" target="_blank" style="color: #455a64;">🚀 Testar Relatórios</a></li>
+              <li><a href="index.html" style="color: #455a64;">🏠 Página Inicial</a></li>
+              <li><a href="quem-somos.html" style="color: #455a64;">👥 Quem Somos</a></li>
+            </ul>
+            <p style="margin-bottom: 0; font-size: 14px; color: #666;">
+              🌐 <strong>Nota:</strong> Relatórios visíveis aparecem automaticamente na página inicial.
+            </p>
+          </div>
+
+          <!-- Requisitos Técnicos -->
+          <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #795548;">
+            <h3 style="color: #5d4037; margin-top: 0;">⚙️ Requisitos Técnicos</h3>
+            <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+              <li><strong>Arquivo:</strong> Deve ser um arquivo <code>.py</code> (Python)</li>
+              <li><strong>Função:</strong> Deve conter uma função <code>main()</code></li>
+              <li><strong>Bibliotecas:</strong> pandas, matplotlib, numpy estão disponíveis</li>
+              <li><strong>Tamanho:</strong> Máximo 10MB por arquivo</li>
+            </ul>
+            <p style="margin-bottom: 0; font-size: 14px; color: #666;">
+              📖 <strong>Exemplo:</strong> <code>def main(): print("Olá, Data IESB!")</code>
+            </p>
+          </div>
+        </div>
+
+        <!-- Exemplo de Código -->
+        <details style="margin-top: 20px; background: white; padding: 15px; border-radius: 8px;">
+          <summary style="cursor: pointer; font-weight: bold; color: #1976d2;">📝 Ver Exemplo de Código Python</summary>
+          <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto;"><code>import pandas as pd
+import matplotlib.pyplot as plt
+
+def main():
+    # Exemplo de relatório simples
+    print("🚀 Executando Relatório Data IESB")
+    
+    # Criar dados de exemplo
+    dados = {
+        'Mês': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+        'Vendas': [100, 150, 200, 180, 220]
+    }
+    
+    df = pd.DataFrame(dados)
+    
+    # Criar gráfico
+    plt.figure(figsize=(10, 6))
+    plt.plot(df['Mês'], df['Vendas'], marker='o')
+    plt.title('Vendas por Mês')
+    plt.xlabel('Mês')
+    plt.ylabel('Vendas')
+    plt.grid(True)
+    plt.show()
+    
+    print("✅ Relatório concluído!")
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </details>
+      </div>
       
       <h2>Criar Novo Relatório</h2>
       <form id="form">
@@ -277,6 +437,21 @@
         }
       }
       console.log('=====================');
+    }
+
+    function toggleHelp() {
+      const helpSection = document.getElementById('helpSection');
+      const helpToggle = document.getElementById('helpToggle');
+      
+      if (helpSection.style.display === 'none') {
+        helpSection.style.display = 'block';
+        helpToggle.innerHTML = '📚 Ocultar Guia de Uso';
+        helpToggle.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+      } else {
+        helpSection.style.display = 'none';
+        helpToggle.innerHTML = '📚 Mostrar Guia de Uso';
+        helpToggle.style.background = 'linear-gradient(135deg, #2196f3, #1976d2)';
+      }
     }
 
     function showMessage(text, type) {
