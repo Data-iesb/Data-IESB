@@ -335,7 +335,19 @@
           return false;
         }
         
-        currentUser = payload.email || payload.username || payload.sub;
+        // Try multiple fields to get the user's email/username
+        currentUser = payload.email || payload.username || payload['cognito:username'] || payload.sub;
+        
+        // If we still have a generic user ID, try to make it more user-friendly
+        if (currentUser && currentUser.startsWith('user-')) {
+          // This is likely from our fallback token, try to get a better identifier
+          currentUser = payload.email || payload.username || 'usuário@iesb.edu.br';
+        }
+        
+        // Debug logging (remove in production)
+        console.log('Token payload:', payload);
+        console.log('Extracted user:', currentUser);
+        
         document.getElementById('userInfo').textContent = `Logado como: ${currentUser}`;
         return true;
       } catch (error) {

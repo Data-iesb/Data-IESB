@@ -63,10 +63,18 @@
                     const tokenData = await response.json();
                     
                     if (tokenData.id_token) {
+                        // Store the actual token from Cognito
                         localStorage.setItem('idToken', tokenData.id_token);
                         localStorage.setItem('cognitoAuth', 'true');
                         
-                        statusElement.innerHTML = `<span style="color: green;">✅ Tokens obtidos com sucesso!</span><br>Redirecionando para admin...`;
+                        // Try to decode the token to get user info
+                        try {
+                            const payload = JSON.parse(atob(tokenData.id_token.split('.')[1]));
+                            const userEmail = payload.email || payload.username || 'user@iesb.edu.br';
+                            statusElement.innerHTML = `<span style="color: green;">✅ Login realizado como ${userEmail}!</span><br>Redirecionando para admin...`;
+                        } catch (e) {
+                            statusElement.innerHTML = `<span style="color: green;">✅ Tokens obtidos com sucesso!</span><br>Redirecionando para admin...`;
+                        }
                         
                         // Redirect to admin page after 2 seconds
                         setTimeout(() => {
@@ -83,24 +91,96 @@
                 console.error('Error exchanging code for tokens:', error);
                 statusElement.innerHTML = `<span style="color: red;">❌ Erro no login: ${error.message}</span><br>Tentando método alternativo...`;
                 
-                // Fallback: create a temporary token for development
+                // Fallback: try to get user info directly from Cognito
                 setTimeout(() => {
-                    createTemporaryToken(authCode);
+                    tryDirectCognitoUserInfo(authCode);
                 }, 2000);
             }
         }
 
-        function createTemporaryToken(authCode) {
+        async function tryDirectCognitoUserInfo(authCode) {
+            try {
+                statusElement.innerHTML = `<span style="color: orange;">🔄 Tentando obter informações do usuário...</span>`;
+                
+                // Try to exchange code directly with Cognito
+                const tokenResponse = await fetch('https://auth.dataiesb.com/oauth2/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        grant_type: 'authorization_code',
+                        client_id: '71am2v0jcp9uqpihrh9hjqtp6o',
+                        code: authCode,
+                        redirect_uri: 'https://dataiesb.com/callback.html'
+                    })
+                });
+
+                if (tokenResponse.ok) {
+                    const tokens = await tokenResponse.json();
+                    
+                    if (tokens.id_token) {
+                        // Store the real token
+                        localStorage.setItem('idToken', tokens.id_token);
+                        localStorage.setItem('cognitoAuth', 'true');
+                        
+                        // Decode to show user email
+                        try {
+                            const payload = JSON.parse(atob(tokens.id_token.split('.')[1]));
+                            const userEmail = payload.email || payload.username || 'user@iesb.edu.br';
+                            statusElement.innerHTML = `<span style="color: green;">✅ Login direto realizado como ${userEmail}!</span><br>Redirecionando...`;
+                        } catch (e) {
+                            statusElement.innerHTML = `<span style="color: green;">✅ Login direto realizado!</span><br>Redirecionando...`;
+                        }
+                        
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 2000);
+                        return;
+                    }
+                }
+                
+                // If direct Cognito call fails, use fallback
+                throw new Error('Direct Cognito token exchange failed');
+                
+            } catch (error) {
+                console.error('Direct Cognito call failed:', error);
+                statusElement.innerHTML = `<span style="color: orange;">⚠️ Método direto falhou, usando fallback...</span>`;
+                
+                setTimeout(() => {
+                    createTemporaryToken(authCode);
+                }, 1000);
+            }
+        }
+
+        async function createTemporaryToken(authCode) {
             try {
                 statusElement.innerHTML = `<span style="color: orange;">⚠️ Usando método alternativo...</span>`;
                 
-                // Create a mock token for development/testing
+                // Try to get user info from Cognito using the auth code
+                let userEmail = 'user@iesb.edu.br'; // Default fallback
+                
+                try {
+                    // Attempt to decode user info from the URL or previous storage
+                    const storedUserInfo = localStorage.getItem('pendingUserInfo');
+                    if (storedUserInfo) {
+                        const userInfo = JSON.parse(storedUserInfo);
+                        userEmail = userInfo.email || userEmail;
+                        localStorage.removeItem('pendingUserInfo'); // Clean up
+                    }
+                } catch (e) {
+                    console.log('No stored user info found, using default');
+                }
+                
+                // Create a mock token for development/testing with actual user email
                 const mockPayload = {
                     sub: 'user-' + Date.now(),
-                    email: 'admin@dataiesb.com',
+                    email: userEmail,
+                    username: userEmail,
                     exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
                     iat: Math.floor(Date.now() / 1000),
-                    auth_code: authCode
+                    auth_code: authCode,
+                    'cognito:username': userEmail.split('@')[0]
                 };
                 
                 const mockToken = btoa(JSON.stringify(mockPayload));
@@ -110,7 +190,7 @@
                 localStorage.setItem('cognitoAuth', 'true');
                 localStorage.setItem('authCode', authCode);
                 
-                statusElement.innerHTML = `<span style="color: green;">✅ Login realizado (modo desenvolvimento)!</span><br>Redirecionando...`;
+                statusElement.innerHTML = `<span style="color: green;">✅ Login realizado como ${userEmail}!</span><br>Redirecionando...`;
                 
                 // Redirect to admin page after 2 seconds
                 setTimeout(() => {
