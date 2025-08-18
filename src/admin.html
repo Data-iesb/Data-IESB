@@ -590,9 +590,63 @@ if __name__ == "__main__":
           currentUser = payload.email || payload.username || 'usuário@iesb.edu.br';
         }
         
+        // IMPORTANT: Validate email domain - only allow @iesb.edu.br
+        const userEmail = payload.email || currentUser;
+        if (userEmail && !userEmail.toLowerCase().endsWith('@iesb.edu.br')) {
+          console.log('Access denied: Invalid email domain:', userEmail);
+          
+          // Show error message in Portuguese
+          const errorDiv = document.createElement('div');
+          errorDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f8d7da;
+            color: #721c24;
+            border: 3px solid #f5c6cb;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 500px;
+            line-height: 1.5;
+          `;
+          errorDiv.innerHTML = `
+            <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+            <div style="font-size: 24px; margin-bottom: 15px; color: #D13F42;">ACESSO NEGADO</div>
+            <div style="margin-bottom: 20px;">
+              Este sistema é exclusivo para usuários com email institucional do IESB.
+            </div>
+            <div style="background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #D13F42;">
+              <strong>Email detectado:</strong> ${userEmail}<br>
+              <strong>Domínio requerido:</strong> @iesb.edu.br
+            </div>
+            <div style="margin-top: 20px;">
+              <button onclick="this.parentElement.parentElement.remove(); logout();" 
+                      style="background: #D13F42; color: white; border: none; padding: 12px 24px; 
+                             border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                Fazer Logout
+              </button>
+            </div>
+          `;
+          document.body.appendChild(errorDiv);
+          
+          // Auto logout after 5 seconds
+          setTimeout(() => {
+            logout();
+          }, 5000);
+          
+          return false;
+        }
+        
         // Debug logging (remove in production)
         console.log('Token payload:', payload);
         console.log('Extracted user:', currentUser);
+        console.log('Email domain validation passed for:', userEmail);
         
         document.getElementById('userInfo').textContent = `Logado como: ${currentUser}`;
         return true;
