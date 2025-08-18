@@ -289,32 +289,103 @@
 
         <!-- Exemplo de Código -->
         <details style="margin-top: 20px; background: white; padding: 15px; border-radius: 8px;">
-          <summary style="cursor: pointer; font-weight: bold; color: #1976d2;">📝 Ver Exemplo de Código Python</summary>
-          <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto;"><code>import pandas as pd
+          <summary style="cursor: pointer; font-weight: bold; color: #1976d2;">📝 Ver Exemplo de Código Python (s3://dataiesb-reports/1/main.py)</summary>
+          <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #2196f3;">
+            <p style="margin: 0; font-size: 14px; color: #1976d2;">
+              📁 <strong>Arquivo real:</strong> Este é o código do relatório ID 1 armazenado em <code>s3://dataiesb-reports/1/main.py</code><br>
+              💾 <strong>Localização local:</strong> Também disponível em <code>../tmp/main.py</code> para referência
+            </p>
+          </div>
+          <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px; overflow-x: auto; max-height: 400px;"><code>import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 def main():
-    # Exemplo de relatório simples
-    print("🚀 Executando Relatório Data IESB")
+    """
+    Exemplo de relatório Data IESB - Análise de Dados Acadêmicos
+    Este arquivo está armazenado em: s3://dataiesb-reports/1/main.py
+    """
+    print("🚀 Iniciando Relatório Data IESB - ID: 1")
+    print("📊 Análise de Performance Acadêmica")
     
-    # Criar dados de exemplo
-    dados = {
-        'Mês': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
-        'Vendas': [100, 150, 200, 180, 220]
+    # Dados simulados de performance acadêmica
+    dados_estudantes = {
+        'Semestre': ['2023.1', '2023.2', '2024.1', '2024.2'],
+        'Aprovados': [850, 920, 980, 1050],
+        'Reprovados': [150, 120, 100, 80],
+        'Trancamentos': [50, 45, 40, 35],
+        'Media_Geral': [7.2, 7.5, 7.8, 8.1]
     }
     
-    df = pd.DataFrame(dados)
+    # Criar DataFrame
+    df = pd.DataFrame(dados_estudantes)
     
-    # Criar gráfico
-    plt.figure(figsize=(10, 6))
-    plt.plot(df['Mês'], df['Vendas'], marker='o')
-    plt.title('Vendas por Mês')
-    plt.xlabel('Mês')
-    plt.ylabel('Vendas')
-    plt.grid(True)
+    print("\n📋 Dados coletados:")
+    print(df.to_string(index=False))
+    
+    # Calcular estatísticas
+    total_estudantes = df['Aprovados'] + df['Reprovados'] + df['Trancamentos']
+    taxa_aprovacao = (df['Aprovados'] / total_estudantes * 100).round(2)
+    
+    print(f"\n📈 Taxa de Aprovação por Semestre:")
+    for i, semestre in enumerate(df['Semestre']):
+        print(f"   {semestre}: {taxa_aprovacao[i]}%")
+    
+    # Criar visualizações
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 12))
+    fig.suptitle('📊 Relatório Acadêmico Data IESB', fontsize=16, fontweight='bold')
+    
+    # Gráfico 1: Evolução de Aprovados
+    ax1.plot(df['Semestre'], df['Aprovados'], marker='o', linewidth=3, color='#2e7d32')
+    ax1.set_title('📈 Evolução de Estudantes Aprovados')
+    ax1.set_ylabel('Número de Aprovados')
+    ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='x', rotation=45)
+    
+    # Gráfico 2: Taxa de Aprovação
+    ax2.bar(df['Semestre'], taxa_aprovacao, color='#1976d2', alpha=0.8)
+    ax2.set_title('📊 Taxa de Aprovação (%)')
+    ax2.set_ylabel('Percentual (%)')
+    ax2.tick_params(axis='x', rotation=45)
+    
+    # Gráfico 3: Distribuição por Status
+    status_atual = [df['Aprovados'].iloc[-1], df['Reprovados'].iloc[-1], df['Trancamentos'].iloc[-1]]
+    labels = ['Aprovados', 'Reprovados', 'Trancamentos']
+    colors = ['#4caf50', '#f44336', '#ff9800']
+    
+    ax3.pie(status_atual, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+    ax3.set_title(f'🥧 Distribuição Atual ({df["Semestre"].iloc[-1]})')
+    
+    # Gráfico 4: Média Geral por Semestre
+    ax4.bar(df['Semestre'], df['Media_Geral'], color='#9c27b0', alpha=0.8)
+    ax4.set_title('📚 Média Geral por Semestre')
+    ax4.set_ylabel('Média (0-10)')
+    ax4.set_ylim(0, 10)
+    ax4.tick_params(axis='x', rotation=45)
+    
+    # Adicionar linha de meta (média 7.0)
+    ax4.axhline(y=7.0, color='red', linestyle='--', alpha=0.7, label='Meta: 7.0')
+    ax4.legend()
+    
+    plt.tight_layout()
     plt.show()
     
-    print("✅ Relatório concluído!")
+    # Relatório final
+    print("\n" + "="*50)
+    print("📋 RESUMO EXECUTIVO")
+    print("="*50)
+    print(f"🎯 Melhor semestre: {df.loc[df['Aprovados'].idxmax(), 'Semestre']} ({df['Aprovados'].max()} aprovados)")
+    print(f"📈 Crescimento de aprovados: {((df['Aprovados'].iloc[-1] / df['Aprovados'].iloc[0] - 1) * 100):.1f}%")
+    print(f"📊 Média geral atual: {df['Media_Geral'].iloc[-1]}")
+    print(f"🎉 Taxa de aprovação atual: {taxa_aprovacao.iloc[-1]}%")
+    
+    if df['Media_Geral'].iloc[-1] >= 7.0:
+        print("✅ Meta de média geral ATINGIDA!")
+    else:
+        print("⚠️ Meta de média geral ainda não atingida")
+    
+    print("\n✅ Relatório Data IESB concluído com sucesso!")
+    print("📁 Arquivo: s3://dataiesb-reports/1/main.py")
 
 if __name__ == "__main__":
     main()</code></pre>
