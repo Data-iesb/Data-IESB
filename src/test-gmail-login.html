@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Gmail Login - Data IESB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Integração Gmail Login</h1>
+        <p>Esta página testa a integração do login com Gmail no sistema Data IESB.</p>
+
+        <div class="test-section info">
+            <h3>📋 Configuração Atual</h3>
+            <ul>
+                <li><strong>Domínio Cognito:</strong> auth.dataiesb.com</li>
+                <li><strong>Client ID:</strong> 71am2v0jcp9uqpihrh9hjqtp6o</li>
+                <li><strong>Identity Pool:</strong> us-east-1:4d2e8d24-b6ee-435a-89c6-3f7963d0dcb5</li>
+                <li><strong>Provedor Google:</strong> ✅ Configurado</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🔐 Status da Autenticação</h3>
+            <div id="authStatus">Verificando...</div>
+            <button class="btn btn-danger" onclick="clearTokens()">Limpar Tokens</button>
+            <button class="btn btn-primary" onclick="checkAuthStatus()">Verificar Status</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Testes de Login</h3>
+            <button class="btn btn-primary" onclick="testGoogleLogin()">Testar Login com Google</button>
+            <button class="btn btn-success" onclick="goToLoginPage()">Ir para Página de Login</button>
+            <button class="btn btn-success" onclick="goToAdminPage()">Ir para Admin (se autenticado)</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Informações do Usuário</h3>
+            <div id="userInfo">Nenhum usuário logado</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Tokens Armazenados</h3>
+            <div id="tokenInfo">Verificando tokens...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Log de Eventos</h3>
+            <div id="eventLog" style="max-height: 200px; overflow-y: auto;"></div>
+            <button class="btn btn-danger" onclick="clearLog()">Limpar Log</button>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('eventLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logEntry.style.marginBottom = '5px';
+            logEntry.style.padding = '5px';
+            logEntry.style.borderRadius = '3px';
+            
+            switch(type) {
+                case 'success':
+                    logEntry.style.backgroundColor = '#d4edda';
+                    break;
+                case 'error':
+                    logEntry.style.backgroundColor = '#f8d7da';
+                    break;
+                case 'warning':
+                    logEntry.style.backgroundColor = '#fff3cd';
+                    break;
+                default:
+                    logEntry.style.backgroundColor = '#d1ecf1';
+            }
+            
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('eventLog').innerHTML = '';
+            log('Log limpo', 'info');
+        }
+
+        function clearTokens() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('idToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userInfo');
+            log('Todos os tokens foram removidos', 'warning');
+            checkAuthStatus();
+        }
+
+        function checkAuthStatus() {
+            const accessToken = localStorage.getItem('accessToken');
+            const idToken = localStorage.getItem('idToken');
+            const userInfo = localStorage.getItem('userInfo');
+            
+            let status = '';
+            let userDisplay = '';
+            let tokenDisplay = '';
+
+            if (accessToken && idToken && userInfo) {
+                try {
+                    const user = JSON.parse(userInfo);
+                    status = '<div class="success">✅ Usuário autenticado via Google OAuth</div>';
+                    userDisplay = `
+                        <strong>Email:</strong> ${user.email}<br>
+                        <strong>Nome:</strong> ${user.name || 'N/A'}<br>
+                        <strong>Verificado:</strong> ${user.email_verified ? 'Sim' : 'Não'}
+                    `;
+                    log(`Usuário autenticado: ${user.email}`, 'success');
+                } catch (error) {
+                    status = '<div class="error">❌ Tokens OAuth corrompidos</div>';
+                    userDisplay = 'Erro ao decodificar informações do usuário';
+                    log('Erro ao decodificar tokens OAuth: ' + error.message, 'error');
+                }
+            } else if (idToken) {
+                try {
+                    const payload = JSON.parse(atob(idToken.split('.')[1]));
+                    status = '<div class="success">✅ Usuário autenticado via sistema legado</div>';
+                    userDisplay = `
+                        <strong>Email:</strong> ${payload.email || payload.username}<br>
+                        <strong>Tipo:</strong> Sistema legado
+                    `;
+                    log(`Usuário autenticado (legado): ${payload.email || payload.username}`, 'success');
+                } catch (error) {
+                    status = '<div class="error">❌ Token ID corrompido</div>';
+                    userDisplay = 'Erro ao decodificar token ID';
+                    log('Erro ao decodificar token ID: ' + error.message, 'error');
+                }
+            } else {
+                status = '<div class="error">❌ Nenhum usuário autenticado</div>';
+                userDisplay = 'Nenhum usuário logado';
+                log('Nenhum token encontrado', 'warning');
+            }
+
+            // Display token information
+            tokenDisplay = `
+                <strong>Access Token:</strong> ${accessToken ? '✅ Presente' : '❌ Ausente'}<br>
+                <strong>ID Token:</strong> ${idToken ? '✅ Presente' : '❌ Ausente'}<br>
+                <strong>Refresh Token:</strong> ${localStorage.getItem('refreshToken') ? '✅ Presente' : '❌ Ausente'}<br>
+                <strong>User Info:</strong> ${userInfo ? '✅ Presente' : '❌ Ausente'}
+            `;
+
+            document.getElementById('authStatus').innerHTML = status;
+            document.getElementById('userInfo').innerHTML = userDisplay;
+            document.getElementById('tokenInfo').innerHTML = tokenDisplay;
+        }
+
+        function testGoogleLogin() {
+            log('Iniciando teste de login com Google...', 'info');
+            
+            const params = new URLSearchParams({
+                client_id: '71am2v0jcp9uqpihrh9hjqtp6o',
+                response_type: 'code',
+                scope: 'email openid profile',
+                redirect_uri: window.location.origin + '/callback.html',
+                identity_provider: 'Google'
+            });
+
+            const googleUrl = `https://auth.dataiesb.com/oauth2/authorize?${params.toString()}`;
+            log('Redirecionando para: ' + googleUrl, 'info');
+            
+            window.location.href = googleUrl;
+        }
+
+        function goToLoginPage() {
+            log('Redirecionando para página de login...', 'info');
+            window.location.href = 'login.html';
+        }
+
+        function goToAdminPage() {
+            const hasTokens = localStorage.getItem('accessToken') || localStorage.getItem('idToken');
+            if (!hasTokens) {
+                log('Nenhum token encontrado. Redirecionando para login...', 'warning');
+                window.location.href = 'login.html';
+            } else {
+                log('Redirecionando para área administrativa...', 'info');
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Check for OAuth callback parameters
+        function checkOAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            
+            if (error) {
+                log(`Erro OAuth recebido: ${error}`, 'error');
+                if (urlParams.get('error_description')) {
+                    log(`Descrição: ${urlParams.get('error_description')}`, 'error');
+                }
+            } else if (code) {
+                log(`Código OAuth recebido: ${code.substring(0, 20)}...`, 'success');
+                log('Redirecionando para callback.html para processar...', 'info');
+                window.location.href = `callback.html${window.location.search}`;
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Página de teste carregada', 'info');
+            checkOAuthCallback();
+            checkAuthStatus();
+        });
+    </script>
+</body>
+</html>

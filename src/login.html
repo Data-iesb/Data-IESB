@@ -131,6 +131,90 @@
             color: #0056b3;
             text-decoration: underline;
         }
+        
+        /* Gmail Login Styles */
+        .social-login {
+            margin: 25px 0;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #666;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e1e5e9;
+            z-index: 1;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+            font-size: 14px;
+        }
+        
+        .btn-google {
+            width: 100%;
+            padding: 12px 16px;
+            background: #fff;
+            color: #333;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: #4285f4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.15);
+        }
+        
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #4285f4;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -174,6 +258,28 @@
                         Apenas e-mails com domínio <code>@iesb.edu.br</code> podem acessar esta área.
                     </div>
                     
+                    <!-- Gmail Login Section -->
+                    <div class="social-login">
+                        <button type="button" class="btn-google" onclick="signInWithGoogle()">
+                            <svg class="google-icon" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            Entrar com Gmail IESB
+                        </button>
+                        
+                        <div class="loading-spinner" id="loadingSpinner">
+                            <div class="spinner"></div>
+                            Redirecionando para autenticação...
+                        </div>
+                        
+                        <div class="divider">
+                            <span>ou</span>
+                        </div>
+                    </div>
+                    
                     <form id="loginForm">
                         <div class="form-group">
                             <label for="username" class="form-label">E-mail Institucional</label>
@@ -211,6 +317,70 @@
     </footer>
 
     <script>
+        // Cognito Configuration for Gmail Login
+        const COGNITO_CONFIG = {
+            domain: 'us-east-1ukxgaymej.auth.us-east-1.amazoncognito.com',
+            clientId: '3ved5e070joa59a5rmananm36q',
+            redirectUri: window.location.origin + '/admin.html',
+            responseType: 'code',
+            scope: 'email openid profile'
+        };
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        function signInWithGoogle() {
+            showLoading();
+            
+            const params = new URLSearchParams({
+                client_id: COGNITO_CONFIG.clientId,
+                response_type: COGNITO_CONFIG.responseType,
+                scope: COGNITO_CONFIG.scope,
+                redirect_uri: COGNITO_CONFIG.redirectUri,
+                identity_provider: 'Google'
+            });
+
+            const googleUrl = `https://${COGNITO_CONFIG.domain}/oauth2/authorize?${params.toString()}`;
+            console.log('Redirecting to Google sign-in:', googleUrl);
+            
+            // Redirect to Cognito hosted UI with Google
+            window.location.href = googleUrl;
+        }
+
+        // Check for OAuth callback parameters
+        function checkOAuthCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            
+            if (error) {
+                hideLoading();
+                const message = document.getElementById("loginMessage");
+                message.style.display = "block";
+                message.className = "login-message text-danger";
+                message.textContent = 'Erro na autenticação: ' + (urlParams.get('error_description') || error);
+                
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (code) {
+                // OAuth success - this should redirect to admin.html automatically
+                // But if we're still here, show success message
+                const message = document.getElementById("loginMessage");
+                message.style.display = "block";
+                message.className = "login-message text-success";
+                message.textContent = 'Autenticação realizada com sucesso! Redirecionando...';
+                
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2000);
+            }
+        }
+
         document.getElementById("loginForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
@@ -279,15 +449,21 @@
         // Function to redirect to Cognito hosted UI for password reset
         function redirectToForgotPassword() {
             const cognitoUrl = 'https://auth.dataiesb.com/forgotPassword';
-            const clientId = '2mpcqrmv19qk8ajqk9j2cemimj';
-            const redirectUri = encodeURIComponent('https://dataiesb.com/login.html');
+            const clientId = '71am2v0jcp9uqpihrh9hjqtp6o';
+            const redirectUri = encodeURIComponent(window.location.origin + '/login.html');
             
             // Construct the forgot password URL
-            const forgotPasswordUrl = `${cognitoUrl}?client_id=${clientId}&response_type=code&scope=email+openid+phone&redirect_uri=${redirectUri}`;
+            const forgotPasswordUrl = `${cognitoUrl}?client_id=${clientId}&response_type=code&scope=email+openid+profile&redirect_uri=${redirectUri}`;
             
             // Redirect to Cognito hosted UI
             window.location.href = forgotPasswordUrl;
         }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkOAuthCallback();
+            hideLoading();
+        });
     </script>
 
 </body>
