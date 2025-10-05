@@ -10,6 +10,35 @@ Official website for Data IESB - Centro Universitário IESB's Data Science and A
 - **Development**: https://d2v66tm8wx23ar.cloudfront.net
 - **Target Dev Domain**: https://dev.dataiesb.com *(DNS setup pending)*
 
+## 📊 Architecture Overview
+
+```mermaid
+graph TB
+    A[Developer] -->|Push to feature branch| B[GitHub Repository]
+    B -->|PR to dev| C[Dev Branch]
+    B -->|PR to main| D[Main Branch]
+    
+    C -->|Auto Deploy| E[GitHub Actions]
+    D -->|Auto Deploy| F[GitHub Actions]
+    
+    E -->|Deploy| G[S3 Dev Bucket]
+    F -->|Deploy| H[S3 Prod Bucket]
+    
+    G -->|Serve via| I[CloudFront Dev]
+    H -->|Serve via| J[CloudFront Prod]
+    
+    I -->|Access| K[dev.dataiesb.com]
+    J -->|Access| L[dataiesb.com]
+    
+    M[DynamoDB] -->|Team Data| G
+    M -->|Team Data| H
+    
+    style C fill:#e1f5fe
+    style D fill:#f3e5f5
+    style I fill:#e8f5e8
+    style J fill:#fff3e0
+```
+
 ## 🏗️ Project Structure
 
 ```
