@@ -180,3 +180,6 @@ tmp/
 
 # rodar localmente
 env_local.bat
+# Lambda functions (sensitive)
+lambda/
+*.zip
