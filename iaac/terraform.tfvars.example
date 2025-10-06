@@ -1,0 +1,40 @@
+# AWS Configuration
+aws_region   = "us-east-1"
+account_id   = "248189947068"
+
+# Project Configuration
+domain_name  = "dataiesb.com"
+environment  = "production"
+project_name = "DataIESB"
+env_prefix   = "prod"
+
+# Network Configuration
+vpc_cidr_block    = "10.0.0.0/16"
+subnet_cidr_block = "10.0.1.0/24"
+
+availability_zones = [
+  "us-east-1a",
+  "us-east-1b", 
+  "us-east-1c"
+]
+
+public_subnets = [
+  "10.0.1.0/24",
+  "10.0.2.0/24",
+  "10.0.3.0/24"
+]
+
+private_subnets = [
+  "10.0.4.0/24",
+  "10.0.5.0/24",
+  "10.0.6.0/24"
+]
+
+enable_nat_gateway = true
+
+# Optional: Override if using existing subnets
+# public_subnet_ids = ["subnet-xxx", "subnet-yyy"]
+# subnet_az_map = {
+#   "subnet-xxx" = "us-east-1a"
+#   "subnet-yyy" = "us-east-1b"
+# }
