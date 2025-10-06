@@ -16,6 +16,10 @@ The platform was designed to serve different user profiles, particularly the pub
 - **Reports Dashboard**: https://app.dataiesb.com/report/
 - **Development Environment**: https://d2v66tm8wx23ar.cloudfront.net
 
+## Related Repositories
+
+- **[report-app](https://github.com/Data-iesb/report-app)** - Streamlit dashboard applications deployed on EKS
+
 ## Technology Infrastructure
 
 In the context of technological infrastructure, the system was refactored to a **serverless architecture**, adopting native **Amazon Web Services (AWS)** services. Website storage and hosting were migrated to **Amazon S3**, configured with appropriate permissions via **Access Control List (ACL)** and distributed as a high-availability public site. The domain was acquired and configured through **Amazon Route 53**, with digital certificates issued by **AWS Certificate Manager (ACM)** and accelerated content distribution via **Amazon CloudFront**.
