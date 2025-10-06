@@ -8,18 +8,25 @@
 
 The **Big Data IESB Project** is a strategic initiative focused on creating and maintaining a structured data platform composed of public information and, when applicable, proprietary data from partner organizations. The main objective is to provide a comprehensive analytical foundation that contributes to improved decision-making, increased public management efficiency, evidence-based policy formulation, and higher quality services to the population.
 
-The platform is designed to serve different user profiles, particularly the public sector, civil society organizations, and educational institutions, promoting innovative data-driven solutions focused on efficiency, innovation, and social responsibility. The project covers diverse areas of social and governmental interest, including health, education, environment, public safety, human rights, labor market, public finance, social assistance, housing, and urban development.
+The platform was designed to serve different user profiles, particularly the public sector, civil society organizations, and educational institutions, promoting innovative data-driven solutions focused on efficiency, innovation, and social responsibility. The project covers diverse areas of social and governmental interest, including health, education, environment, public safety, human rights, labor market, public finance, social assistance, housing, and urban development. Through the integration of data from these areas, the project seeks to foster knowledge generation, innovation in public policies, and the formulation of analytical solutions aimed at the common good.
 
-## 🌐 Platform Access
+## Platform Access
 
-- **Main Website**: https://dataiesb.com - Institutional site for public sector and general users
-- **Reports Dashboard**: https://app.dataiesb.com/report/ - Interactive analytics dashboards
-- **Admin Panel**: Administrative interface for content management
-- **Development**: https://d2v66tm8wx23ar.cloudfront.net
+- **Main Website**: https://dataiesb.com
+- **Reports Dashboard**: https://app.dataiesb.com/report/
+- **Development Environment**: https://d2v66tm8wx23ar.cloudfront.net
 
-## 🏗️ Platform Architecture
+## Technology Infrastructure
 
-The system has been refactored to a **serverless architecture** using native **Amazon Web Services (AWS)** services. Website storage and hosting were migrated to **Amazon S3**, configured with appropriate permissions via **Access Control List (ACL)** and distributed as a high-availability public site. The domain was acquired and configured through **Amazon Route 53**, with digital certificates issued by **AWS Certificate Manager (ACM)** and accelerated content distribution via **Amazon CloudFront**.
+In the context of technological infrastructure, the system was refactored to a **serverless architecture**, adopting native **Amazon Web Services (AWS)** services. Website storage and hosting were migrated to **Amazon S3**, configured with appropriate permissions via **Access Control List (ACL)** and distributed as a high-availability public site. The domain was acquired and configured through **Amazon Route 53**, with digital certificates issued by **AWS Certificate Manager (ACM)** and accelerated content distribution via **Amazon CloudFront**.
+
+To enable continuous updates and simplify the maintenance process, a continuous integration and delivery pipeline was implemented using **AWS CodeBuild**, allowing different collaborators to modify and update the site content in an automated and secure manner. The backend was developed in **AWS Lambda**, ensuring on-demand scalability and reducing operational costs, while dynamic data storage was structured in **Amazon DynamoDB**, guaranteeing durability, performance, and information integrity.
+
+Authentication and access control were established through **Amazon Cognito**, integrating external identity providers and restricting access to users linked to institutional domains. This approach ensures centralized credential management, reinforcing the security and governance aspects of the application.
+
+Additionally, a custom application was developed in **Streamlit**, deployed on an **Amazon EKS (Elastic Kubernetes Service)** cluster. This application aims to dynamically display academic panels and indicators in a unified and interactive interface. The cluster was configured to support other academic workloads, such as data science experiments and machine learning applications, providing flexibility, performance, and scalability to the computational infrastructure.
+
+## Architecture Overview
 
 ### User Access Flow
 ```mermaid
@@ -244,44 +251,14 @@ graph TD
     class DYNAMO,S3_BUCKET,COGNITO,R53,ACM_CERT,EKS_CLUSTER,PODS,LB awsClass
 ```
 
-## 🛠️ Technology Stack
+## Platform Consolidation
 
-### Frontend & Static Content
-- **Amazon S3**: Static website hosting with public ACL configuration
-- **Amazon CloudFront**: Content delivery network for global distribution
-- **HTML5/CSS3/JavaScript**: Modern web standards for responsive design
+With the adoption of this architecture, the **Big Data IESB Project** has consolidated itself as a modern, scalable, and economically viable platform. The use of AWS managed services – including S3, Lambda, DynamoDB, CloudFront, Route 53, ACM, Cognito, EKS, and CodeBuild – resulted in a solution with high availability, enhanced security, and low operational cost. 
 
-### Backend & APIs
-- **AWS Lambda**: Serverless functions for API backend
-- **API Gateway**: RESTful API endpoints
-- **Amazon Cognito**: Authentication and user management with institutional domain restrictions
+Beyond its technical relevance, the project also stands out as a space for **applied learning**, where IESB students and researchers have the opportunity to apply Data Science and Artificial Intelligence methodologies in real scenarios, contributing to the social and institutional development of the country.
 
-### Data & Analytics
-- **Amazon DynamoDB**: NoSQL database for dynamic data storage
-- **Amazon RDS**: Relational database for structured data
-- **Streamlit**: Interactive dashboard framework deployed on EKS
+## Repository Structure
 
-### Container Orchestration
-- **Amazon EKS**: Kubernetes cluster for Streamlit applications
-- **Docker**: Containerization for consistent deployments
-- **Amazon ECR**: Container registry for Docker images
-
-### Infrastructure & DevOps
-- **AWS Route 53**: DNS management and domain configuration
-- **AWS Certificate Manager**: SSL/TLS certificate management
-- **AWS CodeBuild**: Continuous integration and deployment
-- **GitHub Actions**: Additional CI/CD workflows
-
-## 🏗️ Repository Structure
-
-This repository contains the **static website** component of the Big Data IESB Platform. The complete platform consists of multiple repositories:
-
-### Main Repositories
-- **Data-IESB** (this repo): Static institutional website
-- **report-app**: Streamlit dashboard applications
-- **Infrastructure**: Terraform and Kubernetes manifests
-
-### Directory Structure
 ```
 Data-IESB/
 ├── src/                          # Website source files
@@ -294,250 +271,32 @@ Data-IESB/
 │   └── img/                     # Images and assets
 ├── .github/                     # GitHub configuration
 │   ├── workflows/               # CI/CD pipelines
-│   ├── ISSUE_TEMPLATE/          # Issue templates
-│   ├── CODEOWNERS              # Code review assignments
-│   └── pull_request_template.md # PR template
+│   └── ISSUE_TEMPLATE/          # Issue templates
 ├── deploy-main.sh              # Production deployment script
 ├── main-config.json            # Production environment config
 └── buildspec.yml               # AWS CodeBuild configuration
 ```
 
-## 🚀 Quick Start for Contributors
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Data-iesb/Data-IESB.git
-cd Data-IESB
-
-# You'll be on the 'main' branch (production)
-git branch
-# * main
-```
-
-### 2. Create Your Feature Branch
-```bash
-# Create a new feature branch from main
-git checkout -b feature/your-feature-name
-
-# Make your changes
-# ... edit files ...
-
-# Commit your changes
-git add .
-git commit -m "feat: describe your changes"
-
-# Push your feature branch
-git push origin feature/your-feature-name
-```
-
-### 3. Create Pull Request
-- Go to GitHub and create a PR from your feature branch to `main`
-- Fill out the PR template
-- Request review from team members
-- After approval, your changes will be automatically deployed to production
-
-## 🔄 Branch Strategy
-
-### Branch Overview
-- **`main`** ← **Production branch** (protected)
-  - Production environment
-  - Deploys to https://dataiesb.com
-  - Requires admin approval
-  
-- **`dev`** ← Development branch
-  - Development environment
-  - Auto-deploys to https://d2v66tm8wx23ar.cloudfront.net
-  - For testing and development
-
-### Workflow
-```
-feature/new-feature → main → production
-```
-
-## 🛡️ Branch Protection
-
-### Main Branch (Production)
-- 🔒 Requires 2+ approvals
-- 🔒 Admin-only access
-- 🔒 Strict status checks
-- 🔒 Code owner reviews required
-
-## 🧪 Production Environment
-
-### Infrastructure
-- **S3 Bucket**: `dataiesb.com`
-- **CloudFront**: `E371T2F886B5KI`
-- **Auto-deployment**: On push to `main` branch
+## Quick Start
 
 ### Local Development
 ```bash
+# Clone repository
+git clone https://github.com/Data-iesb/Data-IESB.git
+cd Data-IESB
+
 # Serve locally
 cd src
 python -m http.server 8000
 # Visit: http://localhost:8000
-
-# Or use any static file server
-npx serve src
 ```
 
-## 🎨 Platform Features
+### Deployment
+Changes pushed to the `main` branch are automatically deployed to production via GitHub Actions and AWS CodeBuild.
 
-### Multi-Domain Focus Areas
-The platform covers diverse areas of social and governmental interest:
-- **Health**: Public health indicators and analytics
-- **Education**: Educational metrics and performance data
-- **Environment**: Environmental monitoring and sustainability metrics
-- **Public Safety**: Security and crime statistics
-- **Human Rights**: Social justice and equality indicators
-- **Labor Market**: Employment and economic indicators
-- **Public Finance**: Budget transparency and fiscal data
-- **Social Assistance**: Welfare and support program analytics
-- **Housing & Urban Development**: Infrastructure and development metrics
-
-### Technical Features
-- **Dynamic Team Management**: Team data loaded from DynamoDB
-- **Interactive Dashboards**: Streamlit-based analytics interfaces
-- **Responsive Design**: Mobile-first, cross-browser compatibility
-- **Secure Authentication**: Cognito-based user management
-- **Real-time Updates**: Live data integration and updates
-- **Scalable Architecture**: Serverless and container-based infrastructure
-
-## 👥 Project Team
-
-### Academic Coordination
-- **Professor Sérgio da Costa Côrtes** - Project Coordinator
-- **Professor Simone de Araújo Góes Assis** - Academic Supervisor
-- **Professor Natália Ribeiro de Souza Evangelista** - Research Coordinator
-
-### Technical Leadership
-- **Roberto Moreira Diniz** - DevOps & Cloud Infrastructure
-- **Ilton Ferreira Mendes Neto** - Database Administrator
-- **Marley Abe Silva** - Full Stack Developer
-- **Leonardo Araújo Pereira** - Data Science Team Leader
-
-### Data Science & Analytics Team
-- **Guilherme Rocha Duarte** - Data Scientist
-- **Leonardo Borges Silva Braga** - Data Analyst
-- **Pedro Martins Rodrigues** - Research Assistant
-- **William Wallace Ribeiro Matos** - Analytics Specialist
-
-### Target Users
-- **Public Sector**: Government agencies and public administrators
-- **Civil Society Organizations**: NGOs and community groups
-- **Educational Institutions**: Researchers and students
-- **IESB Community**: Applied learning and research opportunities
-
-## 🚀 Deployment
-
-### Automatic (Recommended)
-1. Push to `main` branch
-2. GitHub Actions automatically deploys
-3. Changes live in 5-15 minutes
-
-### Manual
-```bash
-# Ensure you're on main branch
-git checkout main
-
-# Run deployment script
-./deploy-main.sh
-```
-
-## 📋 Contributing
-
-### For Contributors
-1. **Fork** the repository
-2. **Clone** your fork
-3. **Create** feature branch: `git checkout -b feature/amazing-feature`
-4. **Make** your changes
-5. **Test** locally
-6. **Commit** with clear messages
-7. **Push** to your fork
-8. **Create** Pull Request to `main` branch
-
-### Code Style
-- Use semantic HTML5
-- Follow CSS BEM methodology
-- Write clear, commented JavaScript
-- Maintain responsive design
-- Test on multiple browsers
-
-### Commit Messages
-```bash
-feat: add new team member display
-fix: resolve mobile navigation issue
-style: update color scheme consistency
-docs: improve setup instructions
-```
-
-## 🔧 Infrastructure Configuration
-
-### AWS Services Overview
-- **S3 Buckets**: 
-  - `dataiesb.com` - Production static website
-  - `dataiesb-reports` - Analytics data storage
-- **CloudFront Distribution**: `E371T2F886B5KI` - Global CDN
-- **EKS Cluster**: `sas-6881323-eks` - Container orchestration
-- **DynamoDB Tables**: 
-  - `DataIESB-TeamMembers` - Team information
-  - `dataiesb-reports` - Analytics metadata
-- **Route 53**: Domain management for dataiesb.com
-- **Certificate Manager**: SSL/TLS certificates
-- **Cognito User Pool**: Authentication and authorization
-
-### Environment Configuration
-- **Production**: Fully managed AWS infrastructure
-- **Development**: Automated deployment via GitHub Actions
-- **Local Development**: Static file serving for testing
-
-### Security & Access Control
-- **Cognito Integration**: Institutional domain restrictions
-- **IAM Policies**: Least privilege access controls
-- **SSL/TLS**: End-to-end encryption via ACM certificates
-- **VPC Configuration**: Secure network isolation for EKS
-
-## 📚 Documentation
-
-- **[Development Guide](DEV-README.md)** - Complete dev environment docs
-- **[Branch Change Guide](change-default-branch.md)** - How to change default branch
-- **[Color Templates](src/miv.html)** - Brand color combinations
-
-## 🐛 Issues & Support
-
-### Reporting Issues
-- Use issue templates for bugs and features
-- Include environment details
-- Add screenshots when helpful
-- Tag appropriate team members
-
-### Getting Help
-- Check existing issues first
-- Use discussions for questions
-- Contact DevOps team for infrastructure issues
-
-## 📄 About IESB
+## About IESB
 
 **Centro Universitário IESB** is committed to fostering innovation in education and research. The Big Data IESB Platform represents a significant step toward evidence-based decision making and serves as a practical learning environment where students and researchers can apply Data Science and Artificial Intelligence methodologies to real-world scenarios, contributing to the social and institutional development of Brazil.
-
-### Educational Impact
-- **Applied Learning**: Students work with real data and modern cloud technologies
-- **Research Opportunities**: Platform supports academic research in data science
-- **Industry Preparation**: Hands-on experience with enterprise-grade AWS services
-- **Social Contribution**: Projects focused on public benefit and social improvement
-
----
-
-## 🎯 Quick Access Links
-
-- **Main Platform**: https://dataiesb.com
-- **Analytics Dashboard**: https://app.dataiesb.com/report/
-- **Development Environment**: https://d2v66tm8wx23ar.cloudfront.net
-- **GitHub Repository**: https://github.com/Data-iesb/Data-IESB
-- **Issues & Support**: https://github.com/Data-iesb/Data-IESB/issues
-- **CI/CD Pipeline**: https://github.com/Data-iesb/Data-IESB/actions
-
-**Production Branch**: `main` (protected)  
-**Development Branch**: `dev`
 
 ---
 
