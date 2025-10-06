@@ -1,10 +1,14 @@
 # Big Data IESB Platform
 
-[![Deploy to Development](https://github.com/Data-iesb/Data-IESB/actions/workflows/deploy-dev.yml/badge.svg)](https://github.com/Data-iesb/Data-IESB/actions/workflows/deploy-dev.yml)
+[![Deploy to Production](https://github.com/Data-iesb/Data-IESB/actions/workflows/deploy-main.yml/badge.svg)](https://github.com/Data-iesb/Data-IESB/actions/workflows/deploy-main.yml)
+
+**Author**: Roberto Moreira Diniz  
+**GitHub**: [github.com/s33ding](https://www.github.com/s33ding/)  
+**LinkedIn**: [linkedin.com/in/s33ding](https://linkedin.com/in/s33ding)
 
 The **Big Data IESB Project** is a strategic initiative focused on creating and maintaining a structured data platform composed of public information and, when applicable, proprietary data from partner organizations. The main objective is to provide a comprehensive analytical foundation that contributes to improved decision-making, increased public management efficiency, evidence-based policy formulation, and higher quality services to the population.
 
-The platform is designed to serve different user profiles, particularly the public sector, civil society organizations, and educational institutions, promoting innovative data-driven solutions focused on efficiency, innovation, and social responsibility.
+The platform is designed to serve different user profiles, particularly the public sector, civil society organizations, and educational institutions, promoting innovative data-driven solutions focused on efficiency, innovation, and social responsibility. The project covers diverse areas of social and governmental interest, including health, education, environment, public safety, human rights, labor market, public finance, social assistance, housing, and urban development.
 
 ## 🌐 Platform Access
 
@@ -15,20 +19,20 @@ The platform is designed to serve different user profiles, particularly the publ
 
 ## 🏗️ Platform Architecture
 
-The system has been refactored to a **serverless architecture** using native **Amazon Web Services (AWS)** services, ensuring scalability, high availability, and cost efficiency.
+The system has been refactored to a **serverless architecture** using native **Amazon Web Services (AWS)** services. Website storage and hosting were migrated to **Amazon S3**, configured with appropriate permissions via **Access Control List (ACL)** and distributed as a high-availability public site. The domain was acquired and configured through **Amazon Route 53**, with digital certificates issued by **AWS Certificate Manager (ACM)** and accelerated content distribution via **Amazon CloudFront**.
 
 ### User Access Flow
 ```mermaid
 graph TD
-    subgraph "Usuários"
-        U[Setor Público]
-        A[Alunos]
+    subgraph "Users"
+        U[Public Sector]
+        A[Students]
     end
     
-    subgraph "Aplicações"
-        W[dataiesb.com<br/>Site Institucional]
-        REP[app.dataiesb.com<br/>Relatórios]
-        ADM[Página Admin<br/>Gerenciamento]
+    subgraph "Applications"
+        W[dataiesb.com<br/>Institutional Site]
+        REP[app.dataiesb.com<br/>Reports]
+        ADM[Admin Panel<br/>Management]
     end
     
     U --> W
@@ -46,22 +50,22 @@ graph TD
 ### AWS Infrastructure
 ```mermaid
 graph TD
-    subgraph "Usuários"
-        U[Setor Público]
-        A[Alunos]
+    subgraph "Users"
+        U[Public Sector]
+        A[Students]
     end
     
-    subgraph "DNS & Certificados"
+    subgraph "DNS & Certificates"
         R53[Route 53]
         ACM[ACM SSL/TLS]
     end
     
-    subgraph "Autenticação"
+    subgraph "Authentication"
         COG[Cognito Login]
     end
     
     subgraph "Frontend"
-        W[dataiesb.com<br/>Site Estático S3]
+        W[dataiesb.com<br/>Static Site S3]
         ADM[admin.html]
         REP[app.dataiesb.com/report/]
     end
@@ -73,7 +77,7 @@ graph TD
         POD3[Pod: Dashboard 3<br/>Streamlit]
     end
     
-    subgraph "Gerenciamento"
+    subgraph "Management"
         APP[App Editor]
     end
     
@@ -82,7 +86,7 @@ graph TD
         API[API Gateway]
     end
     
-    subgraph "Dados"
+    subgraph "Data"
         DB[DynamoDB]
         S3[S3 Storage]
         RDS[RDS Database]
@@ -132,9 +136,9 @@ graph TD
 ### CI/CD Pipeline
 ```mermaid
 graph LR
-    subgraph "Desenvolvimento"
-        DEV[Desenvolvedor]
-        GH1[GitHub<br/>Data-iesb/Data-IESB<br/>Site Estático]
+    subgraph "Development"
+        DEV[Developer]
+        GH1[GitHub<br/>Data-iesb/Data-IESB<br/>Static Site]
         GH2[GitHub<br/>Data-iesb/report-app<br/>Streamlit Apps]
     end
     
@@ -145,7 +149,7 @@ graph LR
         CF[CloudFront<br/>E371T2F886B5KI]
     end
     
-    subgraph "Destinos"
+    subgraph "Destinations"
         S3[S3 Bucket<br/>dataiesb.com]
         EKS[EKS Cluster<br/>sas-6881323-eks]
     end
@@ -237,7 +241,7 @@ graph TD
     class TF_MAIN,TF_VARS,TF_OUT tfClass
     class IAAC,DDB,PUB iacClass
     class EKS_DIR,DEP,SVC,SA,POL1,POL2 k8sClass
-    class DYNAMO,S3_BUCKET,COGNITO,R53,ACM_CERT,LAMBDA_API,API_GW,EKS_CLUSTER,PODS,LB awsClass
+    class DYNAMO,S3_BUCKET,COGNITO,R53,ACM_CERT,EKS_CLUSTER,PODS,LB awsClass
 ```
 
 ## 🛠️ Technology Stack
@@ -248,11 +252,9 @@ graph TD
 - **HTML5/CSS3/JavaScript**: Modern web standards for responsive design
 
 ### Backend & APIs
-- **AWS Lambda**: Serverless functions for API backend (manually configured)
-- **API Gateway**: RESTful API endpoints (manually configured)
+- **AWS Lambda**: Serverless functions for API backend
+- **API Gateway**: RESTful API endpoints
 - **Amazon Cognito**: Authentication and user management with institutional domain restrictions
-
-> **Note**: For security reasons, backend code and API implementations are maintained in separate private repositories.
 
 ### Data & Analytics
 - **Amazon DynamoDB**: NoSQL database for dynamic data storage
@@ -295,28 +297,26 @@ Data-IESB/
 │   ├── ISSUE_TEMPLATE/          # Issue templates
 │   ├── CODEOWNERS              # Code review assignments
 │   └── pull_request_template.md # PR template
-├── deploy-dev.sh               # Development deployment script
-├── dev-config.json             # Development environment config
+├── deploy-main.sh              # Production deployment script
+├── main-config.json            # Production environment config
 └── buildspec.yml               # AWS CodeBuild configuration
 ```
 
-## 🚀 Quick Start for New Contributors
-
-> **Important**: This repository uses `dev` as the default branch to protect production!
+## 🚀 Quick Start for Contributors
 
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/Data-iesb/Data-IESB.git
 cd Data-IESB
 
-# You'll automatically be on the 'dev' branch (safe for beginners!)
+# You'll be on the 'main' branch (production)
 git branch
-# * dev
+# * main
 ```
 
 ### 2. Create Your Feature Branch
 ```bash
-# Create a new feature branch from dev
+# Create a new feature branch from main
 git checkout -b feature/your-feature-name
 
 # Make your changes
@@ -331,36 +331,30 @@ git push origin feature/your-feature-name
 ```
 
 ### 3. Create Pull Request
-- Go to GitHub and create a PR from your feature branch to `dev`
+- Go to GitHub and create a PR from your feature branch to `main`
 - Fill out the PR template
 - Request review from team members
-- After approval, your changes will be automatically deployed to development
+- After approval, your changes will be automatically deployed to production
 
 ## 🔄 Branch Strategy
 
 ### Branch Overview
-- **`dev`** ← **Default branch** (safe for new contributors)
-  - Development environment
-  - Auto-deploys to https://d2v66tm8wx23ar.cloudfront.net
-  - All new features start here
-  
-- **`main`** ← Production branch (protected)
+- **`main`** ← **Production branch** (protected)
   - Production environment
   - Deploys to https://dataiesb.com
   - Requires admin approval
+  
+- **`dev`** ← Development branch
+  - Development environment
+  - Auto-deploys to https://d2v66tm8wx23ar.cloudfront.net
+  - For testing and development
 
 ### Workflow
 ```
-feature/new-feature → dev → (testing) → main → production
+feature/new-feature → main → production
 ```
 
 ## 🛡️ Branch Protection
-
-### Dev Branch (Default)
-- ✅ Requires 1 approval
-- ✅ Auto-deployment to development
-- ✅ Status checks required
-- ✅ Safe for new contributors
 
 ### Main Branch (Production)
 - 🔒 Requires 2+ approvals
@@ -368,16 +362,16 @@ feature/new-feature → dev → (testing) → main → production
 - 🔒 Strict status checks
 - 🔒 Code owner reviews required
 
-## 🧪 Development Environment
+## 🧪 Production Environment
 
 ### Infrastructure
-- **S3 Bucket**: `dev-dataiesb`
-- **CloudFront**: `E142Z1CPAKR8S8`
-- **Auto-deployment**: On push to `dev` branch
+- **S3 Bucket**: `dataiesb.com`
+- **CloudFront**: `E371T2F886B5KI`
+- **Auto-deployment**: On push to `main` branch
 
 ### Local Development
 ```bash
-# Serve locally (if you have a local server)
+# Serve locally
 cd src
 python -m http.server 8000
 # Visit: http://localhost:8000
@@ -436,30 +430,30 @@ The platform covers diverse areas of social and governmental interest:
 ## 🚀 Deployment
 
 ### Automatic (Recommended)
-1. Push to `dev` branch
+1. Push to `main` branch
 2. GitHub Actions automatically deploys
 3. Changes live in 5-15 minutes
 
 ### Manual
 ```bash
-# Ensure you're on dev branch
-git checkout dev
+# Ensure you're on main branch
+git checkout main
 
 # Run deployment script
-./deploy-dev.sh
+./deploy-main.sh
 ```
 
 ## 📋 Contributing
 
-### For New Contributors
+### For Contributors
 1. **Fork** the repository
-2. **Clone** your fork (automatically on `dev` branch)
+2. **Clone** your fork
 3. **Create** feature branch: `git checkout -b feature/amazing-feature`
 4. **Make** your changes
 5. **Test** locally
 6. **Commit** with clear messages
 7. **Push** to your fork
-8. **Create** Pull Request to `dev` branch
+8. **Create** Pull Request to `main` branch
 
 ### Code Style
 - Use semantic HTML5
@@ -481,7 +475,6 @@ docs: improve setup instructions
 ### AWS Services Overview
 - **S3 Buckets**: 
   - `dataiesb.com` - Production static website
-  - `dev-dataiesb` - Development environment
   - `dataiesb-reports` - Analytics data storage
 - **CloudFront Distribution**: `E371T2F886B5KI` - Global CDN
 - **EKS Cluster**: `sas-6881323-eks` - Container orchestration
@@ -543,8 +536,8 @@ docs: improve setup instructions
 - **Issues & Support**: https://github.com/Data-iesb/Data-IESB/issues
 - **CI/CD Pipeline**: https://github.com/Data-iesb/Data-IESB/actions
 
-**Default Branch**: `dev` (safe for new contributors!)  
-**Production Branch**: `main` (protected)
+**Production Branch**: `main` (protected)  
+**Development Branch**: `dev`
 
 ---
 
