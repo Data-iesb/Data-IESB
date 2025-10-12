@@ -177,6 +177,16 @@
       }
     }
 
+    function isAuthorizedAdmin() {
+      const adminEmails = [
+        'roberto.diniz@iesb.edu.br',
+        'sergio.cortes@iesb.edu.br', 
+        'simone.a.assis@iesb.edu.br',
+        'natalia.evangelista@iesb.edu.br'
+      ];
+      return adminEmails.includes(currentUser);
+    }
+
     function displayReports(reports) {
       const container = document.getElementById('reportsList');
       
@@ -185,6 +195,7 @@
         return;
       }
 
+      const canEditAll = isAuthorizedAdmin();
       let html = '';
       for (const [id, report] of Object.entries(reports)) {
         html += `
@@ -200,6 +211,7 @@
               <button onclick="downloadReport('${id}')" class="btn-success btn-small">
                 📥 Download
               </button>
+              ${canEditAll ? `<button onclick="editReport('${id}')" class="btn-small" style="background: #ffc107;">✏️ Editar</button>` : ''}
               <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn-danger btn-small">
                 🗑️ Excluir
               </button>
@@ -208,6 +220,62 @@
         `;
       }
       container.innerHTML = html;
+    }
+
+    async function editReport(reportId) {
+      if (!authToken || !isAuthorizedAdmin()) {
+        showMessage('Acesso negado', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const report = await response.json();
+          
+          const newTitle = prompt('Título:', report.titulo);
+          if (newTitle === null) return;
+          
+          const newAuthor = prompt('Autor:', report.autor);
+          if (newAuthor === null) return;
+          
+          const newDescription = prompt('Descrição:', report.descricao);
+          if (newDescription === null) return;
+
+          const updateResponse = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              titulo: newTitle,
+              autor: newAuthor,
+              descricao: newDescription
+            })
+          });
+
+          if (updateResponse.ok) {
+            showMessage('Relatório atualizado com sucesso!', 'success');
+            loadReports();
+          } else {
+            showMessage('Erro ao atualizar relatório', 'error');
+          }
+        } else if (response.status === 401) {
+          logout();
+        } else {
+          showMessage('Erro ao carregar dados do relatório', 'error');
+        }
+      } catch (error) {
+        showMessage('Erro de conexão ao editar relatório', 'error');
+      }
     }
 
     async function downloadReport(reportId) {
