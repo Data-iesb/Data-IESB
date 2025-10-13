@@ -421,27 +421,21 @@
         });
 
         if (response.ok) {
-          // Try to parse JSON response, fallback to text if empty
-          let responseData;
-          const responseText = await response.text();
-          
-          if (responseText.trim()) {
-            try {
-              responseData = JSON.parse(responseText);
-            } catch (parseError) {
-              console.warn('Response is not valid JSON:', responseText);
-              responseData = { message: 'Success' };
-            }
-          } else {
-            responseData = { message: 'Success' };
-          }
-          
           const action = isCurrentlyHidden ? 'visível' : 'oculto';
           showStatus(`Relatório agora está ${action} no site público`, 'success');
-          loadReports(); // Reload to update button states
+          loadReports();
         } else {
-          const error = await response.text();
-          showStatus(`Erro ao alterar visibilidade: ${error}`, 'danger');
+          let errorMessage = 'Erro desconhecido';
+          try {
+            const errorText = await response.text();
+            if (errorText.trim()) {
+              const errorData = JSON.parse(errorText);
+              errorMessage = errorData.error || errorText;
+            }
+          } catch (parseError) {
+            errorMessage = `Erro HTTP ${response.status}`;
+          }
+          showStatus(`Erro ao alterar visibilidade: ${errorMessage}`, 'danger');
         }
       } catch (error) {
         console.error('Error toggling visibility:', error);
