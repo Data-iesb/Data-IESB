@@ -65,43 +65,6 @@
     <button type="submit">Criar Relatório</button>
   </form>
 
-  <hr style="margin: 40px 0; border: 1px solid #ddd;">
-
-  <h2>Upload de Configuração TOML Personalizada</h2>
-  <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
-    <h4 style="color: #856404; margin-top: 0;">⚠️ Aviso Importante</h4>
-    <p style="color: #856404; margin-bottom: 0;">
-      Esta configuração personalizada requer trabalho extra para implementação. 
-      O arquivo TOML será automaticamente configurado com <code>template_iesb = false</code> 
-      na primeira linha, indicando que você precisará adaptar manualmente o código para 
-      funcionar com sua configuração específica.
-    </p>
-  </div>
-  
-  <form id="tomlForm">
-    <div class="form-group">
-      <label>Título do Relatório:</label>
-      <input type="text" id="tomlTitulo" required>
-    </div>
-    
-    <div class="form-group">
-      <label>Autor:</label>
-      <input type="text" id="tomlAutor" required>
-    </div>
-    
-    <div class="form-group">
-      <label>Descrição:</label>
-      <textarea id="tomlDescricao" rows="3" required></textarea>
-    </div>
-    
-    <div class="form-group">
-      <label>Arquivo de Configuração TOML:</label>
-      <input type="file" id="tomlArquivo" accept=".toml" required>
-    </div>
-    
-    <button type="submit" style="background: #fd7e14;">Criar Relatório com Config Personalizada</button>
-  </form>
-
   <div class="reports-section">
     <h2>Meus Relatórios</h2>
     <div id="reportsList">Carregando relatórios...</div>
@@ -177,16 +140,6 @@
       }
     }
 
-    function isAuthorizedAdmin() {
-      const adminEmails = [
-        'roberto.diniz@iesb.edu.br',
-        'sergio.cortes@iesb.edu.br', 
-        'simone.a.assis@iesb.edu.br',
-        'natalia.evangelista@iesb.edu.br'
-      ];
-      return adminEmails.includes(currentUser);
-    }
-
     function displayReports(reports) {
       const container = document.getElementById('reportsList');
       
@@ -195,7 +148,6 @@
         return;
       }
 
-      const canEditAll = isAuthorizedAdmin();
       let html = '';
       for (const [id, report] of Object.entries(reports)) {
         html += `
@@ -211,7 +163,6 @@
               <button onclick="downloadReport('${id}')" class="btn-success btn-small">
                 📥 Download
               </button>
-              ${canEditAll ? `<button onclick="editReport('${id}')" class="btn-small" style="background: #ffc107;">✏️ Editar</button>` : ''}
               <button onclick="showDeleteConfirm('${id}', '${report.titulo}')" class="btn-danger btn-small">
                 🗑️ Excluir
               </button>
@@ -220,62 +171,6 @@
         `;
       }
       container.innerHTML = html;
-    }
-
-    async function editReport(reportId) {
-      if (!authToken || !isAuthorizedAdmin()) {
-        showMessage('Acesso negado', 'error');
-        return;
-      }
-
-      try {
-        const response = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          const report = await response.json();
-          
-          const newTitle = prompt('Título:', report.titulo);
-          if (newTitle === null) return;
-          
-          const newAuthor = prompt('Autor:', report.autor);
-          if (newAuthor === null) return;
-          
-          const newDescription = prompt('Descrição:', report.descricao);
-          if (newDescription === null) return;
-
-          const updateResponse = await fetch(`https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports/${reportId}`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              titulo: newTitle,
-              autor: newAuthor,
-              descricao: newDescription
-            })
-          });
-
-          if (updateResponse.ok) {
-            showMessage('Relatório atualizado com sucesso!', 'success');
-            loadReports();
-          } else {
-            showMessage('Erro ao atualizar relatório', 'error');
-          }
-        } else if (response.status === 401) {
-          logout();
-        } else {
-          showMessage('Erro ao carregar dados do relatório', 'error');
-        }
-      } catch (error) {
-        showMessage('Erro de conexão ao editar relatório', 'error');
-      }
     }
 
     async function downloadReport(reportId) {
@@ -400,65 +295,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       if (checkAuth()) {
         loadReports();
-      }
-      
-      // Attach TOML form handler
-      const tomlForm = document.getElementById('tomlForm');
-      if (tomlForm) {
-        tomlForm.onsubmit = async function(e) {
-          e.preventDefault();
-          
-          if (!authToken) {
-            logout();
-            return;
-          }
-
-          const tomlFile = document.getElementById('tomlArquivo').files[0];
-          if (!tomlFile) {
-            showMessage('Por favor, selecione um arquivo TOML', 'error');
-            return;
-          }
-
-          try {
-            // Read the TOML file content
-            const tomlContent = await tomlFile.text();
-            
-            // Add template_iesb = false at the beginning
-            const modifiedTomlContent = 'template_iesb = false\n' + tomlContent;
-            
-            // Create a new file with the modified content
-            const modifiedFile = new File([modifiedTomlContent], tomlFile.name, { type: 'text/plain' });
-
-            const formData = new FormData();
-            formData.append('titulo', document.getElementById('tomlTitulo').value);
-            formData.append('autor', document.getElementById('tomlAutor').value);
-            formData.append('descricao', document.getElementById('tomlDescricao').value);
-            formData.append('config', modifiedFile);
-
-            const response = await fetch('https://hewx1kjfxh.execute-api.us-east-1.amazonaws.com/prod/dataiesb-auth/reports', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${authToken}`
-              },
-              body: formData
-            });
-
-            if (response.ok) {
-              const result = await response.json();
-              showMessage('Relatório com configuração personalizada criado com sucesso! Lembre-se de que será necessário trabalho adicional para implementação.', 'success');
-              tomlForm.reset();
-              loadReports(); // Reload reports list
-            } else if (response.status === 401) {
-              logout();
-            } else {
-              const error = await response.text();
-              showMessage(`Erro ao criar relatório: ${error}`, 'error');
-            }
-          } catch (error) {
-            console.error('Error processing TOML:', error);
-            showMessage('Erro de conexão ao criar relatório com configuração personalizada', 'error');
-          }
-        };
       }
     });
   </script>
