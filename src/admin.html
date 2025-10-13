@@ -134,19 +134,41 @@
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Arquivo: <span id="codeFileName"></span></label>
-            <textarea id="codeEditor" rows="25" class="form-control" 
-                      style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
-                             font-size: 14px; 
-                             line-height: 1.5; 
-                             tab-size: 4; 
-                             white-space: pre; 
-                             background-color: #f8f9fa; 
-                             border: 1px solid #dee2e6;
-                             resize: vertical;"
-                      placeholder="# Seu código Python aqui..."></textarea>
+            <div style="position: relative;">
+              <pre id="codeHighlight" style="position: absolute; 
+                                            top: 0; left: 0; 
+                                            margin: 0; 
+                                            padding: 12px; 
+                                            border: 1px solid #dee2e6; 
+                                            border-radius: 0.375rem;
+                                            background-color: #f8f9fa; 
+                                            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+                                            font-size: 14px; 
+                                            line-height: 1.5; 
+                                            white-space: pre-wrap; 
+                                            word-wrap: break-word;
+                                            pointer-events: none;
+                                            color: transparent;
+                                            z-index: 1;"></pre>
+              <textarea id="codeEditor" rows="25" class="form-control" 
+                        style="position: relative;
+                               z-index: 2;
+                               background: transparent;
+                               font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+                               font-size: 14px; 
+                               line-height: 1.5; 
+                               tab-size: 4; 
+                               white-space: pre; 
+                               border: 1px solid #dee2e6;
+                               resize: vertical;
+                               color: #212529;"
+                        placeholder="# Seu código Python aqui..."
+                        oninput="highlightCode()"
+                        onscroll="syncScroll()"></textarea>
+            </div>
           </div>
           <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Use Ctrl+A para selecionar tudo | Tab para indentar</small>
+            <small class="text-muted">Use Tab para indentar | Ctrl+S para salvar | Syntax highlighting ativo</small>
             <div>
               <button type="button" class="btn btn-outline-secondary btn-sm" onclick="formatCode()">
                 <i class="bi bi-code"></i> Formatar
@@ -443,6 +465,36 @@
       }
     }
 
+    function highlightCode() {
+      const editor = document.getElementById('codeEditor');
+      const highlight = document.getElementById('codeHighlight');
+      const code = editor.value;
+      
+      // Simple Python syntax highlighting
+      let highlighted = code
+        // Keywords
+        .replace(/\b(def|class|if|elif|else|for|while|try|except|finally|with|import|from|as|return|yield|break|continue|pass|lambda|and|or|not|in|is|True|False|None)\b/g, '<span style="color: #0000ff; font-weight: bold;">$1</span>')
+        // Strings
+        .replace(/(["'])((?:\\.|(?!\1)[^\\])*?)\1/g, '<span style="color: #008000;">$1$2$1</span>')
+        // Comments
+        .replace(/(#.*$)/gm, '<span style="color: #808080; font-style: italic;">$1</span>')
+        // Numbers
+        .replace(/\b(\d+\.?\d*)\b/g, '<span style="color: #ff6600;">$1</span>')
+        // Functions
+        .replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g, '<span style="color: #800080;">$1</span>')
+        // Streamlit functions
+        .replace(/\b(st\.[a-zA-Z_][a-zA-Z0-9_]*)/g, '<span style="color: #ff1493; font-weight: bold;">$1</span>');
+      
+      highlight.innerHTML = highlighted;
+    }
+
+    function syncScroll() {
+      const editor = document.getElementById('codeEditor');
+      const highlight = document.getElementById('codeHighlight');
+      highlight.scrollTop = editor.scrollTop;
+      highlight.scrollLeft = editor.scrollLeft;
+    }
+
     function formatCode() {
       const editor = document.getElementById('codeEditor');
       let code = editor.value;
@@ -539,8 +591,12 @@
           const code = await response.text();
           document.getElementById('codeEditor').value = code;
           
+          // Initialize syntax highlighting
+          highlightCode();
+          
           // Add keyboard shortcuts
           const editor = document.getElementById('codeEditor');
+          editor.addEventListener('keydown', function(e) {
           editor.addEventListener('keydown', function(e) {
             // Tab for indentation
             if (e.key === 'Tab') {
