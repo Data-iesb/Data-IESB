@@ -671,16 +671,16 @@
       if (!currentEditingReportId) return;
       
       const code = document.getElementById('codeEditor').value;
-      const blob = new Blob([code], { type: 'text/plain' });
-      const file = new File([blob], 'main.py', { type: 'text/plain' });
-      
-      const formData = new FormData();
-      formData.append('main', file);
       
       try {
         const response = await apiCall(`/reports/${currentEditingReportId}`, {
           method: 'PUT',
-          body: formData
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            code: code
+          })
         });
 
         if (response.ok) {
