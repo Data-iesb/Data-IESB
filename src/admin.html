@@ -262,6 +262,8 @@
     function displayReports(reports) {
       const container = document.getElementById('reportsContainer');
       
+      console.log('Displaying reports:', reports);
+      
       if (Object.keys(reports).length === 0) {
         container.innerHTML = `
           <div class="text-center py-4 text-muted">
@@ -272,7 +274,10 @@
         return;
       }
 
-      const reportsHtml = Object.entries(reports).map(([id, report]) => `
+      const reportsHtml = Object.entries(reports).map(([id, report]) => {
+        console.log(`Report ${id}:`, report, 'hidden:', report.hidden, 'type:', typeof report.hidden);
+        
+        return `
         <div class="card mb-3">
           <div class="card-body">
             <div class="row align-items-center">
@@ -309,7 +314,7 @@
             </div>
           </div>
         </div>
-      `).join('');
+      `}).join('');
 
       container.innerHTML = reportsHtml;
     }
