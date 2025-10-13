@@ -117,46 +117,14 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Arquivo: <span id="codeFileName"></span></label>
-              <div style="position: relative;">
-                <pre id="codeHighlight" style="position: absolute; 
-                                              top: 0; left: 0; 
-                                              margin: 0; 
-                                              padding: 12px; 
-                                              border: 1px solid #dee2e6; 
-                                              border-radius: 0.375rem;
-                                              background-color: #f8f9fa; 
-                                              font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
-                                              font-size: 14px; 
-                                              line-height: 1.5; 
-                                              white-space: pre-wrap; 
-                                              word-wrap: break-word;
-                                              pointer-events: none;
-                                              color: transparent;
-                                              z-index: 1;"></pre>
-                <textarea id="codeEditor" rows="25" class="form-control" 
-                          style="position: relative;
-                                 z-index: 2;
-                                 background: transparent;
-                                 font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
-                                 font-size: 14px; 
-                                 line-height: 1.5; 
-                                 tab-size: 4; 
-                                 white-space: pre; 
-                                 border: 1px solid #dee2e6;
-                                 resize: vertical;
-                                 color: #212529;"
-                          placeholder="# Seu código Python aqui..."></textarea>
-              </div>
+              <textarea id="codeEditor" rows="20" class="form-control" 
+                        style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+                               font-size: 14px;"
+                        placeholder="# Seu código Python aqui..."></textarea>
             </div>
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <small class="text-muted">Use Tab para indentar | Ctrl+S para salvar | Syntax highlighting ativo</small>
+              <small class="text-muted">Use Tab para indentar | Ctrl+S para salvar</small>
               <div>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="formatCode()">
-                  <i class="bi bi-code"></i> Formatar
-                </button>
-                <button type="button" class="btn btn-outline-info btn-sm" onclick="validateCode()">
-                  <i class="bi bi-check-circle"></i> Validar
-                </button>
                 <button type="button" class="btn btn-primary" onclick="saveCode()">
                   <i class="bi bi-save"></i> Salvar Código
                 </button>
@@ -633,7 +601,6 @@
           const end = this.selectionEnd;
           this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
           this.selectionStart = this.selectionEnd = start + 4;
-          highlightCode();
         }
         
         // Ctrl+S to save
@@ -641,22 +608,7 @@
           e.preventDefault();
           saveCode();
         }
-        
-        // Auto-close brackets
-        if (e.key === '(' || e.key === '[' || e.key === '{') {
-          const closeChar = e.key === '(' ? ')' : e.key === '[' ? ']' : '}';
-          const start = this.selectionStart;
-          const end = this.selectionEnd;
-          this.value = this.value.substring(0, start) + e.key + closeChar + this.value.substring(end);
-          this.selectionStart = this.selectionEnd = start + 1;
-          e.preventDefault();
-          highlightCode();
-        }
       });
-      
-      // Add input event for syntax highlighting
-      newEditor.addEventListener('input', highlightCode);
-      newEditor.addEventListener('scroll', syncScroll);
     }
 
     function cancelCodeEdit() {
@@ -701,9 +653,6 @@
           
           // Initialize code editor with event listeners
           initializeCodeEditor();
-          
-          // Initialize syntax highlighting
-          highlightCode();
           
           document.getElementById('codeSection').style.display = 'block';
           document.getElementById('codeSection').scrollIntoView({ behavior: 'smooth' });
