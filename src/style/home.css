@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    color: #212529;
+    color: #212529; /* Cor de texto base mais escura */
     background-color: #fff;
 }
 
@@ -21,7 +21,7 @@ ul {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1200px; /* Aumentado para mais espaço */
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -31,89 +31,57 @@ header {
     padding: 15px 0;
     background-color: #fff;
     border-bottom: 1px solid #dee2e6;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    transition: transform 0.3s ease;
 }
 
 .nav-container {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr auto; /* Colunas para logo, nav e ações */
     align-items: center;
+    gap: 20px;
 }
 
 .logo {
     font-weight: 700;
     font-size: 1.6em;
-    color: #DA2F35;
+    color: #DA2F35; /* Cor escura para o logo */
 }
 
-.logo img {
-    transition: transform 0.2s ease;
-}
-
-.logo img:hover {
-    transform: scale(1.05);
-}
-
-/* Desktop Navigation */
-.nav-collapse {
-    display: flex;
-    align-items: center;
-    gap: 60px;
+header nav {
+    margin-left: 60px; /* Centraliza a lista de links */
 }
 
 header nav ul {
-    display: flex;
+    display: inline-flex; /* Faz os itens se alinharem */
     gap: 30px;
 }
 
 header nav a {
     font-size: 0.9em;
-    color: #32325D;
+    color: #32325D; /* Cor escura para os links */
     font-weight: 500;
-    transition: color 0.2s ease;
-    position: relative;
 }
 
-header nav a:hover {
-    color: #D13F42;
+.header-actions {
+    display: flex;
+    justify-content: flex-end; /* Alinha à direita */
+    align-items: center;
+    gap: 10px;
 }
 
-header nav a.active {
-    font-weight: 700;
-    color: #D13F42;
+.header-actions input[type="search"] {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px 15px;
 }
 
-header nav a.active::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: #D13F42;
-}
-
-/* Mobile Menu */
-.menu-toggle {
-    display: none;
-}
-
-.hamburger-menu {
-    display: none;
-    flex-direction: column;
+.login-btn {
+    background-color: #1D345B; /* Azul da paleta oficial */
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 5px;
     cursor: pointer;
-    padding: 5px;
-}
-
-.hamburger-line {
-    width: 25px;
-    height: 3px;
-    background-color: #32325D;
-    margin: 3px 0;
-    transition: 0.3s;
+    font-weight: 500;
 }
 
 /* Seção Hero */
@@ -178,28 +146,17 @@ header nav a.active::after {
     font-weight: 600;
     border: 1px solid transparent;
     font-size: 0.95em;
-    transition: all 0.2s ease;
 }
 
 .btn-primary {
-    background-color: #D13F42;
+    background-color: #D13F42; /* Vermelho da paleta oficial */
     color: white;
-}
-
-.btn-primary:hover {
-    background-color: #b8363a;
-    transform: translateY(-1px);
 }
 
 .btn-secondary {
     background-color: white;
-    color: #1D345B;
-    border-color: #1D345B;
-}
-
-.btn-secondary:hover {
-    background-color: #1D345B;
-    color: white;
+    color: #1D345B; /* Azul da paleta oficial */
+    border-color: #1D345B; /* Azul da paleta oficial */
 }
 
 .stat-card {
@@ -256,18 +213,12 @@ header nav a.active::after {
 }
 
 .panel-card {
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; /* Fundo cinza claro */
     padding: 30px;
     border: 1px solid #e9ecef;
-    border-radius: 12px;
-    text-align: left;
+    border-radius: 12px; /* Bordas mais arredondadas */
+    text-align: left; /* Garante alinhamento à esquerda */
     cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.panel-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 .panel-card h3 {
@@ -407,8 +358,8 @@ header nav a.active {
 
 /* Seção: Equipe Técnica */
 .team {
-    padding: 40px 0 80px 0;
-    background-color: #f8f9fa;
+    padding: 60px 0;
+    background-color: #ffffff;
 }
 
 .team h2 {
@@ -421,7 +372,8 @@ header nav a.active {
     text-align: center;
     color: #6c757d;
     max-width: 800px;
-    margin: 0 auto 50px auto;
+    margin: 0 auto 40px auto;
+    line-height: 1.6;
 }
 
 .team-grid {
@@ -772,54 +724,58 @@ header nav a.active {
     margin: 5px 0;
 }
 
-/* Mobile Styles */
+/* Media Query para ativar o menu responsivo */
 @media (max-width: 992px) {
+    /* Mostra o ícone do menu */
     .hamburger-menu {
-        display: flex;
+        display: block;
     }
 
+    /* Ajusta o layout do cabeçalho */
+    .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Esconde o menu por padrão */
     .nav-collapse {
         display: none;
         position: absolute;
-        top: 100%;
+        top: 70px;
         left: 0;
         width: 100%;
         background-color: white;
         padding: 20px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         flex-direction: column;
-        gap: 20px;
+        align-items: center;
+        gap: 25px;
     }
-
+    
+    /* A MÁGICA ACONTECE AQUI: */
+    /* Quando o checkbox está marcado, o menu (.nav-collapse) é exibido */
     .menu-toggle:checked ~ .nav-collapse {
         display: flex;
     }
 
-    .menu-toggle:checked ~ .hamburger-menu .hamburger-line:nth-child(1) {
-        transform: rotate(-45deg) translate(-5px, 6px);
-    }
-
-    .menu-toggle:checked ~ .hamburger-menu .hamburger-line:nth-child(2) {
-        opacity: 0;
-    }
-
-    .menu-toggle:checked ~ .hamburger-menu .hamburger-line:nth-child(3) {
-        transform: rotate(45deg) translate(-5px, -6px);
-    }
-
+    /* Estilos dos itens dentro do menu aberto */
     header nav ul {
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
         text-align: center;
         width: 100%;
     }
-
     header nav a {
         font-size: 1.1em;
-        padding: 10px;
     }
-
-    .panels-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 15px;
+    }
+    .header-actions input[type="search"], .header-actions .login-btn {
+        width: 100%;
+        text-align: center;
     }
 }
