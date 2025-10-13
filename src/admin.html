@@ -615,11 +615,18 @@
       document.getElementById('codeSection').style.display = 'none';
       document.getElementById('codeEditor').value = '';
       currentEditingReportId = null;
+      currentReportData = null;
     }
+
+    let currentReportData = null;
 
     async function editCode(reportId, reportTitle) {
       currentEditingReportId = reportId;
       document.getElementById('codeFileName').textContent = `${reportTitle}/main.py`;
+      
+      // Store current report data for saving
+      const reports = await getCurrentReports();
+      currentReportData = reports[reportId];
       
       try {
         // Download current code from S3
@@ -667,8 +674,20 @@
       }
     }
 
+    async function getCurrentReports() {
+      try {
+        const response = await apiCall('/reports');
+        if (response && response.ok) {
+          return await response.json();
+        }
+      } catch (error) {
+        console.error('Error getting reports:', error);
+      }
+      return {};
+    }
+
     async function saveCode() {
-      if (!currentEditingReportId) return;
+      if (!currentEditingReportId || !currentReportData) return;
       
       const code = document.getElementById('codeEditor').value;
       
@@ -679,6 +698,9 @@
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
+            titulo: currentReportData.titulo,
+            autor: currentReportData.autor,
+            descricao: currentReportData.descricao,
             code: code
           })
         });
