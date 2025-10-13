@@ -46,6 +46,36 @@
   
   <div id="message"></div>
   
+  <!-- Comprehensive Guide Section -->
+  <div style="background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 5px; padding: 20px; margin-bottom: 30px;">
+    <h3 style="color: #0066cc; margin-top: 0;">📚 Guia Completo de Uso</h3>
+    
+    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin: 15px 0; border-radius: 5px;">
+      <h4 style="color: #856404; margin-top: 0;">⚠️ Instruções Importantes</h4>
+      <ul style="color: #856404; margin-bottom: 0;">
+        <li>O arquivo Python <strong>não deve usar</strong> o método <code>st.set_page_config()</code> do Streamlit</li>
+        <li>Use apenas bibliotecas padrão ou especifique dependências no código</li>
+        <li>Teste seu código localmente antes do upload</li>
+        <li>Arquivos TOML personalizados requerem adaptação manual do código</li>
+      </ul>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+      <div>
+        <h4 style="color: #333;">🎨 Configuração de Template</h4>
+        <p>• <strong>Template MIV:</strong> Inclui cabeçalho, rodapé e branding institucional</p>
+        <p>• <strong>Sem Template:</strong> Streamlit padrão, mais limpo</p>
+        <p>• <strong>Cores Personalizadas:</strong> Configure paleta de cores específica</p>
+      </div>
+      <div>
+        <h4 style="color: #333;">⚙️ Configuração Avançada</h4>
+        <p>• <strong>Arquivo TOML:</strong> Upload de configuração completa</p>
+        <p>• <strong>Configuração Manual:</strong> Ajuste cores e tema diretamente</p>
+        <p>• <strong>CSS Personalizado:</strong> Estilos específicos para seu relatório</p>
+      </div>
+    </div>
+  </div>
+  
   <h2>Criar Novo Relatório</h2>
   <form id="form">
     <div class="form-group">
@@ -125,6 +155,24 @@
         <button type="button" onclick="previewConfig()" style="margin-top: 10px; background: #6c757d;">
           👁️ Visualizar Configuração
         </button>
+        
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd;">
+          <h4 style="margin-bottom: 10px; color: #333;">🎨 CSS Personalizado</h4>
+          <label>CSS Adicional (opcional):</label>
+          <textarea id="customCSS" rows="6" style="width: 100%; font-family: monospace; font-size: 12px;" 
+                    placeholder="/* Adicione seu CSS personalizado aqui */
+.stApp { 
+  background-color: #f8f9fa; 
+}
+.main-header { 
+  color: #333; 
+  font-weight: bold;
+}
+/* Personalize elementos específicos do Streamlit */"></textarea>
+          <small style="color: #666; display: block; margin: 5px 0;">
+            Este CSS será injetado no seu relatório Streamlit para personalização avançada
+          </small>
+        </div>
       </div>
     </div>
     
