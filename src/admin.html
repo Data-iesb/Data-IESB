@@ -134,7 +134,27 @@
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Arquivo: <span id="codeFileName"></span></label>
-            <textarea id="codeEditor" rows="20" class="form-control" style="font-family: 'Courier New', monospace; font-size: 14px;"></textarea>
+            <textarea id="codeEditor" rows="25" class="form-control" 
+                      style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+                             font-size: 14px; 
+                             line-height: 1.5; 
+                             tab-size: 4; 
+                             white-space: pre; 
+                             background-color: #f8f9fa; 
+                             border: 1px solid #dee2e6;
+                             resize: vertical;"
+                      placeholder="# Seu código Python aqui..."></textarea>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">Use Ctrl+A para selecionar tudo | Tab para indentar</small>
+            <div>
+              <button type="button" class="btn btn-outline-secondary btn-sm" onclick="formatCode()">
+                <i class="bi bi-code"></i> Formatar
+              </button>
+              <button type="button" class="btn btn-outline-info btn-sm" onclick="validateCode()">
+                <i class="bi bi-check-circle"></i> Validar
+              </button>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -401,6 +421,21 @@
         });
 
         if (response.ok) {
+          // Try to parse JSON response, fallback to text if empty
+          let responseData;
+          const responseText = await response.text();
+          
+          if (responseText.trim()) {
+            try {
+              responseData = JSON.parse(responseText);
+            } catch (parseError) {
+              console.warn('Response is not valid JSON:', responseText);
+              responseData = { message: 'Success' };
+            }
+          } else {
+            responseData = { message: 'Success' };
+          }
+          
           const action = isCurrentlyHidden ? 'visível' : 'oculto';
           showStatus(`Relatório agora está ${action} no site público`, 'success');
           loadReports(); // Reload to update button states
@@ -411,6 +446,89 @@
       } catch (error) {
         console.error('Error toggling visibility:', error);
         showStatus('Erro de conexão ao alterar visibilidade', 'danger');
+      }
+    }
+
+    function formatCode() {
+      const editor = document.getElementById('codeEditor');
+      let code = editor.value;
+      
+      // Basic Python formatting
+      const lines = code.split('\n');
+      let formattedLines = [];
+      let indentLevel = 0;
+      
+      for (let line of lines) {
+        const trimmed = line.trim();
+        
+        // Decrease indent for certain keywords
+        if (trimmed.startsWith('except') || trimmed.startsWith('elif') || 
+            trimmed.startsWith('else') || trimmed.startsWith('finally')) {
+          indentLevel = Math.max(0, indentLevel - 1);
+        }
+        
+        // Add proper indentation
+        if (trimmed) {
+          formattedLines.push('    '.repeat(indentLevel) + trimmed);
+        } else {
+          formattedLines.push('');
+        }
+        
+        // Increase indent after certain keywords
+        if (trimmed.endsWith(':') && (
+            trimmed.startsWith('def ') || trimmed.startsWith('class ') ||
+            trimmed.startsWith('if ') || trimmed.startsWith('elif ') ||
+            trimmed.startsWith('else:') || trimmed.startsWith('for ') ||
+            trimmed.startsWith('while ') || trimmed.startsWith('try:') ||
+            trimmed.startsWith('except') || trimmed.startsWith('finally:') ||
+            trimmed.startsWith('with ')
+        )) {
+          indentLevel++;
+        }
+      }
+      
+      editor.value = formattedLines.join('\n');
+      showStatus('Código formatado!', 'success');
+    }
+
+    function validateCode() {
+      const code = document.getElementById('codeEditor').value;
+      const issues = [];
+      
+      // Basic Python validation
+      const lines = code.split('\n');
+      let openParens = 0;
+      let openBrackets = 0;
+      let openBraces = 0;
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        
+        // Check for common issues
+        if (line.includes('st.set_page_config')) {
+          issues.push(`Linha ${i + 1}: Evite usar st.set_page_config() - será adicionado automaticamente`);
+        }
+        
+        // Count brackets
+        for (let char of line) {
+          if (char === '(') openParens++;
+          if (char === ')') openParens--;
+          if (char === '[') openBrackets++;
+          if (char === ']') openBrackets--;
+          if (char === '{') openBraces++;
+          if (char === '}') openBraces--;
+        }
+      }
+      
+      // Check for unmatched brackets
+      if (openParens !== 0) issues.push('Parênteses não balanceados');
+      if (openBrackets !== 0) issues.push('Colchetes não balanceados');
+      if (openBraces !== 0) issues.push('Chaves não balanceadas');
+      
+      if (issues.length === 0) {
+        showStatus('Código validado com sucesso!', 'success');
+      } else {
+        showStatus(`Problemas encontrados: ${issues.join('; ')}`, 'warning');
       }
     }
 
@@ -426,6 +544,36 @@
         if (response.ok) {
           const code = await response.text();
           document.getElementById('codeEditor').value = code;
+          
+          // Add keyboard shortcuts
+          const editor = document.getElementById('codeEditor');
+          editor.addEventListener('keydown', function(e) {
+            // Tab for indentation
+            if (e.key === 'Tab') {
+              e.preventDefault();
+              const start = this.selectionStart;
+              const end = this.selectionEnd;
+              this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+              this.selectionStart = this.selectionEnd = start + 4;
+            }
+            
+            // Ctrl+S to save
+            if (e.ctrlKey && e.key === 's') {
+              e.preventDefault();
+              saveCode();
+            }
+            
+            // Auto-close brackets
+            if (e.key === '(' || e.key === '[' || e.key === '{') {
+              const closeChar = e.key === '(' ? ')' : e.key === '[' ? ']' : '}';
+              const start = this.selectionStart;
+              const end = this.selectionEnd;
+              this.value = this.value.substring(0, start) + e.key + closeChar + this.value.substring(end);
+              this.selectionStart = this.selectionEnd = start + 1;
+              e.preventDefault();
+            }
+          });
+          
           new bootstrap.Modal(document.getElementById('codeModal')).show();
         } else {
           showStatus('Erro ao carregar código do relatório', 'danger');
