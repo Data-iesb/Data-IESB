@@ -162,9 +162,7 @@
                                border: 1px solid #dee2e6;
                                resize: vertical;
                                color: #212529;"
-                        placeholder="# Seu código Python aqui..."
-                        oninput="highlightCode()"
-                        onscroll="syncScroll()"></textarea>
+                        placeholder="# Seu código Python aqui..."></textarea>
             </div>
           </div>
           <div class="d-flex justify-content-between align-items-center">
@@ -241,6 +239,9 @@
 
     async function apiCall(endpoint, options = {}) {
       const token = localStorage.getItem("idToken");
+      console.log('Making API call to:', `${API_BASE_URL}${endpoint}`);
+      console.log('Token present:', !!token);
+      
       const defaultOptions = {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -253,7 +254,10 @@
         ...defaultOptions
       });
 
+      console.log('API response status:', response.status);
+
       if (response.status === 401) {
+        console.log('Unauthorized, logging out');
         logout();
         return;
       }
@@ -263,12 +267,18 @@
 
     async function loadReports() {
       try {
+        console.log('Loading reports from:', `${API_BASE_URL}/reports`);
         const response = await apiCall('/reports');
-        if (response.ok) {
+        console.log('Response status:', response?.status);
+        
+        if (response && response.ok) {
           const reports = await response.json();
+          console.log('Reports loaded:', reports);
           displayReports(reports);
         } else {
-          showStatus('Erro ao carregar relatórios', 'danger');
+          const errorText = response ? await response.text() : 'No response';
+          console.error('Failed to load reports:', errorText);
+          showStatus(`Erro ao carregar relatórios: ${errorText}`, 'danger');
         }
       } catch (error) {
         console.error('Error loading reports:', error);
@@ -468,6 +478,9 @@
     function highlightCode() {
       const editor = document.getElementById('codeEditor');
       const highlight = document.getElementById('codeHighlight');
+      
+      if (!editor || !highlight) return;
+      
       const code = editor.value;
       
       // Simple Python syntax highlighting
@@ -491,6 +504,9 @@
     function syncScroll() {
       const editor = document.getElementById('codeEditor');
       const highlight = document.getElementById('codeHighlight');
+      
+      if (!editor || !highlight) return;
+      
       highlight.scrollTop = editor.scrollTop;
       highlight.scrollLeft = editor.scrollLeft;
     }
@@ -580,6 +596,48 @@
 
     let currentEditingReportId = null;
 
+    function initializeCodeEditor() {
+      const editor = document.getElementById('codeEditor');
+      
+      // Remove any existing event listeners to prevent duplicates
+      const newEditor = editor.cloneNode(true);
+      editor.parentNode.replaceChild(newEditor, editor);
+      
+      // Add keyboard shortcuts
+      newEditor.addEventListener('keydown', function(e) {
+        // Tab for indentation
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const start = this.selectionStart;
+          const end = this.selectionEnd;
+          this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+          this.selectionStart = this.selectionEnd = start + 4;
+          highlightCode();
+        }
+        
+        // Ctrl+S to save
+        if (e.ctrlKey && e.key === 's') {
+          e.preventDefault();
+          saveCode();
+        }
+        
+        // Auto-close brackets
+        if (e.key === '(' || e.key === '[' || e.key === '{') {
+          const closeChar = e.key === '(' ? ')' : e.key === '[' ? ']' : '}';
+          const start = this.selectionStart;
+          const end = this.selectionEnd;
+          this.value = this.value.substring(0, start) + e.key + closeChar + this.value.substring(end);
+          this.selectionStart = this.selectionEnd = start + 1;
+          e.preventDefault();
+          highlightCode();
+        }
+      });
+      
+      // Add input event for syntax highlighting
+      newEditor.addEventListener('input', highlightCode);
+      newEditor.addEventListener('scroll', syncScroll);
+    }
+
     async function editCode(reportId, reportTitle) {
       currentEditingReportId = reportId;
       document.getElementById('codeFileName').textContent = `${reportTitle}/main.py`;
@@ -588,45 +646,43 @@
         // Download current code from S3
         const response = await apiCall(`/reports/${reportId}/download`);
         if (response.ok) {
-          const code = await response.text();
+          let code = await response.text();
+          
+          // Handle potential base64 encoding
+          try {
+            // Check if the response is base64 encoded
+            if (code.match(/^[A-Za-z0-9+/]*={0,2}$/)) {
+              code = atob(code);
+            }
+          } catch (decodeError) {
+            // If base64 decode fails, use original text
+            console.log('Not base64 encoded, using original text');
+          }
+          
+          // Handle potential UTF-8 encoding issues
+          try {
+            // Try to decode as UTF-8 if needed
+            const encoder = new TextEncoder();
+            const decoder = new TextDecoder('utf-8');
+            const bytes = encoder.encode(code);
+            code = decoder.decode(bytes);
+          } catch (encodingError) {
+            console.log('UTF-8 encoding not needed');
+          }
+          
           document.getElementById('codeEditor').value = code;
+          
+          // Initialize code editor with event listeners
+          initializeCodeEditor();
           
           // Initialize syntax highlighting
           highlightCode();
           
-          // Add keyboard shortcuts
-          const editor = document.getElementById('codeEditor');
-          editor.addEventListener('keydown', function(e) {
-          editor.addEventListener('keydown', function(e) {
-            // Tab for indentation
-            if (e.key === 'Tab') {
-              e.preventDefault();
-              const start = this.selectionStart;
-              const end = this.selectionEnd;
-              this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
-              this.selectionStart = this.selectionEnd = start + 4;
-            }
-            
-            // Ctrl+S to save
-            if (e.ctrlKey && e.key === 's') {
-              e.preventDefault();
-              saveCode();
-            }
-            
-            // Auto-close brackets
-            if (e.key === '(' || e.key === '[' || e.key === '{') {
-              const closeChar = e.key === '(' ? ')' : e.key === '[' ? ']' : '}';
-              const start = this.selectionStart;
-              const end = this.selectionEnd;
-              this.value = this.value.substring(0, start) + e.key + closeChar + this.value.substring(end);
-              this.selectionStart = this.selectionEnd = start + 1;
-              e.preventDefault();
-            }
-          });
-          
           new bootstrap.Modal(document.getElementById('codeModal')).show();
         } else {
-          showStatus('Erro ao carregar código do relatório', 'danger');
+          const errorText = await response.text();
+          console.error('Download error:', errorText);
+          showStatus(`Erro ao carregar código: ${errorText}`, 'danger');
         }
       } catch (error) {
         console.error('Error loading code:', error);
