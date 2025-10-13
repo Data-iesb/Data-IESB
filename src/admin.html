@@ -288,7 +288,6 @@
                 <small class="text-muted">
                   <i class="bi bi-person"></i> ${report.autor}
                   ${report.deletado ? '<span class="badge bg-danger ms-2">Deletado</span>' : ''}
-                  ${report.hidden ? '<span class="badge bg-warning ms-2">Oculto</span>' : ''}
                 </small>
               </div>
               <div class="col-md-4 text-end">
@@ -298,9 +297,6 @@
                   </button>
                   <button class="btn btn-outline-success btn-sm" onclick="editCode('${id}', '${report.titulo}')">
                     <i class="bi bi-code-slash"></i> Código
-                  </button>
-                  <button class="btn btn-outline-${report.hidden === true ? 'warning' : 'info'} btn-sm" onclick="toggleVisibility('${id}', ${report.hidden === true})">
-                    <i class="bi bi-eye${report.hidden === true ? '-slash' : ''}"></i> ${report.hidden === true ? 'Desocultar' : 'Ocultar'}
                   </button>
                   ${!report.deletado ? 
                     `<button class="btn btn-outline-danger btn-sm" onclick="deleteReport('${id}')">
@@ -427,47 +423,6 @@
       } catch (error) {
         console.error('Error restoring report:', error);
         showStatus('Erro de conexão ao restaurar relatório', 'danger');
-      }
-    }
-
-    async function toggleVisibility(reportId, isCurrentlyHidden) {
-      try {
-        const response = await apiCall(`/reports/${reportId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            hidden: !isCurrentlyHidden
-          })
-        });
-
-        if (response.ok) {
-          const action = isCurrentlyHidden ? 'visível' : 'oculto';
-          showStatus(`Relatório agora está ${action} no site público`, 'success');
-          loadReports();
-        } else {
-          let errorMessage = 'Erro desconhecido';
-          try {
-            const responseText = await response.text();
-            if (responseText.trim()) {
-              try {
-                const errorData = JSON.parse(responseText);
-                errorMessage = errorData.error || errorData.message || responseText;
-              } catch (jsonError) {
-                errorMessage = responseText;
-              }
-            } else {
-              errorMessage = `Erro HTTP ${response.status}`;
-            }
-          } catch (parseError) {
-            errorMessage = `Erro HTTP ${response.status}`;
-          }
-          showStatus(`Erro ao alterar visibilidade: ${errorMessage}`, 'danger');
-        }
-      } catch (error) {
-        console.error('Error toggling visibility:', error);
-        showStatus('Erro de conexão ao alterar visibilidade', 'danger');
       }
     }
 
