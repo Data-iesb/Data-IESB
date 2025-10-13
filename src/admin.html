@@ -282,6 +282,7 @@
                 <small class="text-muted">
                   <i class="bi bi-person"></i> ${report.autor}
                   ${report.deletado ? '<span class="badge bg-danger ms-2">Deletado</span>' : ''}
+                  ${report.hidden ? '<span class="badge bg-warning ms-2">Oculto</span>' : '<span class="badge bg-success ms-2">Visível</span>'}
                 </small>
               </div>
               <div class="col-md-4 text-end">
@@ -292,8 +293,8 @@
                   <button class="btn btn-outline-success btn-sm" onclick="editCode('${id}', '${report.titulo}')">
                     <i class="bi bi-code-slash"></i> Código
                   </button>
-                  <button class="btn btn-outline-${report.hidden ? 'warning' : 'info'} btn-sm" onclick="toggleVisibility('${id}', ${report.hidden || false})">
-                    <i class="bi bi-eye${report.hidden ? '-slash' : ''}"></i> ${report.hidden ? 'Mostrar' : 'Ocultar'}
+                  <button class="btn btn-outline-${report.hidden === true ? 'warning' : 'info'} btn-sm" onclick="toggleVisibility('${id}', ${report.hidden === true})">
+                    <i class="bi bi-eye${report.hidden === true ? '-slash' : ''}"></i> ${report.hidden === true ? 'Mostrar' : 'Ocultar'}
                   </button>
                   ${!report.deletado ? 
                     `<button class="btn btn-outline-danger btn-sm" onclick="deleteReport('${id}')">
@@ -318,24 +319,47 @@
       e.preventDefault();
       
       const formData = new FormData(this);
+      const data = {
+        titulo: formData.get('titulo'),
+        autor: formData.get('autor'),
+        descricao: formData.get('descricao')
+      };
       
-      try {
-        const response = await apiCall('/reports', {
-          method: 'POST',
-          body: formData
-        });
+      // Handle file upload separately if needed
+      const mainFile = formData.get('main');
+      if (mainFile && mainFile.size > 0) {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          data.code = e.target.result;
+          await submitReport(data);
+        };
+        reader.readAsText(mainFile);
+      } else {
+        await submitReport(data);
+      }
+      
+      async function submitReport(reportData) {
+        try {
+          const response = await apiCall('/reports', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reportData)
+          });
 
-        if (response.ok) {
-          showStatus('Relatório criado com sucesso!');
-          this.reset();
-          loadReports();
-        } else {
-          const error = await response.text();
-          showStatus(`Erro ao criar relatório: ${error}`, 'danger');
+          if (response.ok) {
+            showStatus('Relatório criado com sucesso!');
+            document.getElementById('createReportForm').reset();
+            loadReports();
+          } else {
+            const error = await response.text();
+            showStatus(`Erro ao criar relatório: ${error}`, 'danger');
+          }
+        } catch (error) {
+          console.error('Error creating report:', error);
+          showStatus('Erro de conexão ao criar relatório', 'danger');
         }
-      } catch (error) {
-        console.error('Error creating report:', error);
-        showStatus('Erro de conexão ao criar relatório', 'danger');
       }
     });
 
@@ -360,24 +384,48 @@
       
       const formData = new FormData(this);
       const reportId = document.getElementById('editReportId').value;
+      
+      const data = {
+        titulo: formData.get('titulo'),
+        autor: formData.get('autor'),
+        descricao: formData.get('descricao')
+      };
+      
+      // Handle file upload separately if needed
+      const mainFile = formData.get('main');
+      if (mainFile && mainFile.size > 0) {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          data.code = e.target.result;
+          await submitUpdate(data);
+        };
+        reader.readAsText(mainFile);
+      } else {
+        await submitUpdate(data);
+      }
+      
+      async function submitUpdate(reportData) {
+        try {
+          const response = await apiCall(`/reports/${reportId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reportData)
+          });
 
-      try {
-        const response = await apiCall(`/reports/${reportId}`, {
-          method: 'PUT',
-          body: formData
-        });
-
-        if (response.ok) {
-          showStatus('Relatório atualizado com sucesso!');
-          cancelEdit();
-          loadReports();
-        } else {
-          const error = await response.text();
-          showStatus(`Erro ao atualizar relatório: ${error}`, 'danger');
+          if (response.ok) {
+            showStatus('Relatório atualizado com sucesso!');
+            cancelEdit();
+            loadReports();
+          } else {
+            const error = await response.text();
+            showStatus(`Erro ao atualizar relatório: ${error}`, 'danger');
+          }
+        } catch (error) {
+          console.error('Error updating report:', error);
+          showStatus('Erro de conexão ao atualizar relatório', 'danger');
         }
-      } catch (error) {
-        console.error('Error updating report:', error);
-        showStatus('Erro de conexão ao atualizar relatório', 'danger');
       }
     });
 
