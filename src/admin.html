@@ -324,47 +324,24 @@
       e.preventDefault();
       
       const formData = new FormData(this);
-      const data = {
-        titulo: formData.get('titulo'),
-        autor: formData.get('autor'),
-        descricao: formData.get('descricao')
-      };
       
-      // Handle file upload separately if needed
-      const mainFile = formData.get('main');
-      if (mainFile && mainFile.size > 0) {
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-          data.code = e.target.result;
-          await submitReport(data);
-        };
-        reader.readAsText(mainFile);
-      } else {
-        await submitReport(data);
-      }
-      
-      async function submitReport(reportData) {
-        try {
-          const response = await apiCall('/reports', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(reportData)
-          });
+      try {
+        const response = await apiCall('/reports', {
+          method: 'POST',
+          body: formData
+        });
 
-          if (response.ok) {
-            showStatus('Relatório criado com sucesso!');
-            document.getElementById('createReportForm').reset();
-            loadReports();
-          } else {
-            const error = await response.text();
-            showStatus(`Erro ao criar relatório: ${error}`, 'danger');
-          }
-        } catch (error) {
-          console.error('Error creating report:', error);
-          showStatus('Erro de conexão ao criar relatório', 'danger');
+        if (response.ok) {
+          showStatus('Relatório criado com sucesso!');
+          document.getElementById('createReportForm').reset();
+          loadReports();
+        } else {
+          const error = await response.text();
+          showStatus(`Erro ao criar relatório: ${error}`, 'danger');
         }
+      } catch (error) {
+        console.error('Error creating report:', error);
+        showStatus('Erro de conexão ao criar relatório', 'danger');
       }
     });
 
@@ -390,47 +367,23 @@
       const formData = new FormData(this);
       const reportId = document.getElementById('editReportId').value;
       
-      const data = {
-        titulo: formData.get('titulo'),
-        autor: formData.get('autor'),
-        descricao: formData.get('descricao')
-      };
-      
-      // Handle file upload separately if needed
-      const mainFile = formData.get('main');
-      if (mainFile && mainFile.size > 0) {
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-          data.code = e.target.result;
-          await submitUpdate(data);
-        };
-        reader.readAsText(mainFile);
-      } else {
-        await submitUpdate(data);
-      }
-      
-      async function submitUpdate(reportData) {
-        try {
-          const response = await apiCall(`/reports/${reportId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(reportData)
-          });
+      try {
+        const response = await apiCall(`/reports/${reportId}`, {
+          method: 'PUT',
+          body: formData
+        });
 
-          if (response.ok) {
-            showStatus('Relatório atualizado com sucesso!');
-            cancelEdit();
-            loadReports();
-          } else {
-            const error = await response.text();
-            showStatus(`Erro ao atualizar relatório: ${error}`, 'danger');
-          }
-        } catch (error) {
-          console.error('Error updating report:', error);
-          showStatus('Erro de conexão ao atualizar relatório', 'danger');
+        if (response.ok) {
+          showStatus('Relatório atualizado com sucesso!');
+          cancelEdit();
+          loadReports();
+        } else {
+          const error = await response.text();
+          showStatus(`Erro ao atualizar relatório: ${error}`, 'danger');
         }
+      } catch (error) {
+        console.error('Error updating report:', error);
+        showStatus('Erro de conexão ao atualizar relatório', 'danger');
       }
     });
 
