@@ -61,7 +61,48 @@
       </div>
     </div>
 
-    <!-- My Reports -->
+    <!-- Edit Form (Hidden by default) -->
+    <div id="editSection" class="row mb-4" style="display: none;">
+      <div class="col">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="card-title">
+                <i class="bi bi-pencil"></i> Editar Relatório
+              </h5>
+              <button class="btn btn-outline-secondary btn-sm" onclick="cancelEdit()">
+                <i class="bi bi-x"></i> Cancelar
+              </button>
+            </div>
+            <form id="editReportForm">
+              <input type="hidden" id="editReportId" name="reportId">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="editTitulo" class="form-label">Título</label>
+                  <input type="text" class="form-control" id="editTitulo" name="titulo" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="editAutor" class="form-label">Autor</label>
+                  <input type="text" class="form-control" id="editAutor" name="autor" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="editDescricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="editDescricao" name="descricao" rows="3" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="editMain" class="form-label">Atualizar main.py (opcional)</label>
+                <input type="file" class="form-control" id="editMain" name="main" accept=".py">
+                <div class="form-text">Deixe em branco para manter o arquivo atual.</div>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check"></i> Salvar Alterações
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col">
         <div class="card shadow-sm">
@@ -83,44 +124,6 @@
 
     <!-- Status Messages -->
     <div id="statusContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
-  </div>
-
-  <!-- Edit Modal -->
-  <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar Relatório</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editReportForm">
-            <input type="hidden" id="editReportId" name="reportId">
-            <div class="mb-3">
-              <label for="editTitulo" class="form-label">Título</label>
-              <input type="text" class="form-control" id="editTitulo" name="titulo" required>
-            </div>
-            <div class="mb-3">
-              <label for="editAutor" class="form-label">Autor</label>
-              <input type="text" class="form-control" id="editAutor" name="autor" required>
-            </div>
-            <div class="mb-3">
-              <label for="editDescricao" class="form-label">Descrição</label>
-              <textarea class="form-control" id="editDescricao" name="descricao" rows="3" required></textarea>
-            </div>
-            <div class="mb-3">
-              <label for="editMain" class="form-label">Atualizar main.py (opcional)</label>
-              <input type="file" class="form-control" id="editMain" name="main" accept=".py">
-              <div class="form-text">Deixe em branco para manter o arquivo atual.</div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" onclick="updateReport()">Salvar Alterações</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Code Editor Modal -->
@@ -372,12 +375,20 @@
       document.getElementById('editAutor').value = report.autor;
       document.getElementById('editDescricao').value = report.descricao;
       
-      new bootstrap.Modal(document.getElementById('editModal')).show();
+      document.getElementById('editSection').style.display = 'block';
+      document.getElementById('editSection').scrollIntoView({ behavior: 'smooth' });
     }
 
-    async function updateReport() {
-      const form = document.getElementById('editReportForm');
-      const formData = new FormData(form);
+    function cancelEdit() {
+      document.getElementById('editSection').style.display = 'none';
+      document.getElementById('editReportForm').reset();
+    }
+
+    // Edit Report Form Handler
+    document.getElementById('editReportForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
       const reportId = document.getElementById('editReportId').value;
 
       try {
@@ -388,7 +399,7 @@
 
         if (response.ok) {
           showStatus('Relatório atualizado com sucesso!');
-          bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+          cancelEdit();
           loadReports();
         } else {
           const error = await response.text();
@@ -398,7 +409,7 @@
         console.error('Error updating report:', error);
         showStatus('Erro de conexão ao atualizar relatório', 'danger');
       }
-    }
+    });
 
     async function deleteReport(id) {
       if (!confirm('Tem certeza que deseja deletar este relatório?')) {
@@ -444,12 +455,14 @@
 
     async function toggleVisibility(reportId, isCurrentlyHidden) {
       try {
-        const formData = new FormData();
-        formData.append('hidden', !isCurrentlyHidden);
-        
         const response = await apiCall(`/reports/${reportId}`, {
           method: 'PUT',
-          body: formData
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            hidden: !isCurrentlyHidden
+          })
         });
 
         if (response.ok) {
@@ -459,10 +472,12 @@
         } else {
           let errorMessage = 'Erro desconhecido';
           try {
-            const errorText = await response.text();
-            if (errorText.trim()) {
-              const errorData = JSON.parse(errorText);
-              errorMessage = errorData.error || errorText;
+            const responseText = await response.text();
+            if (responseText.trim()) {
+              const errorData = JSON.parse(responseText);
+              errorMessage = errorData.error || errorData.message || responseText;
+            } else {
+              errorMessage = `Erro HTTP ${response.status}`;
             }
           } catch (parseError) {
             errorMessage = `Erro HTTP ${response.status}`;
