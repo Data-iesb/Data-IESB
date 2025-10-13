@@ -392,14 +392,12 @@
 
     async function toggleVisibility(reportId, isCurrentlyHidden) {
       try {
-        const response = await apiCall(`/reports/${reportId}/visibility`, {
+        const formData = new FormData();
+        formData.append('hidden', !isCurrentlyHidden);
+        
+        const response = await apiCall(`/reports/${reportId}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            hidden: !isCurrentlyHidden
-          })
+          body: formData
         });
 
         if (response.ok) {
