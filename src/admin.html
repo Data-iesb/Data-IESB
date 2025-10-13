@@ -294,7 +294,7 @@
                     <i class="bi bi-code-slash"></i> Código
                   </button>
                   <button class="btn btn-outline-${report.hidden === true ? 'warning' : 'info'} btn-sm" onclick="toggleVisibility('${id}', ${report.hidden === true})">
-                    <i class="bi bi-eye${report.hidden === true ? '-slash' : ''}"></i> ${report.hidden === true ? 'Mostrar' : 'Ocultar'}
+                    <i class="bi bi-eye${report.hidden === true ? '-slash' : ''}"></i> ${report.hidden === true ? 'Desocultar' : 'Ocultar'}
                   </button>
                   ${!report.deletado ? 
                     `<button class="btn btn-outline-danger btn-sm" onclick="deleteReport('${id}')">
