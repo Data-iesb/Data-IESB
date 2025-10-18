@@ -232,6 +232,59 @@ header nav a {
     line-height: 1.7;
 }
 
+/* Seção de Aplicações de Alunos */
+.student-apps {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+}
+
+.student-apps h2 {
+    font-size: 2.2em;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #212529;
+}
+
+.student-apps .subtitle {
+    text-align: center;
+    color: #6c757d;
+    font-size: 1.1em;
+    margin-bottom: 50px;
+}
+
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.app-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.app-card h3 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 15px;
+}
+
+.app-card p {
+    color: #6c757d;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
 /* Seção de Newsletter */
 .newsletter {
     color: white;
@@ -638,7 +691,7 @@ header nav a.active {
     .hero-text h1, .project-intro h1, .page-content h1 {
         font-size: 2.2em;
     }
-    .panels h2, .team h2, .newsletter-text h2, .contact-info-box h2 {
+    .panels h2, .team h2, .newsletter-text h2, .student-apps h2, .contact-info-box h2 {
         font-size: 1.9em;
     }
     .hero-buttons {
