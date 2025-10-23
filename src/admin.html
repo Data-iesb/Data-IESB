@@ -166,6 +166,16 @@
 
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
+      // Check if this is an OAuth callback (code parameter in URL)
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      
+      if (code) {
+        // Redirect to callback.html to handle the OAuth flow properly
+        window.location.href = 'callback.html' + window.location.search;
+        return;
+      }
+      
       checkAuth();
       loadReports();
     });
@@ -190,7 +200,7 @@
 
     function logout() {
       localStorage.removeItem("idToken");
-      window.location.href = '/login.html';
+      window.location.href = 'https://dataiesb.com/login.html';
     }
 
     function showStatus(message, type = 'success') {
